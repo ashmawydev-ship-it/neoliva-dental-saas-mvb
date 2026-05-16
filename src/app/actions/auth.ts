@@ -2,6 +2,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { prisma } from "@/lib/prisma";
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { AuditService } from "@/services/audit.service";
@@ -10,34 +11,86 @@ import { StaffRole } from "@/generated/client";
 import { EmailService } from "@/services/email.service";
 
 export async function staffLogin(formData: FormData) {
-  const email = formData.get('email') as string;
+  const email = (formData.get('email') as string || '').trim().toLowerCase();
   const password = formData.get('password') as string;
+  console.log(`[AUTH_STEP_1][LOGIN_REQUEST_RECEIVED] Email: ${email}, PasswordLength: ${password?.length || 0}`);
+  console.log(`[AUTH_RUNTIME_CHECK] SupabaseURL: ${process.env.NEXT_PUBLIC_SUPABASE_URL}, SiteURL: ${process.env.NEXT_PUBLIC_SITE_URL}`);
   const rememberMe = formData.get('remember') === 'true' || formData.get('rememberMe') === 'true';
   const supabase = await createClient();
 
-  console.log(`[AUTH_TRACE][LOGIN_START] Email: ${email}, Path: /login`);
-  const result = await supabase.auth.signInWithPassword({
+  // STEP 3: Eliminate Stale Auth State - Clean Reset before login attempt
+  console.log(`[AUTH_TRACE][STALE_STATE_CLEANUP_START]`);
+  const cookieStore = await cookies();
+  
+  try {
+    cookieStore.delete('app_refresh_token');
+    await supabase.auth.signOut();
+    console.log(`[AUTH_TRACE][STALE_STATE_CLEANUP_SUCCESS]`);
+  } catch (e) {
+    console.log(`[AUTH_TRACE][STALE_STATE_CLEANUP_SKIPPED] Reason: ${e instanceof Error ? e.message : 'No active session'}`);
+  }
+
+  console.log(`[AUTH_STEP_2][SUPABASE_AUTH_START] Email: ${email}`);
+  
+  const startTime = Date.now();
+  const { data, error } = await supabase.auth.signInWithPassword({
     email,
     password,
   });
-  
-  const { data, error } = result;
+  const duration = Date.now() - startTime;
+
+  // STEP 1 — RAW SUPABASE RESPONSE (FORENSIC MODE)
+  console.log(`[AUTH_FORENSIC][SUPABASE_RESPONSE]`, {
+    email,
+    success: !error,
+    duration: `${duration}ms`,
+    user: data.user ? {
+      id: data.user.id,
+      email: data.user.email,
+      confirmed_at: data.user.confirmed_at,
+      last_sign_in_at: data.user.last_sign_in_at
+    } : null,
+    session: data.session ? {
+      access_token: 'PRESENT',
+      refresh_token: 'PRESENT',
+      expires_at: data.session.expires_at,
+      expires_in: data.session.expires_in
+    } : null,
+    error: error ? {
+      code: error.status,
+      message: error.message,
+      name: error.name
+    } : null
+  });
 
   if (error) {
-    console.warn(`[AUTH_TRACE][SUPABASE_FAILURE] Email: ${email}, Status: ${error.status}, Message: ${error.message}`);
-    if (process.env.AUTH_DEBUG === 'true') {
-      console.log("[AUTH_TRACE][SUPABASE_RAW_ERROR]", JSON.stringify(error, null, 2));
+    console.warn(`[AUTH_STEP_2][SUPABASE_AUTH_FAILED] Email: ${email}, Status: ${error.status}, Message: ${error.message}`);
+    
+    // FORENSIC ERROR MAPPING
+    let errorCode = 'AUTH_ERROR';
+    if (error.message.includes('Invalid login credentials')) {
+      errorCode = 'INVALID_CREDENTIALS';
+    } else if (error.message.includes('Email not confirmed')) {
+      errorCode = 'EMAIL_NOT_CONFIRMED';
+    } else if (error.status === 429) {
+      errorCode = 'TOO_MANY_REQUESTS';
+    } else if (error.status === 400) {
+      errorCode = 'BAD_REQUEST';
     }
-    return { success: false, error: error.message };
+    
+    console.log(`[AUTH_TRACE][FINAL_ERROR] Stage: SUPABASE_AUTH, Code: ${errorCode}, Raw: ${error.message}`);
+    return { success: false, error: errorCode, rawError: error.message };
   }
 
-  console.log(`[AUTH_TRACE][SUPABASE_SUCCESS] UserId: ${data.user?.id}, Email: ${email}`);
+  console.log(`[AUTH_STEP_2][SUPABASE_AUTH_SUCCESS] UserId: ${data.user?.id}, Email: ${email}`);
 
   if (!data.user) {
-    return { success: false, error: "Authentication failed." };
+    console.error(`[AUTH_TRACE][USER_OBJECT_MISSING] Success returned but no user object.`);
+    return { success: false, error: "AUTH_OBJECT_MISSING" };
   }
 
   // Find the user and their primary membership
+  console.log(`[AUTH_STEP_3][USER_FETCH_START] SupabaseId: ${data.user.id}`);
   const dbUser = await prisma.user.findUnique({
     where: { supabaseId: data.user.id },
     include: {
@@ -49,50 +102,85 @@ export async function staffLogin(formData: FormData) {
     }
   });
 
-  if (!dbUser || dbUser.memberships.length === 0) {
-    console.warn(`[AUTH_TRACE][MEMBERSHIP_MISSING] UserId: ${data.user.id}, Email: ${email}`);
+  if (!dbUser) {
+    console.error(`[AUTH_TRACE][USER_FETCH_FAILED] No DB user record found for SupabaseId: ${data.user.id}`);
+    console.log(`[AUTH_TRACE][FINAL_ERROR] Stage: USER_FETCH, Code: NO_USER_RECORD`);
+    return { success: false, error: 'NO_USER_RECORD' };
+  }
+
+  console.log(`[AUTH_TRACE][USER_FETCH_SUCCESS] DbUserId: ${dbUser.id}, Memberships: ${dbUser.memberships.length}`);
+  
+  if (dbUser.memberships.length === 0) {
+    console.warn(`[AUTH_STEP_4][TENANT_MEMBERSHIP_MISSING] UserId: ${dbUser.id}, Email: ${email}`);
+    
     // Check if there's a pending invitation
     const pendingInvite = await prisma.staffInvitation.findFirst({
-      where: { 
-        email: email,
-        status: 'PENDING'
-      }
+      where: { email: email, status: 'PENDING' }
     });
 
     if (pendingInvite) {
-      return { 
-        success: false, 
-        error: "Your invitation is pending. Please accept the invitation from your email first." 
-      };
+      console.log(`[AUTH_TRACE][FINAL_ERROR] Stage: TENANT_MEMBERSHIP_CHECK, Code: INVITE_PENDING`);
+      return { success: false, error: "Your invitation is pending. Please accept the invitation from your email first." };
     }
 
-    return { 
-      success: false, 
-      error: "You are not registered as a staff member for any clinic. Please contact your administrator." 
-    };
+    console.log(`[AUTH_TRACE][FINAL_ERROR] Stage: TENANT_MEMBERSHIP_CHECK, Code: NO_MEMBERSHIP`);
+    return { success: false, error: "You are not registered as a staff member for any clinic. Please contact your administrator." };
   }
 
   const primaryMembership = dbUser.memberships[0];
-  console.log(`[AUTH_TRACE][MEMBERSHIP_FOUND] UserId: ${dbUser.id}, TenantId: ${primaryMembership.tenantId}, Role: ${primaryMembership.role}, Status: ${primaryMembership.tenant.status}`);
+  const tenantStatus = primaryMembership.tenant.status;
+  console.log(`[AUTH_STEP_4][TENANT_MEMBERSHIP_FOUND] TenantId: ${primaryMembership.tenantId}, Role: ${primaryMembership.role}, TenantStatus: ${tenantStatus}`);
+
+  // STEP 1: Fix login error rendering - Validate tenant status IMMEDIATELY
+  if (tenantStatus === 'DISABLED') {
+    console.warn(`[AUTH_TRACE][TENANT_STATUS_BLOCKED] Reason: ACCOUNT_DISABLED`);
+    await supabase.auth.signOut();
+    console.log(`[AUTH_TRACE][FINAL_ERROR] Stage: TENANT_STATUS_CHECK, Code: ACCOUNT_DISABLED`);
+    return { success: false, error: 'ACCOUNT_DISABLED' };
+  }
+  
+  if (tenantStatus === 'SUSPENDED') {
+    console.warn(`[AUTH_TRACE][TENANT_STATUS_BLOCKED] Reason: ACCOUNT_SUSPENDED`);
+    await supabase.auth.signOut();
+    console.log(`[AUTH_TRACE][FINAL_ERROR] Stage: TENANT_STATUS_CHECK, Code: ACCOUNT_SUSPENDED`);
+    return { success: false, error: 'ACCOUNT_SUSPENDED' };
+  }
+
+  if (tenantStatus === 'REJECTED') {
+    console.warn(`[AUTH_TRACE][TENANT_STATUS_BLOCKED] Reason: ACCOUNT_REJECTED`);
+    await supabase.auth.signOut();
+    console.log(`[AUTH_TRACE][FINAL_ERROR] Stage: TENANT_STATUS_CHECK, Code: ACCOUNT_REJECTED`);
+    return { success: false, error: 'ACCOUNT_REJECTED' };
+  }
+
+  if (tenantStatus === 'PENDING') {
+    console.warn(`[AUTH_TRACE][TENANT_STATUS_BLOCKED] Reason: TENANT_PENDING`);
+    await supabase.auth.signOut();
+    console.log(`[AUTH_TRACE][FINAL_ERROR] Stage: TENANT_STATUS_CHECK, Code: TENANT_PENDING`);
+    return { success: false, error: 'TENANT_PENDING' };
+  }
+  
+  console.log(`[AUTH_TRACE][TENANT_STATUS_APPROVED] Proceeding to session creation...`);
 
   // --- PERSISTENT SESSION ARCHITECTURE ---
   // Create a DB-backed session for long-term persistence
   try {
+    console.log(`[AUTH_STEP_5][SESSION_CREATION_START] UserId: ${dbUser.id}, TenantId: ${primaryMembership.tenantId}`);
     const { SessionService } = await import('@/lib/auth/session-service');
     const { headers: getHeaders } = await import('next/headers');
     const headerList = await getHeaders();
     
-    const { appRefreshToken } = await SessionService.createSession({
+    const { appRefreshToken, session } = await SessionService.createSession({
       userId: dbUser.id,
       tenantId: primaryMembership.tenantId,
       ipAddress: headerList.get('x-forwarded-for') || undefined,
       userAgent: headerList.get('user-agent') || undefined
     }, data.session?.refresh_token || '');
 
-    console.log(`[AUTH_TRACE][SESSION_CREATED] UserId: ${dbUser.id}, TenantId: ${primaryMembership.tenantId}`);
+    const sessionId = session.id;
+    console.log(`[AUTH_TRACE][SESSION_CREATION_SUCCESS] SessionId: ${sessionId}`);
 
     // Set the persistent refresh token cookie (90 days)
-    const { cookies } = await import('next/headers');
     const cookieStore = await cookies();
     cookieStore.set('app_refresh_token', appRefreshToken, {
       httpOnly: true,
@@ -101,6 +189,7 @@ export async function staffLogin(formData: FormData) {
       maxAge: 60 * 60 * 24 * 90, // 90 days
       path: '/'
     });
+    console.log(`[AUTH_TRACE][COOKIE_SET_SUCCESS] Name: app_refresh_token, MaxAge: 90 days`);
   } catch (sessionError) {
     console.error("[AUTH][CRITICAL] Failed to create persistent session:", sessionError);
     // We continue since Supabase auth succeeded, but persistence will be limited
@@ -120,18 +209,25 @@ export async function staffLogin(formData: FormData) {
   revalidatePath('/', 'layout');
 
   // Smart Redirect System based on Membership Role
+  let redirectTarget = '/dashboard';
   switch (primaryMembership.role) {
     case 'OWNER':
     case 'ADMIN':
     case 'MANAGER':
-      redirect('/dashboard');
+      redirectTarget = '/dashboard';
+      break;
     case 'DOCTOR':
-      redirect('/dashboard/appointments');
+      redirectTarget = '/dashboard/appointments';
+      break;
     case 'ACCOUNTANT':
-      redirect('/dashboard/finance');
+      redirectTarget = '/dashboard/finance';
+      break;
     default:
-      redirect('/dashboard');
+      redirectTarget = '/dashboard';
   }
+
+  console.log(`[AUTH_STEP_6][FINAL_REDIRECT_TARGET] Target: ${redirectTarget}`);
+  return redirect(redirectTarget);
 }
 
 export async function resendVerificationEmail(email: string) {
@@ -249,7 +345,7 @@ export async function acceptStaffInvitation(formData: FormData) {
     });
 
     // Create Tenant Membership
-    await tx.tenantMembership.create({
+    const membership = await tx.tenantMembership.create({
       data: {
         userId: user.id,
         tenantId: invite.tenantId,
@@ -274,6 +370,7 @@ export async function acceptStaffInvitation(formData: FormData) {
         email: invite.email,
         role: invite.role,
         tenantId: invite.tenantId,
+        membershipId: membership.id,
         status: 'Online'
       }
     });
@@ -289,7 +386,7 @@ export async function acceptStaffInvitation(formData: FormData) {
         tenantId: invite.tenantId,
         ipAddress: headerList.get('x-forwarded-for') || undefined,
         userAgent: headerList.get('user-agent') || undefined
-      }, data.session?.refresh_token || '');
+      }, data.session?.refresh_token || '', tx);
 
       const { cookies } = await import('next/headers');
       const cookieStore = await cookies();

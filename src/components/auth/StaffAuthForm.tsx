@@ -6,6 +6,7 @@ import { Mail, Lock, Loader2, AlertCircle, Eye, EyeOff, CheckCircle2 } from 'luc
 import { staffLogin } from '@/app/actions/auth';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
+import { getAuthError } from '@/lib/auth-errors';
 
 export function StaffAuthForm() {
   const [loading, setLoading] = useState(false);
@@ -28,7 +29,8 @@ export function StaffAuthForm() {
     const result = await staffLogin(formData);
 
     if (result && !result.success) {
-      setError(result.error);
+      const authError = getAuthError(result.error);
+      setError(authError.description);
       setLoading(false);
     }
   }

@@ -25,10 +25,14 @@ export class StaffRepository {
     });
   }
 
-  async findById(tenantId: string, id: string): Promise<Staff | null> {
+  /**
+   * Find a staff profile by membership ID.
+   * This aligns with the new relational model where membershipId is the primary link.
+   */
+  async findByMembershipId(tenantId: string, membershipId: string): Promise<Staff | null> {
     return prisma.staff.findFirst({
       where: {
-        id,
+        membershipId,
         tenantId,
       },
     });
@@ -43,22 +47,49 @@ export class StaffRepository {
     });
   }
 
-  async update(tenantId: string, id: string, data: Prisma.StaffUpdateInput): Promise<Staff> {
+  /**
+   * Update staff profile using membership ID.
+   */
+  async updateByMembershipId(tenantId: string, membershipId: string, data: Prisma.StaffUpdateInput): Promise<Staff> {
     return prisma.staff.update({
       where: {
-        id,
+        membershipId,
         tenantId,
       },
       data,
     });
   }
 
-  async delete(tenantId: string, id: string): Promise<Staff> {
-    return prisma.staff.delete({
-      where: {
-        id,
-        tenantId,
-      },
+  /**
+   * Transactional deletion of staff member.
+   * Deletes BOTH the staff profile and the tenant membership record.
+   */
+  async deleteStaffMember(tenantId: string, membershipId: string): Promise<void> {
+    await prisma.$transaction(async (tx) => {
+      // 1. Delete Staff Profile (if exists)
+      await tx.staff.deleteMany({
+        where: {
+          membershipId,
+          tenantId,
+        }
+      });
+
+      // 2. Delete Tenant Membership
+      await tx.tenantMembership.delete({
+        where: {
+          id: membershipId,
+          tenantId,
+        }
+      });
     });
+  }
+
+  // Legacy compatibility (can be removed later if not used)
+  async update(tenantId: string, id: string, data: Prisma.StaffUpdateInput): Promise<Staff> {
+    return this.updateByMembershipId(tenantId, id, data);
+  }
+
+  async delete(tenantId: string, id: string): Promise<any> {
+    return this.deleteStaffMember(tenantId, id);
   }
 }

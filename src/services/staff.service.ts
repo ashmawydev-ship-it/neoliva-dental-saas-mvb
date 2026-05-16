@@ -42,6 +42,11 @@ export class StaffService {
     }
   }
 
+  /**
+   * Fetches the complete staff list for a tenant, including both active members
+   * and pending invitations.
+   * IDs returned for active members are TenantMembership IDs.
+   */
   async getStaffList(tenantId: string) {
     try {
       this.validateTenant(tenantId);
@@ -52,23 +57,25 @@ export class StaffService {
       ]);
 
       const activeStaff = members.map(m => ({
-        id: m.id,
+        id: m.id, // TenantMembership ID
         name: m.staffProfile?.name || m.user.email.split('@')[0],
         email: m.user.email,
         role: m.role,
-        status: 'Active',
+        status: m.staffProfile?.status || 'Online',
         isPending: false,
+        title: m.staffProfile?.title || 'Staff Member',
         joinedAt: m.joinedAt
       }));
 
       const pendingStaff = invitations.map(i => ({
-        id: i.id,
+        id: i.id, // Invitation ID
         name: i.fullName,
         email: i.email,
         role: i.role,
         status: 'Pending',
         isPending: true,
-        createdAt: i.createdAt
+        title: i.jobTitle || 'Invited',
+        joinedAt: i.createdAt
       }));
 
       return [...activeStaff, ...pendingStaff];
@@ -78,15 +85,13 @@ export class StaffService {
     }
   }
 
-  async createStaffMember(tenantId: string, data: any) {
-    // This now delegates to the secure invitation logic in auth actions
-    // but we can keep it here if needed for direct creation by superadmins
-    throw new Error("Use createStaffInvitation action for secure staff onboarding.");
-  }
-
-  async updateStaffMember(tenantId: string, id: string, updates: any) {
+  /**
+   * Updates a staff member's profile using their membershipId.
+   */
+  async updateStaffMember(tenantId: string, membershipId: string, updates: any): Promise<any> {
     try {
       this.validateTenant(tenantId);
+      
       const formattedUpdates = { 
         ...updates,
         name: updates.name ? this.normalizeString(updates.name) : undefined,
@@ -95,28 +100,31 @@ export class StaffService {
       };
       
       if (formattedUpdates.role) {
-        formattedUpdates.role = formattedUpdates.role.toUpperCase();
+        // Ensure role matches StaffRole enum if needed, but repository handles Prisma.StaffUpdateInput
       }
       
-      const result = await this.repository.update(tenantId, id, {
+      const result = await this.repository.updateByMembershipId(tenantId, membershipId, {
         ...formattedUpdates,
         updatedAt: new Date()
       });
+      
       return this.serializeStaff(result);
     } catch (error) {
       console.error("[StaffService.updateStaffMember] Error:", error);
-      return this.getSafeStaffFallback(id);
+      return this.getSafeStaffFallback(membershipId);
     }
   }
 
-  async deleteStaffMember(tenantId: string, id: string) {
+  /**
+   * Transactionally deletes a staff member's profile and membership.
+   */
+  async deleteStaffMember(tenantId: string, membershipId: string): Promise<void> {
     try {
       this.validateTenant(tenantId);
-      return await this.repository.delete(tenantId, id);
+      await this.repository.deleteStaffMember(tenantId, membershipId);
     } catch (error) {
       console.error("[StaffService.deleteStaffMember] Error:", error);
-      return false;
+      throw error;
     }
   }
 }
-

@@ -33,16 +33,16 @@ export default async function DashboardLayout({
 
     // Handle TenantContextError codes explicitly
     if (error instanceof TenantContextError) {
-      if (error.code === 'PENDING') {
+      if (error.code === 'TENANT_PENDING') {
         redirect("/pending-approval");
       }
-      if (error.code === 'REJECTED') {
+      if (error.code === 'ACCOUNT_REJECTED') {
         redirect("/auth/error?type=ACCOUNT_REJECTED");
       }
-      if (error.code === 'SUSPENDED') {
+      if (error.code === 'ACCOUNT_SUSPENDED') {
         redirect("/auth/error?type=ACCOUNT_SUSPENDED");
       }
-      if (error.code === 'DISABLED') {
+      if (error.code === 'ACCOUNT_DISABLED') {
         redirect("/auth/error?type=ACCOUNT_DISABLED");
       }
       // NO_USER_RECORD, UNAUTHORIZED, etc.

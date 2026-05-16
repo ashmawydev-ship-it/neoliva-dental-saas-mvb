@@ -376,22 +376,23 @@ export async function resolveTenantContextOrRedirect(): Promise<ResolvedTenantCo
       console.warn(`[TenantContext] Redirecting due to ${error.code}: ${error.internalReason}`);
 
       switch (error.code) {
-        case 'PENDING':
+        case 'TENANT_PENDING':
           redirect('/pending-approval');
           break;
-        case 'REJECTED':
+        case 'ACCOUNT_REJECTED':
           redirect('/auth/error?type=ACCOUNT_REJECTED');
           break;
-        case 'SUSPENDED':
+        case 'ACCOUNT_SUSPENDED':
           redirect('/auth/error?type=ACCOUNT_SUSPENDED');
           break;
-        case 'DISABLED':
+        case 'ACCOUNT_DISABLED':
           redirect('/auth/error?type=ACCOUNT_DISABLED');
           break;
         case 'UNAUTHORIZED':
         case 'NO_USER_RECORD':
         case 'NO_MEMBERSHIP':
         case 'MEMBERSHIP_INACTIVE':
+        case 'SESSION_EXPIRED':
           redirect('/auth/error?type=SESSION_EXPIRED');
           break;
         case 'INVALID_ROLE':

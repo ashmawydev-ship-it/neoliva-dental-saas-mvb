@@ -1,5 +1,5 @@
 
-import { PrismaClient } from '../../generated/client'
+import { PrismaClient } from '../generated/client'
 import { PrismaPg } from "@prisma/adapter-pg"
 import { Pool } from "pg"
 import * as dotenv from 'dotenv'
@@ -33,28 +33,48 @@ async function main() {
   const user = await prisma.user.upsert({
     where: { supabaseId },
     update: {
-      tenantId: staff.tenantId,
       email: email
     },
     create: {
       supabaseId,
       email,
-      tenantId: staff.tenantId
     }
   })
   
   console.log('User record created/updated:', user.id)
+
+  // 3. Create/Update TenantMembership
+  const membership = await prisma.tenantMembership.upsert({
+    where: {
+      userId_tenantId: {
+        userId: user.id,
+        tenantId: staff.tenantId
+      }
+    },
+    update: {
+      status: 'ACTIVE',
+      isActive: true
+    },
+    create: {
+      userId: user.id,
+      tenantId: staff.tenantId,
+      role: staff.role,
+      status: 'ACTIVE',
+      isActive: true
+    }
+  })
+
+  console.log('TenantMembership created/updated:', membership.id)
   
-  // 3. Link Staff to User
+  // 4. Link Staff to Membership
   await prisma.staff.update({
     where: { id: staff.id },
     data: {
-      userId: user.id,
-      inviteAccepted: true
+      membershipId: membership.id
     }
   })
   
-  console.log('Staff linked to User successfully!')
+  console.log('Staff linked to TenantMembership successfully!')
   console.log('You should now be able to access the dashboard.')
 }
 

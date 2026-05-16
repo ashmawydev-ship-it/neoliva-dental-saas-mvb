@@ -19,7 +19,7 @@ export class SessionService {
   /**
    * Creates a new persistent session in the database
    */
-  static async createSession(data: SessionData, supabaseRefreshToken: string) {
+  static async createSession(data: SessionData, supabaseRefreshToken: string, tx?: any) {
     const appRefreshToken = randomUUID();
     const refreshTokenHash = this.hashToken(appRefreshToken);
     const encryptedSupabaseToken = this.encrypt(supabaseRefreshToken);
@@ -28,7 +28,9 @@ export class SessionService {
     const expiresAt = new Date();
     expiresAt.setDate(expiresAt.getDate() + 90);
 
-    const session = await prisma.session.create({
+    const client = tx || prisma;
+
+    const session = await client.session.create({
       data: {
         userId: data.userId,
         tenantId: data.tenantId,

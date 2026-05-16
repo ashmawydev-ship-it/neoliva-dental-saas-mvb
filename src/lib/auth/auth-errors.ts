@@ -19,10 +19,11 @@ export type TenantContextCode =
   | 'NO_USER_RECORD'     // Supabase user exists, but no DB User record
   | 'NO_MEMBERSHIP'      // User exists, but no TenantMembership
   | 'MEMBERSHIP_INACTIVE'// Membership exists but is not active
-  | 'PENDING'            // Tenant awaiting admin approval
-  | 'REJECTED'           // Tenant registration was rejected
-  | 'SUSPENDED'          // Tenant account suspended by admin
-  | 'DISABLED'           // Tenant account permanently disabled
+  | 'TENANT_PENDING'     // Tenant awaiting admin approval
+  | 'ACCOUNT_REJECTED'    // Tenant registration was rejected
+  | 'ACCOUNT_SUSPENDED'   // Tenant account suspended by admin
+  | 'ACCOUNT_DISABLED'    // Tenant account permanently disabled
+  | 'SESSION_EXPIRED'     // Explicit session expiry
   | 'INVALID_ROLE'       // Role in DB is not a recognized SystemRole
 
 export class TenantContextError extends Error {
@@ -45,6 +46,7 @@ export class TenantContextError extends Error {
   private static defaultClientMessage(code: TenantContextCode): string {
     switch (code) {
       case 'UNAUTHORIZED':
+      case 'SESSION_EXPIRED':
         return 'Your session has expired. Please sign in again.';
       case 'NO_USER_RECORD':
         return 'Account setup is incomplete. Please contact support.';
@@ -52,13 +54,13 @@ export class TenantContextError extends Error {
         return 'Your account is not linked to any clinic. Please contact your administrator.';
       case 'MEMBERSHIP_INACTIVE':
         return 'Your clinic membership has been deactivated. Please contact your administrator.';
-      case 'PENDING':
+      case 'TENANT_PENDING':
         return 'Your clinic registration is awaiting approval.';
-      case 'REJECTED':
+      case 'ACCOUNT_REJECTED':
         return 'Your clinic registration has been declined.';
-      case 'SUSPENDED':
+      case 'ACCOUNT_SUSPENDED':
         return 'Your clinic account has been suspended. Please contact support.';
-      case 'DISABLED':
+      case 'ACCOUNT_DISABLED':
         return 'Your clinic account has been permanently disabled. Please contact administration.';
       case 'INVALID_ROLE':
         return 'Your account has an invalid role configuration. Please contact support.';

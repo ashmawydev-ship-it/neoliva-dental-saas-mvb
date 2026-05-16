@@ -9,6 +9,8 @@ export type AuthErrorCode =
   | 'ACCOUNT_DISABLED'
   | 'ACCOUNT_REJECTED'
   | 'TENANT_PENDING'
+  | 'NO_USER_RECORD'
+  | 'NO_MEMBERSHIP'
   | 'UNKNOWN_ERROR';
 
 export interface AuthErrorDetails {
@@ -101,6 +103,24 @@ export const AUTH_ERRORS: Record<AuthErrorCode, AuthErrorDetails> = {
     severity: 'info',
     recoveryAction: {
       label: 'Check Status',
+      path: '/login'
+    }
+  },
+  NO_USER_RECORD: {
+    title: 'Account not found',
+    description: 'Your authentication succeeded but we could not find your clinic profile. Please contact support.',
+    severity: 'error',
+    recoveryAction: {
+      label: 'Contact Support',
+      path: 'mailto:support@neoliva.com'
+    }
+  },
+  NO_MEMBERSHIP: {
+    title: 'No clinic association',
+    description: 'You are not assigned to any active clinic. Please ask your administrator to add you.',
+    severity: 'warning',
+    recoveryAction: {
+      label: 'Contact Administrator',
       path: '/login'
     }
   },

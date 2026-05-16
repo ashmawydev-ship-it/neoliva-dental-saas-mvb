@@ -128,30 +128,39 @@ export async function proxy(request: NextRequest) {
         if (process.env.AUTH_DEBUG === 'true') {
           console.warn(`[AUTH_DEBUG][Proxy] Silent refresh FAILED: ${err instanceof Error ? err.message : 'Unknown error'}`);
         }
+        
+        // STEP 4: Pass specific error types on refresh failure
+        if (err instanceof Error && (err.message === 'TENANT_BLOCKED' || err.message.startsWith('TENANT_'))) {
+          // If we can determine the tenant status from the error, we should redirect specifically
+          const errorType = 'ACCOUNT_DISABLED'; // Default for blocked refresh
+          const errorUrl = new URL('/auth/error', request.url);
+          errorUrl.searchParams.set('type', errorType);
+          const errorResponse = NextResponse.redirect(errorUrl);
+          errorResponse.cookies.delete('app_refresh_token');
+          return errorResponse;
+        }
       }
     }
   }
 
   if (process.env.AUTH_DEBUG === 'true') {
-    console.log(`[AUTH_DEBUG][Proxy] Path: ${pathname} | Auth: ${!!user} | RID: ${requestId}`);
+    console.log(`[PROXY_TRACE][SESSION_VALIDATION] Path: ${pathname}, UserAuthenticated: ${!!user}, RID: ${requestId}`);
   }
 
   // --- 6. Auth Gate ---
-  console.log(`[PROXY][PATH] ${pathname}`);
-  console.log(`[PROXY][ROLE] ${user ? 'Authenticated' : 'Public'}`);
-
+  console.log(`[PROXY_TRACE][PATH_CHECK] ${pathname}`);
+  
   if (!user && !isPublicRoute) {
     const isAdminRoute = pathname.startsWith('/admin');
     const redirectPath = isAdminRoute ? '/admin/login' : '/login';
     
-    console.warn(`[AUTH_TRACE][PROXY_UNAUTHORIZED_REDIRECT] Path: ${pathname}, Target: ${redirectPath}`);
+    console.warn(`[PROXY_TRACE][UNAUTHORIZED_REDIRECT] Path: ${pathname} -> ${redirectPath}`);
     
     const loginUrl = new URL(redirectPath, request.url);
-    loginUrl.searchParams.set('next', pathname);
-    
-    const authResponse = NextResponse.redirect(loginUrl);
-    authResponse.cookies.delete('app_refresh_token');
-    return authResponse;
+    if (pathname !== '/') {
+      loginUrl.searchParams.set('redirect', pathname);
+    }
+    return NextResponse.redirect(loginUrl);
   }
 
   // --- 7. Hardened Security Check (Enterprise Lifecycle Enforcement) ---
@@ -189,6 +198,7 @@ export async function proxy(request: NextRequest) {
         case 'NO_MEMBERSHIP':
         case 'NO_USER_RECORD':
         case 'UNAUTHORIZED':
+        case 'SESSION_EXPIRED':
           errorType = 'SESSION_EXPIRED';
           break;
         default:
@@ -207,11 +217,11 @@ export async function proxy(request: NextRequest) {
 
   // --- 8. Redirect Authenticated Users from Login ---
   if (user && (pathname === '/login' || pathname === '/staff-signin')) {
-    console.log(`[PROXY][REDIRECT] ${pathname} -> /dashboard (Already Authenticated)`);
+    console.log(`[PROXY_TRACE][ALREADY_AUTH_REDIRECT] ${pathname} -> /dashboard`);
     return NextResponse.redirect(new URL('/dashboard', request.url));
   }
 
-  console.log(`[PROXY][NEXT] ${pathname} allowed`);
+  console.log(`[PROXY_TRACE][ALLOWED] ${pathname}`);
   return response;
 }
 

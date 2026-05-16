@@ -1,5 +1,5 @@
 
-import { PrismaClient } from '../../generated/client'
+import { PrismaClient } from '../generated/client'
 import { PrismaPg } from "@prisma/adapter-pg"
 import { Pool } from "pg"
 import * as dotenv from 'dotenv'
@@ -35,7 +35,7 @@ async function main() {
     })
     
     console.log('Current Staff Members:')
-    staff.forEach(s => {
+    staff.forEach((s: any) => {
       console.log(`- ${s.name} (${s.email}): userId=${s.userId}, inviteAccepted=${s.inviteAccepted}, tenantId=${s.tenantId}`)
     })
   }
