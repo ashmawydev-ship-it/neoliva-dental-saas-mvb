@@ -1,4 +1,3 @@
-import * as Sentry from "@sentry/nextjs";
 import { logger } from "../logger";
 import { withTrace } from "./context";
 import { randomUUID } from "node:crypto";
@@ -98,17 +97,8 @@ export function wrapAction<T, Args extends any[]>(
           }
         });
 
-        // Report to Sentry
-        Sentry.captureException(error, {
-          tags: {
-            action: name,
-            module: metadata.module,
-            requestId
-          },
-          extra: {
-            args: sanitizeArgs(args)
-          }
-        });
+        // Report to Sentry (Removed temporarily)
+        // Sentry.captureException(error, ...);
 
         return { 
           success: false,
