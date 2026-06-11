@@ -3,7 +3,7 @@
 import { withPermission } from "@/lib/rbac/guard";
 
 
-import { revalidatePath } from 'next/cache'
+import { revalidatePath, revalidateTag, unstable_cache } from 'next/cache'
 import { StaffService } from "@/services/staff.service";
 
 
@@ -16,14 +16,22 @@ const staffService = new StaffService();
 
 import { createStaffInvitation } from "./auth";
 
+const getCachedStaffList = unstable_cache(
+  async (tenantId: string) => {
+    return await staffService.getStaffList(tenantId);
+  },
+  ['staff'],
+  { revalidate: 300, tags: ['staff'] }
+);
+
 /**
  * Server Action: Fetches all staff members.
  */
 export async function getStaff() {
   try {
     return await withPermission('staff', 'read', async (session) => {
-      const tenantId = session.tenantId;
-      const data = await staffService.getStaffList(tenantId);
+      const tenantId = session.tenantId!;
+      const data = await getCachedStaffList(tenantId);
       
           const getInitials = (name: string) => {
             const parts = name?.split(' ') || [];
@@ -71,7 +79,7 @@ export const createStaff = wrapAction(
   'STAFF_CREATE',
   async (formData: { name: string; role: string; title: string; email: string; phone: string; invite: boolean }) => {
     return withPermission('staff', 'create', async (session) => {
-      const tenantId = session.tenantId;
+      const tenantId = session.tenantId!;
       // We call the auth action which handles the token, hashing and secure DB creation
           const result = await createStaffInvitation({
             email: formData.email,
@@ -85,6 +93,7 @@ export const createStaff = wrapAction(
           }
       
           revalidatePath('/staff');
+          revalidateTag('staff', 'default');
           return { id: result.invitationId, ...formData };
     });
   },
@@ -98,7 +107,7 @@ export const updateStaff = wrapAction(
   'STAFF_UPDATE',
   async (id: string, updates: Partial<{ name: string; role: string; title: string; email: string; phone: string; status: string }>) => {
     return withPermission('staff', 'update', async (session) => {
-      const tenantId = session.tenantId;
+      const tenantId = session.tenantId!;
       const result = await staffService.updateStaffMember(tenantId, id, updates);
       
           if (updates.role) {
@@ -112,6 +121,7 @@ export const updateStaff = wrapAction(
           }
       
           revalidatePath('/staff');
+          revalidateTag('staff', 'default');
           return result;
     });
   },
@@ -125,7 +135,7 @@ export const deleteStaff = wrapAction(
   'STAFF_DELETE',
   async (id: string) => {
     return withPermission('staff', 'delete', async (session) => {
-      const tenantId = session.tenantId;
+      const tenantId = session.tenantId!;
       await staffService.deleteStaffMember(tenantId, id);
       
           await EventService.trackEvent({
@@ -136,10 +146,9 @@ export const deleteStaff = wrapAction(
           });
       
           revalidatePath('/staff');
+          revalidateTag('staff', 'default');
           return { success: true, error: undefined };
     });
   },
   { module: 'staff', entityType: 'STAFF' }
 );
-
-

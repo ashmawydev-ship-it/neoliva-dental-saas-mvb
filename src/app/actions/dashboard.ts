@@ -3,10 +3,10 @@
 import { withPermission } from '@/lib/rbac/guard'
 import { prisma } from '@/lib/prisma'
 import { startOfDay, endOfDay, startOfMonth } from 'date-fns'
+import { unstable_cache } from 'next/cache'
 
-export async function getDashboardStats() {
-  return withPermission('reports', 'read', async (session) => {
-    const tenantId = session.tenantId!
+const getCachedStats = unstable_cache(
+  async (tenantId: string) => {
     const now = new Date()
     const startOfToday = startOfDay(now)
     const endOfToday = endOfDay(now)
@@ -68,5 +68,14 @@ export async function getDashboardStats() {
       recentPatients,
       upcomingAppointments,
     }
+  },
+  ['dashboard-stats'],
+  { revalidate: 300, tags: ['dashboard-stats'] }
+);
+
+export async function getDashboardStats() {
+  return withPermission('reports', 'read', async (session) => {
+    const tenantId = session.tenantId!
+    return getCachedStats(tenantId)
   })
 }

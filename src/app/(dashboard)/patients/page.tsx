@@ -4,19 +4,16 @@ import { AddPatientDialog } from "@/components/patients/AddPatientDialog";
 import { PatientsTable } from "@/components/patients/PatientsTable";
 import { PatientService } from "@/services/patient.service";
 import { resolveTenantContextOrRedirect as resolveTenantContext } from "@/lib/auth/resolve-tenant-context";
+import { Suspense } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const patientService = new PatientService();
 
 const PATIENTS_PER_PAGE = 15;
 
-interface PatientsPageProps {
-  searchParams: Promise<{ page?: string; search?: string }>;
-}
-
-export default async function PatientsPage({ searchParams }: PatientsPageProps) {
+async function PatientsListContent({ searchParams }: { searchParams: Promise<{ page?: string; search?: string }> }) {
   const { tenantId } = await resolveTenantContext();
 
-  // Await the searchParams Promise (Next.js 15+ async searchParams)
   const params  = await searchParams;
   const page    = Math.max(1, parseInt(params.page   ?? "1",  10) || 1);
   const search  = (params.search ?? "").trim();
@@ -27,7 +24,7 @@ export default async function PatientsPage({ searchParams }: PatientsPageProps) 
   );
 
   return (
-    <div className="space-y-6 animate-fade-in-up">
+    <>
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-gray-900">Patients</h1>
@@ -45,6 +42,31 @@ export default async function PatientsPage({ searchParams }: PatientsPageProps) 
         currentPage={page}
         currentSearch={search}
       />
+    </>
+  );
+}
+
+interface PatientsPageProps {
+  searchParams: Promise<{ page?: string; search?: string }>;
+}
+
+export default function PatientsPage({ searchParams }: PatientsPageProps) {
+  return (
+    <div className="space-y-6 animate-fade-in-up">
+      <Suspense fallback={
+        <>
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div>
+              <Skeleton className="h-9 w-32 mb-1 rounded-md" />
+              <Skeleton className="h-4 w-40 rounded-md" />
+            </div>
+            <Skeleton className="h-10 w-32 rounded-md" />
+          </div>
+          <Skeleton className="w-full h-96 rounded-xl" />
+        </>
+      }>
+        <PatientsListContent searchParams={searchParams} />
+      </Suspense>
     </div>
   );
 }

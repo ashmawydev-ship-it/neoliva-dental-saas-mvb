@@ -5,8 +5,10 @@ import { ActivityFeed } from "@/components/dashboard/ActivityFeed";
 import { QuickActions } from "@/components/dashboard/QuickActions";
 import { LayoutDashboard, Sparkles } from "lucide-react";
 import { differenceInMinutes } from "date-fns";
+import { Suspense } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
 
-export default async function DashboardPage() {
+async function DashboardContent() {
   const stats = await getDashboardStats();
 
   const queue = stats.upcomingAppointments.map((a: any) => {
@@ -35,6 +37,27 @@ export default async function DashboardPage() {
   }));
 
   return (
+    <>
+      <DashboardKPIs data={stats} />
+
+      <div className="grid gap-6 lg:grid-cols-12">
+        <div className="lg:col-span-8 space-y-6">
+          <div className="grid gap-6 md:grid-cols-2">
+            <ActivityFeed activities={activities} />
+            <OperationalPanel queue={queue} />
+          </div>
+        </div>
+
+        <div className="lg:col-span-4 space-y-6">
+          {/* Mock components removed to strictly show real data */}
+        </div>
+      </div>
+    </>
+  );
+}
+
+export default function DashboardPage() {
+  return (
     <div className="space-y-6 animate-fade-in-up pb-10">
       {/* Page header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
@@ -55,20 +78,24 @@ export default async function DashboardPage() {
         <QuickActions />
       </div>
 
-      <DashboardKPIs data={stats} />
-
-      <div className="grid gap-6 lg:grid-cols-12">
-        <div className="lg:col-span-8 space-y-6">
-          <div className="grid gap-6 md:grid-cols-2">
-            <ActivityFeed activities={activities} />
-            <OperationalPanel queue={queue} />
+      <Suspense fallback={
+        <div className="space-y-6">
+          <Skeleton className="w-full h-32 rounded-xl" />
+          <div className="grid gap-6 lg:grid-cols-12">
+            <div className="lg:col-span-8 space-y-6">
+              <div className="grid gap-6 md:grid-cols-2">
+                <Skeleton className="w-full h-64 rounded-xl" />
+                <Skeleton className="w-full h-64 rounded-xl" />
+              </div>
+            </div>
+            <div className="lg:col-span-4 space-y-6">
+              <Skeleton className="w-full h-64 rounded-xl" />
+            </div>
           </div>
         </div>
-
-        <div className="lg:col-span-4 space-y-6">
-          {/* Mock components removed to strictly show real data */}
-        </div>
-      </div>
+      }>
+        <DashboardContent />
+      </Suspense>
     </div>
   );
 }

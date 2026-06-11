@@ -56,6 +56,9 @@ const createPrismaClient = () => {
 
   // @ts-ignore
   client.$on('query', (e: any) => {
+    if (e.duration >= 500) {
+      console.warn(`[SLOW QUERY] ${e.duration}ms: ${e.query}`);
+    }
     logger.debug(`Prisma Query`, {
       query: e.query,
       params: e.params,

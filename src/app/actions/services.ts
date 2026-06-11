@@ -3,7 +3,7 @@
 import { withPermission } from "@/lib/rbac/guard";
 
 
-import { revalidatePath } from 'next/cache'
+import { revalidatePath, revalidateTag, unstable_cache } from 'next/cache'
 import { ServiceService } from "@/services/service.service";
 import { ServiceCategory } from "@/generated/client";
 
@@ -14,14 +14,22 @@ import { wrapAction } from "@/lib/observability/wrap-action";
 
 const serviceService = new ServiceService();
 
+const getCachedServices = unstable_cache(
+  async (tenantId: string) => {
+    return await serviceService.getServices(tenantId);
+  },
+  ['services'],
+  { revalidate: 300, tags: ['services'] }
+);
+
 /**
  * Server Action: Fetches all dental services.
  */
 export async function getServices() {
   try {
     return await withPermission('settings', 'read', async (session) => {
-      const tenantId = session.tenantId;
-      const data = await serviceService.getServices(tenantId);
+      const tenantId = session.tenantId!;
+      const data = await getCachedServices(tenantId);
           return data;
     });
   } catch (error) {
@@ -44,10 +52,11 @@ export const createServiceAction = wrapAction(
     popular?: boolean;
   }) => {
     return withPermission('settings', 'create', async (session) => {
-      const tenantId = session.tenantId;
+      const tenantId = session.tenantId!;
       const result = await serviceService.createService(tenantId, data);
           revalidatePath('/services');
           revalidatePath('/appointments'); 
+          revalidateTag('services', 'default');
           return result;
     });
   },
@@ -68,9 +77,10 @@ export const updateServiceAction = wrapAction(
     popular: boolean;
   }>) => {
     return withPermission('settings', 'update', async (session) => {
-      const tenantId = session.tenantId;
+      const tenantId = session.tenantId!;
       const result = await serviceService.updateService(tenantId, id, data);
           revalidatePath('/services');
+          revalidateTag('services', 'default');
           return result;
     });
   },
@@ -84,12 +94,12 @@ export const deleteServiceAction = wrapAction(
   'SERVICE_DELETE',
   async (id: string) => {
     return withPermission('settings', 'delete', async (session) => {
-      const tenantId = session.tenantId;
+      const tenantId = session.tenantId!;
       const result = await serviceService.deleteService(tenantId, id);
           revalidatePath('/services');
+          revalidateTag('services', 'default');
           return result;
     });
   },
   { module: 'settings', entityType: 'SERVICE' }
 );
-
