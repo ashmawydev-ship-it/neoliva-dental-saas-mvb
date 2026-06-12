@@ -219,4 +219,4 @@ src/
 
 ## 📄 License
 
-This project is proprietary software developed for Neoliva dental clinics.
+This project is software developed by Mohamed Ashmawy Phone Number +201066414120
