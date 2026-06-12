@@ -97,3 +97,126 @@ Security is a primary focus of Neoliva. We implement a **Strict Isolation Policy
 
 Open [http://localhost:3000](http://localhost:3000) to see the application.
 
+---
+
+## 🛡️ RBAC & Authorization
+
+Neoliva implements a **Dual-Layer RBAC (Role-Based Access Control)** system for defense-in-depth:
+
+### System A — Permission Code Guard (`src/lib/rbac.ts`)
+- Used by the **Dashboard Layout** to compute UI-level permission sets.
+- Resolves the user via `resolveTenantContext()` → validates tenant membership → maps role to granular `PermissionCode` entries (e.g., `PATIENT_VIEW`, `BILLING_INVOICE_CREATE`).
+- Cached per-request via React `cache()` and across requests via `unstable_cache`.
+
+### System B — Action Guard (`src/lib/rbac/guard.ts`)
+- Used by **Server Actions** via `withPermission(resource, action, callback)`.
+- Resolves the user independently via `getUserSession()` → checks `can(role, resource, action)` against a static permission matrix.
+- Fail-closed: returns `UnauthorizedError` if session is null or permission denied.
+
+### Supported Roles
+| Role | Dashboard | Patients | Appointments | Billing | Clinical | Inventory | Staff | Reports | Settings |
+|------|-----------|----------|-------------|---------|----------|-----------|-------|---------|----------|
+| **OWNER** | ✅ | Full CRUD | Full CRUD | Full CRUD | Full CRUD | Full CRUD | Full CRUD | ✅ | Read/Write |
+| **ADMIN** | ✅ | CRU | Full CRUD | CRU | Read | CRU | CRU | ✅ | Read |
+| **MANAGER** | ✅ | Full CRUD | Full CRUD | Full CRUD | Read | Full CRUD | CRU | ✅ | Read/Write |
+| **DOCTOR** | ✅ | CRU | RU | Read | Full CRUD | Read | Read | ✅ | — |
+| **ASSISTANT** | ✅ | RU | CRU | Read | RU | Read | Read | ✅ | — |
+| **RECEPTIONIST** | ✅ | CRU | Full CRUD | CRU | — | Read | Read | — | — |
+| **ACCOUNTANT** | ✅ | Read | Read | Full CRUD | — | RU | Read | ✅ | — |
+| **NURSE** | ✅ | RU | RU | Read | RU | Read | Read | — | — |
+| **STAFF** | ✅ | Read | Read | — | — | Read | Read | — | — |
+
+---
+
+## 🔐 Authentication Flow
+
+Neoliva supports two primary authentication paths:
+
+### Password Login (`staffLogin`)
+```
+User → signInWithPassword() → Validate Tenant Status → Create Persistent Session
+     → Set app_refresh_token cookie → Set active_tenant_id cookie → Redirect to /dashboard
+```
+
+### OAuth / Magic Link (`auth/callback`)
+```
+Supabase → exchangeCodeForSession() → getUser() → resolvePostAuthRedirect()
+         → Validate Membership → Set active_tenant_id cookie → Redirect based on role
+```
+
+### Persistent Sessions
+- **DB-backed sessions** with revocation support via `SessionService`.
+- `app_refresh_token` cookie (90-day TTL) enables silent session refresh in the proxy layer.
+- Session mismatch detection prevents token reuse across users.
+
+### Proxy Layer (`src/proxy.ts`)
+- Replaces the deprecated `middleware.ts` convention for Next.js 16+.
+- Handles: static asset bypass, public route definitions, Supabase auth context, silent session refresh, auth gate, and enterprise tenant lifecycle enforcement (SUSPENDED/DISABLED/REJECTED blocking).
+
+---
+
+## 📁 Project Structure
+
+```
+src/
+├── app/
+│   ├── (auth)/             # Login, registration, tenant selection
+│   ├── (dashboard)/        # Protected dashboard modules
+│   │   ├── appointments/   # Appointment scheduling
+│   │   ├── billing/        # Invoice & payment management
+│   │   ├── dashboard/      # Main analytics dashboard
+│   │   ├── expenses/       # Expense tracking
+│   │   ├── inventory/      # Supply management
+│   │   ├── lab-orders/     # Laboratory order tracking
+│   │   ├── notifications/  # Alert center
+│   │   ├── patients/       # Patient records & clinical tools
+│   │   ├── reports/        # Financial & operational reports
+│   │   ├── rooms/          # Room management & scheduling
+│   │   ├── services/       # Dental service catalog
+│   │   ├── settings/       # Clinic configuration
+│   │   └── staff/          # Staff management & invitations
+│   ├── actions/            # Server Actions (auth, CRUD, data fetching)
+│   ├── admin/              # Super Admin portal
+│   ├── api/                # API routes (tenant selection, cron)
+│   └── auth/               # Auth callback handler
+├── components/             # Reusable UI components
+├── lib/
+│   ├── auth/               # Auth orchestrator, tenant resolver, session service
+│   ├── rbac/               # Permission matrix, session, guard
+│   ├── supabase/           # Supabase client factory
+│   ├── prisma.ts           # Prisma client singleton
+│   └── observability/      # Action wrapper & tracing
+├── repositories/           # Tenant-scoped data access layer
+├── services/               # Business logic layer (25 services)
+├── types/                  # TypeScript type definitions
+└── proxy.ts                # Request interception & auth gate
+```
+
+---
+
+## 📊 Observability & Audit
+
+- **Action Wrapping**: Server Actions are wrapped via `wrapAction()` for automatic event tracking.
+- **Event Service**: All significant operations emit structured events (`EventService.trackEvent()`).
+- **Audit Logging**: Login, role changes, RBAC denials, and data mutations are logged with full metadata.
+- **Diagnostic Logging**: Auth flow includes forensic-level `[AUTH_TRACE]`, `[RBAC]`, and `[PROXY_TRACE]` logs for production debugging.
+
+---
+
+## ⚙️ Environment Variables
+
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `NEXT_PUBLIC_SUPABASE_URL` | ✅ | Supabase project URL |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | ✅ | Supabase anonymous API key |
+| `DATABASE_URL` | ✅ | Prisma connection string (pooled) |
+| `DIRECT_URL` | ✅ | Prisma direct connection string |
+| `NEXT_PUBLIC_SITE_URL` | ✅ | Public site URL (for OAuth redirects) |
+| `ALLOWED_SUPER_ADMIN_EMAILS` | ⚠️ | Comma-separated admin email allowlist |
+| `AUTH_DEBUG` | — | Set to `true` for verbose auth logging |
+
+---
+
+## 📄 License
+
+This project is proprietary software developed for Neoliva dental clinics.
