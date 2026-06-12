@@ -16,6 +16,8 @@ export type UserSession = {
 
 export const getUserSession = cache(async (): Promise<UserSession | null> => {
   const cookieStore = await cookies();
+  const allCookies = cookieStore.getAll();
+  console.log(`[DIAGNOSTIC][GET_USER_SESSION] All cookies received:`, JSON.stringify(allCookies.map(c => c.name)));
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -28,8 +30,21 @@ export const getUserSession = cache(async (): Promise<UserSession | null> => {
     }
   );
 
-  const { data: { user }, error } = await supabase.auth.getUser();
-  if (error || !user) return null;
+  let user = null;
+  try {
+    const { data, error } = await supabase.auth.getUser();
+    if (error) {
+      console.error(`[DIAGNOSTIC][GET_USER_SESSION] Supabase auth error:`, error.message, error.status);
+    }
+    user = data.user;
+  } catch (err: any) {
+    console.error(`[DIAGNOSTIC][GET_USER_SESSION] Token verification exception:`, err?.message || err);
+    return null;
+  }
+  if (!user) {
+    console.log(`[DIAGNOSTIC][GET_USER_SESSION] No user found. Returning null.`);
+    return null;
+  }
 
   const tenantId = cookieStore.get('active_tenant_id')?.value;
   if (!tenantId) return null;
