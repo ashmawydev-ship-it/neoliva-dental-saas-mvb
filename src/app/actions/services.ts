@@ -14,13 +14,15 @@ import { wrapAction } from "@/lib/observability/wrap-action";
 
 const serviceService = new ServiceService();
 
-const getCachedServices = unstable_cache(
-  async (tenantId: string) => {
-    return await serviceService.getServices(tenantId);
-  },
-  ['services'],
-  { revalidate: 300, tags: ['services'] }
-);
+function getCachedServices(tenantId: string) {
+  return unstable_cache(
+    async () => {
+      return await serviceService.getServices(tenantId);
+    },
+    ['services', tenantId],
+    { revalidate: 300, tags: ['services'] }
+  )();
+}
 
 /**
  * Server Action: Fetches all dental services.

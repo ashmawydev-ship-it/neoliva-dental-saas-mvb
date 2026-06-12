@@ -16,13 +16,15 @@ const staffService = new StaffService();
 
 import { createStaffInvitation } from "./auth";
 
-const getCachedStaffList = unstable_cache(
-  async (tenantId: string) => {
-    return await staffService.getStaffList(tenantId);
-  },
-  ['staff'],
-  { revalidate: 300, tags: ['staff'] }
-);
+function getCachedStaffList(tenantId: string) {
+  return unstable_cache(
+    async () => {
+      return await staffService.getStaffList(tenantId);
+    },
+    ['staff', tenantId],
+    { revalidate: 300, tags: ['staff'] }
+  )();
+}
 
 /**
  * Server Action: Fetches all staff members.
