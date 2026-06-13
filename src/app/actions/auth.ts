@@ -300,40 +300,42 @@ export async function validateInviteToken(tokenHash: string) {
     clinicName: invite.tenant.name
   };
 }
-
-export async function acceptStaffInvitation(formData: FormData) {
-  const rawToken = formData.get('token') as string;
+export async function finalizeStaffInvitation(formData: FormData) {
   const password = formData.get('password') as string;
 
-  if (!rawToken) return { success: false, error: "Invitation token is required." };
-
-  const tokenHash = crypto.createHash('sha256').update(rawToken).digest('hex');
-
-  const validation = await validateInviteToken(tokenHash);
-  if (!validation.valid) return { success: false, error: validation.error };
-
-  const invite = await staffRepository.findInvitationByToken(tokenHash);
-
-  if (!invite) return { success: false, error: "Invitation not found." };
+  if (!password || password.length < 8) {
+    return { success: false, error: "Password must be at least 8 characters." };
+  }
 
   const supabase = await createClient();
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+  const { data: { user }, error: userError } = await supabase.auth.getUser();
 
-  // 1. Sign up or Link User in Supabase
-  const { data, error } = await supabase.auth.signUp({
-    email: invite.email,
-    password,
-    options: {
-      emailRedirectTo: `${siteUrl}/auth/callback`,
-      data: { full_name: invite.fullName }
-    }
+  if (userError || !user) {
+    return { success: false, error: "Not authenticated. The invitation link may have expired." };
+  }
+
+  const staffId = user.user_metadata?.staffId;
+  if (!staffId) {
+    return { success: false, error: "Invalid invitation data. Please contact support." };
+  }
+
+  const { prisma } = await import('@/lib/prisma');
+  const invitation = await prisma.staffInvitation.findUnique({
+    where: { id: staffId }
   });
 
-  if (error) return { success: false, error: error.message };
-  if (!data.user) return { success: false, error: "Signup failed." };
+  if (!invitation || invitation.status !== 'PENDING') {
+    return { success: false, error: "Invitation not found or already accepted." };
+  }
+
+  // 1. Update user password in Supabase
+  const { error: updateError } = await supabase.auth.updateUser({ password });
+  if (updateError) {
+    return { success: false, error: updateError.message };
+  }
 
   // 2. Create local User and Membership inside a transaction
-  const { user } = await staffRepository.acceptInvitation(data.user!.id, invite);
+  const { user: dbUser } = await staffRepository.acceptInvitation(user.id, invitation);
 
   // --- PERSISTENT SESSION ARCHITECTURE ---
   try {
@@ -341,12 +343,14 @@ export async function acceptStaffInvitation(formData: FormData) {
     const { headers: getHeaders } = await import('next/headers');
     const headerList = await getHeaders();
 
+    const { data: sessionData } = await supabase.auth.getSession();
+
     const { appRefreshToken } = await SessionService.createSession({
-      userId: user.id,
-      tenantId: invite.tenantId,
+      userId: dbUser.id,
+      tenantId: invitation.tenantId,
       ipAddress: headerList.get('x-forwarded-for') || undefined,
       userAgent: headerList.get('user-agent') || undefined
-    }, data.session?.refresh_token || '');
+    }, sessionData.session?.refresh_token || '');
 
     const { cookies } = await import('next/headers');
     const cookieStore = await cookies();
@@ -362,12 +366,12 @@ export async function acceptStaffInvitation(formData: FormData) {
   }
 
   revalidatePath('/', 'layout');
-  redirect('/staff/sign-in?success=invitation-accepted');
+  return { success: true };
 }
 
 // Aliases for frontend consistency
 export const login = staffLogin;
-export const signupWithInvite = acceptStaffInvitation;
+export const signupWithInvite = finalizeStaffInvitation;
 
 export async function createStaffInvitation(data: { email: string; fullName: string; role: StaffRole; jobTitle?: string }, tenantId: string) {
   const { email, fullName, role, jobTitle } = data;

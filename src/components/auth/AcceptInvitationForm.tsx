@@ -1,18 +1,16 @@
-
 'use client';
 
 import React, { useState } from 'react';
 import { Lock, Loader2, AlertCircle, Eye, EyeOff, CheckCircle2 } from 'lucide-react';
-import { acceptStaffInvitation } from '@/app/actions/auth';
+import { finalizeStaffInvitation } from '@/app/actions/auth';
 import Link from 'next/link';
 
 interface AcceptInvitationFormProps {
-  token: string;
   email: string;
   clinicName: string;
 }
 
-export function AcceptInvitationForm({ token, email, clinicName }: AcceptInvitationFormProps) {
+export function AcceptInvitationForm({ email, clinicName }: AcceptInvitationFormProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
@@ -39,7 +37,7 @@ export function AcceptInvitationForm({ token, email, clinicName }: AcceptInvitat
       return;
     }
 
-    const result = await acceptStaffInvitation(formData);
+    const result = await finalizeStaffInvitation(formData);
 
     if (result && !result.success) {
       setError(result.error);
@@ -47,6 +45,8 @@ export function AcceptInvitationForm({ token, email, clinicName }: AcceptInvitat
     } else {
       setSuccess(true);
       setLoading(false);
+      
+      // Redirect handled by success view below
     }
   }
 
@@ -61,10 +61,10 @@ export function AcceptInvitationForm({ token, email, clinicName }: AcceptInvitat
           <p className="text-white/50">Your account has been activated and you are now a member of {clinicName}.</p>
         </div>
         <Link 
-          href="/staff/sign-in"
+          href="/dashboard"
           className="block w-full bg-blue-600 text-white font-bold py-4 rounded-2xl hover:bg-blue-500 transition-all shadow-lg shadow-blue-600/20"
         >
-          Go to Sign In
+          Go to Dashboard
         </Link>
       </div>
     );
@@ -78,7 +78,6 @@ export function AcceptInvitationForm({ token, email, clinicName }: AcceptInvitat
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">
-        <input type="hidden" name="token" value={token} />
         {error && (
           <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-2xl flex items-start gap-3 text-red-400 animate-in fade-in slide-in-from-top-2">
             <AlertCircle className="w-5 h-5 mt-0.5 shrink-0" />
