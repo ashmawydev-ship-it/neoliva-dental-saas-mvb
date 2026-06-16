@@ -34,11 +34,10 @@ const createPrismaClient = () => {
   let dbUrl = process.env.DATABASE_URL;
   if (dbUrl && !dbUrl.includes('connection_limit=')) {
     const separator = dbUrl.includes('?') ? '&' : '?';
-    dbUrl = `${dbUrl}${separator}connection_limit=${poolMax}`;
+    process.env.DATABASE_URL = `${dbUrl}${separator}connection_limit=${poolMax}`;
   }
 
   const client = new PrismaClient({ 
-    datasourceUrl: dbUrl,
     log: [
       { emit: 'event', level: 'query' },
       { emit: 'stdout', level: 'error' },
