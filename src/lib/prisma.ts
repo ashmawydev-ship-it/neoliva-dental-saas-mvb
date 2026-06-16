@@ -1,4 +1,6 @@
 import { PrismaClient, Prisma, InvoiceStatus, PaymentMethod } from "@/generated/client";
+import { PrismaPg } from "@prisma/adapter-pg";
+import { Pool } from "pg";
 import { logger } from "./logger";
 import { getTraceContextSync } from "./observability/context";
 import { AsyncLocalStorage } from "node:async_hooks";
@@ -6,6 +8,7 @@ import { AsyncLocalStorage } from "node:async_hooks";
 const globalForPrisma = globalThis as unknown as {
   rawPrisma: PrismaClient | undefined;
   prisma: any | undefined;
+  pool: Pool | undefined;
 };
 
 // AsyncLocalStorage to track whether we are inside a tenant RLS transaction
@@ -31,13 +34,19 @@ const createPrismaClient = () => {
   //   Dedicated server         : DB_POOL_MAX=20  (adjust to PG max_connections)
   const poolMax = process.env.DB_POOL_MAX ? parseInt(process.env.DB_POOL_MAX, 10) : 15;
 
-  let dbUrl = process.env.DATABASE_URL;
-  if (dbUrl && !dbUrl.includes('connection_limit=')) {
-    const separator = dbUrl.includes('?') ? '&' : '?';
-    process.env.DATABASE_URL = `${dbUrl}${separator}connection_limit=${poolMax}`;
+  const pool = new Pool({
+    connectionString: process.env.DATABASE_URL,
+    max:              poolMax,
+    idleTimeoutMillis: 30000,
+  });
+
+  if (process.env.NODE_ENV !== "production") {
+    globalForPrisma.pool = pool;
   }
 
+  const adapter = new PrismaPg(pool);
   const client = new PrismaClient({ 
+    adapter,
     log: [
       { emit: 'event', level: 'query' },
       { emit: 'stdout', level: 'error' },
@@ -68,9 +77,13 @@ const getRawPrismaClient = (): PrismaClient => {
   if (!globalForPrisma.rawPrisma || !(globalForPrisma.rawPrisma as any).ledgerAccount) {
     if (globalForPrisma.rawPrisma) {
       console.warn("[Prisma] Stale raw client detected (missing ledgerAccount). Re-initializing...");
-      globalForPrisma.rawPrisma.$disconnect().catch((err: any) => {
-        console.error("[Prisma] Error closing stale Prisma client:", err);
-      });
+      if (globalForPrisma.pool) {
+        console.warn("[Prisma] Closing existing connection pool to prevent TCP leakage...");
+        const oldPool = globalForPrisma.pool;
+        oldPool.end().catch((err: any) => {
+          console.error("[Prisma] Error closing stale connection pool:", err);
+        });
+      }
     }
     globalForPrisma.rawPrisma = createPrismaClient();
   }
