@@ -38,11 +38,7 @@ const createPrismaClient = () => {
   }
 
   const client = new PrismaClient({ 
-    datasources: {
-      db: {
-        url: dbUrl
-      }
-    },
+    datasourceUrl: dbUrl,
     log: [
       { emit: 'event', level: 'query' },
       { emit: 'stdout', level: 'error' },
