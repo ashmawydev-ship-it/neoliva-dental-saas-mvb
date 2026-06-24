@@ -2,8 +2,7 @@ import { EventRepository } from '@/repositories/event.repository';
 import { logger } from '@/lib/logger';
 import { getTraceContextSync } from '@/lib/observability/context';
 import { validateEvent } from '@/lib/events/validation';
-// Import dynamically or ensure no circularity
-import { triggerDerivedEvents } from './derived-events.service';
+import { DerivedEventsService } from './derived-events.service';
 
 export type BusinessEntityType = 
   | 'PATIENT' 
@@ -100,11 +99,18 @@ interface TrackEventOptions {
 }
 
 export class EventService {
+  static instance?: EventService;
+
+  constructor(
+    private readonly eventRepository = new EventRepository(),
+    private readonly derivedEventsService?: DerivedEventsService
+  ) {}
+
   /**
    * Tracks a business event and persists it to the database.
    * Ensures data integrity via validation layer.
    */
-  static async trackEvent(options: TrackEventOptions) {
+  async trackEvent(options: TrackEventOptions) {
     const { tenantId, userId, eventType, entityType, entityId, metadata = {} } = options;
     const context = getTraceContextSync();
 
@@ -117,8 +123,7 @@ export class EventService {
       }
 
       // 2. Persist to DB
-      const eventRepository = new EventRepository();
-      const event = await eventRepository.create(tenantId, {
+      const event = await this.eventRepository.create(tenantId, {
         userId: userId || context?.userId,
         eventType,
         entityType,
@@ -142,9 +147,11 @@ export class EventService {
 
       // 4. Derived Intelligence Engine
       // Run asynchronously to prevent blocking the main flow
-      triggerDerivedEvents(event).catch(err => {
-        logger.error('Derived events trigger failed', err, { eventId: event.id });
-      });
+      if (this.derivedEventsService) {
+        this.derivedEventsService.triggerDerivedEvents(event).catch(err => {
+          logger.error('Derived events trigger failed', err, { eventId: event.id });
+        });
+      }
 
       return event;
     } catch (error) {
@@ -157,4 +164,13 @@ export class EventService {
       return null;
     }
   }
+
+  static async trackEvent(options: TrackEventOptions) {
+    if (EventService.instance) {
+      return EventService.instance.trackEvent(options);
+    }
+    const fallback = new EventService();
+    return fallback.trackEvent(options);
+  }
 }
+
