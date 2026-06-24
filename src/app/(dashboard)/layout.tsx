@@ -8,7 +8,7 @@ import { redirect } from "next/navigation";
 import { isRedirectError } from "next/dist/client/components/redirect-error";
 import { PermissionProvider } from "@/components/providers/permission-provider";
 import { getUserPermissions } from "@/lib/rbac";
-import { getClinicSettings } from "@/services/settings.service";
+import { settingsService } from "@/config/di";
 import { runDailyJobsIfNeeded } from "@/services/job.service";
 
 export default async function DashboardLayout({
@@ -63,7 +63,7 @@ export default async function DashboardLayout({
   // Fetch permissions and settings concurrently
   const [permissions, tenantSettings] = await Promise.all([
     getUserPermissions(),
-    tenantId ? getClinicSettings(tenantId) : Promise.resolve(null)
+    tenantId ? settingsService.getClinicSettings(tenantId) : Promise.resolve(null)
   ]);
 
   // Pass only plain serializable properties to Client Components

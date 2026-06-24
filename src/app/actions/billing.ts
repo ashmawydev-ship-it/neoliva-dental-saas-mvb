@@ -3,10 +3,10 @@
 import { withPermission } from "@/lib/rbac/guard";
 
 
-import { BillingRepository } from "@/repositories/billing.repository";
+
 
 import { revalidatePath } from "next/cache";
-import { BillingService } from "@/services/billing.service";
+import { billingService, billingRepository } from "@/config/di";
 
 
 import { PaymentMethod } from "@/generated/client";
@@ -15,8 +15,7 @@ import { EventService } from "@/services/event.service";
 
 import { wrapAction } from "@/lib/observability/wrap-action";
 import { InvoiceSchema, PaymentSchema, formatZodError } from "@/lib/validations/schemas";
-const billingService = new BillingService();
-const billingRepository = new BillingRepository();
+
 
 /**
  * Server Action: Generates an invoice from an appointment.

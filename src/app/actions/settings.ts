@@ -1,7 +1,8 @@
 "use server";
 
 import { z } from "zod";
-import { getClinicSettings, updateClinicSettings, NotificationsConfig } from "@/services/settings.service";
+import { NotificationsConfig } from "@/services/settings.service";
+import { settingsService } from "@/config/di";
 import { resolveTenantContext as getTenantContext } from "@/lib/auth/resolve-tenant-context";
 import { requirePermission } from "@/lib/rbac";
 import { revalidatePath } from "next/cache";
@@ -34,7 +35,7 @@ export async function fetchSettingsAction() {
   // Require read access to settings
   await requirePermission(PermissionCode.SETTINGS_CLINIC_EDIT);
 
-  const settings = await getClinicSettings(ctx.tenantId);
+  const settings = await settingsService.getClinicSettings(ctx.tenantId);
   return {
     ...settings,
     taxRate: settings.taxRate ? Number(settings.taxRate) : 0,
@@ -48,7 +49,7 @@ export async function updateClinicAction(data: z.infer<typeof clinicSchema>) {
 
   const parsed = clinicSchema.parse(data);
 
-  await updateClinicSettings(ctx.tenantId, parsed, ctx.user.id);
+  await settingsService.updateClinicSettings(ctx.tenantId, parsed, ctx.user.id);
   revalidatePath('/dashboard', 'layout');
   return { success: true };
 }
@@ -60,7 +61,7 @@ export async function updateBillingAction(data: z.infer<typeof billingSchema>) {
 
   const parsed = billingSchema.parse(data);
 
-  await updateClinicSettings(ctx.tenantId, {
+  await settingsService.updateClinicSettings(ctx.tenantId, {
     currency: parsed.currency,
     taxRate: parsed.taxRate,
     invoiceNote: parsed.invoiceNote,
@@ -77,7 +78,7 @@ export async function updateNotificationsAction(data: z.infer<typeof notificatio
 
   const parsed = notificationsSchema.parse(data);
 
-  await updateClinicSettings(ctx.tenantId, {
+  await settingsService.updateClinicSettings(ctx.tenantId, {
     notificationsConfig: parsed as NotificationsConfig,
   }, ctx.user.id);
   

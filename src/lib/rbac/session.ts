@@ -46,8 +46,7 @@ export const getUserSession = cache(async (): Promise<UserSession | null> => {
     return null;
   }
 
-  const tenantId = cookieStore.get('active_tenant_id')?.value;
-  if (!tenantId) return null;
+  let tenantId = cookieStore.get('active_tenant_id')?.value;
 
   // Resolve internal database user ID from Supabase auth user ID
   const dbUser = await rawPrisma.user.findUnique({
@@ -56,21 +55,45 @@ export const getUserSession = cache(async (): Promise<UserSession | null> => {
   });
   if (!dbUser) return null;
 
-  // Query tenant_memberships
-  const membership = await rawPrisma.tenantMembership.findUnique({
-    where: {
-      userId_tenantId: {
-        userId: dbUser.id,
-        tenantId
+  let membership;
+
+  if (tenantId) {
+    // Query specific tenant_membership
+    membership = await rawPrisma.tenantMembership.findUnique({
+      where: {
+        userId_tenantId: {
+          userId: dbUser.id,
+          tenantId
+        }
+      },
+      select: {
+        role: true,
+        status: true,
+        permissions: true,
+        isActive: true,
+        tenantId: true
       }
-    },
-    select: {
-      role: true,
-      status: true,
-      permissions: true,
-      isActive: true
+    });
+  } else {
+    // Fallback to first active membership
+    membership = await rawPrisma.tenantMembership.findFirst({
+      where: {
+        userId: dbUser.id,
+        status: 'ACTIVE',
+        isActive: true
+      },
+      select: {
+        role: true,
+        status: true,
+        permissions: true,
+        isActive: true,
+        tenantId: true
+      }
+    });
+    if (membership) {
+      tenantId = membership.tenantId;
     }
-  });
+  }
 
   if (!membership || membership.status !== 'ACTIVE' || !membership.isActive) return null;
 

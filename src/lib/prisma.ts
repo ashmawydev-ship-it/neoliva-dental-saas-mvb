@@ -44,7 +44,7 @@ const createPrismaClient = () => {
     globalForPrisma.pool = pool;
   }
 
-  const adapter = new PrismaPg(pool);
+  const adapter = new PrismaPg(pool as any);
   const client = new PrismaClient({ 
     adapter,
     log: [

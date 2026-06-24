@@ -4,7 +4,7 @@ import { withPermission } from "@/lib/rbac/guard";
 
 
 import { revalidatePath } from 'next/cache'
-import { AppointmentService } from "@/services/appointment.service";
+import { appointmentService } from "@/config/di";
 
 
 import { requireRecordAccess } from "@/lib/abac";
@@ -13,7 +13,7 @@ import { EventService } from "@/services/event.service";
 
 import { wrapAction } from "@/lib/observability/wrap-action";
 import { AppointmentSchema, formatZodError } from "@/lib/validations/schemas";
-const appointmentService = new AppointmentService();
+
 
 export async function getAppointmentsData() {
   try {
