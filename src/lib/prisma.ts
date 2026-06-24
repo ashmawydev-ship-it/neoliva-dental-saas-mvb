@@ -11,6 +11,22 @@ const globalForPrisma = globalThis as unknown as {
   pool: Pool | undefined;
 };
 
+// Suppress pg's concurrent query deprecation warning (known issue with @prisma/adapter-pg)
+if (typeof process !== 'undefined' && typeof process.emitWarning === 'function') {
+  const originalEmitWarning = process.emitWarning;
+  process.emitWarning = function (warning, ...args) {
+    const isPgWarning =
+      (typeof warning === 'string' && warning.includes('Calling client.query()')) ||
+      (warning instanceof Error &&
+        warning.name === 'DeprecationWarning' &&
+        warning.message.includes('Calling client.query()'));
+    if (isPgWarning) {
+      return;
+    }
+    return originalEmitWarning.call(process, warning, ...args as any);
+  };
+}
+
 // AsyncLocalStorage to track whether we are inside a tenant RLS transaction
 export const rlsStorage = new AsyncLocalStorage<{ inTx: boolean; tenantId: string }>();
 
