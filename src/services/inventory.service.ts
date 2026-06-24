@@ -1,13 +1,14 @@
 import "server-only";
 import { InventoryRepository } from "@/repositories/inventory.repository";
 import { prisma } from "@/lib/prisma";
-
 import { NotificationService } from "./notification.service";
 
-const inventoryRepository = new InventoryRepository();
-const notificationService = new NotificationService();
-
 export class InventoryService {
+  constructor(
+    private readonly inventoryRepository = new InventoryRepository(),
+    private readonly notificationService = new NotificationService()
+  ) {}
+
   private normalizeString(val: string | undefined | null, fallback: string = ""): string {
     if (!val || typeof val !== 'string') return fallback;
     return val.trim();
@@ -49,7 +50,7 @@ export class InventoryService {
         category: this.normalizeString(data.category, "General"),
         unit: this.normalizeString(data.unit, "unit"),
       };
-      const result = await inventoryRepository.createItem(tenantId, normalizedData);
+      const result = await this.inventoryRepository.createItem(tenantId, normalizedData);
       return this.serializeItem(result);
     } catch (error) {
       console.error("[InventoryService.createItem] Error:", error);
@@ -63,7 +64,7 @@ export class InventoryService {
   }) {
     try {
       this.validateTenant(tenantId);
-      const items = await inventoryRepository.getItems(tenantId, filters);
+      const items = await this.inventoryRepository.getItems(tenantId, filters);
       
       const processedItems = (items || []).map(item => {
         try {
@@ -94,7 +95,7 @@ export class InventoryService {
   }) {
     try {
       this.validateTenant(tenantId);
-      const result = await inventoryRepository.addStock(tenantId, {
+      const result = await this.inventoryRepository.addStock(tenantId, {
         ...data,
         reason: this.normalizeString(data.reason, "Stock In")
       });
@@ -112,7 +113,7 @@ export class InventoryService {
   }) {
     try {
       this.validateTenant(tenantId);
-      const item = await inventoryRepository.findUnique(tenantId, data.itemId);
+      const item = await this.inventoryRepository.findUnique(tenantId, data.itemId);
       if (!item) throw new Error("Item not found");
 
       const currentStock = this.calculateCurrentStock(item.stockEntries || []);
@@ -120,17 +121,17 @@ export class InventoryService {
         throw new Error(`Insufficient stock. Available: ${currentStock} ${item.unit}`);
       }
 
-      const result = await inventoryRepository.deductStock(tenantId, {
+      const result = await this.inventoryRepository.deductStock(tenantId, {
         ...data,
         reason: this.normalizeString(data.reason, "Stock Out")
       });
 
       // Check for low stock alert
-      const updatedItem = await inventoryRepository.findUnique(tenantId, data.itemId);
+      const updatedItem = await this.inventoryRepository.findUnique(tenantId, data.itemId);
       if (updatedItem) {
           const newStock = this.calculateCurrentStock(updatedItem.stockEntries || []);
           if (newStock <= (updatedItem.minimumStock || 0)) {
-              await notificationService.notifyEvent(tenantId, 'LOW_STOCK_ALERT', {
+              await this.notificationService.notifyEvent(tenantId, 'LOW_STOCK_ALERT', {
                   itemName: updatedItem.name,
                   currentStock: newStock,
                   unit: updatedItem.unit,
@@ -149,7 +150,7 @@ export class InventoryService {
   async getInventoryStatsService(tenantId: string) {
     try {
       this.validateTenant(tenantId);
-      const items = await inventoryRepository.getItems(tenantId);
+      const items = await this.inventoryRepository.getItems(tenantId);
       
       let totalItems = (items || []).length;
       let lowStockAlerts = 0;
@@ -182,7 +183,7 @@ export class InventoryService {
   async getItemHistoryService(tenantId: string, itemId: string) {
     try {
       this.validateTenant(tenantId);
-      const history = await inventoryRepository.getStockEntries(tenantId, itemId);
+      const history = await this.inventoryRepository.getStockEntries(tenantId, itemId);
       return JSON.parse(JSON.stringify(history || []));
     } catch (error) {
       console.error("[InventoryService.getItemHistory] Error:", error);
@@ -204,7 +205,7 @@ export class InventoryService {
         category: data.category ? this.normalizeString(data.category) : undefined,
         unit: data.unit ? this.normalizeString(data.unit) : undefined,
       };
-      const result = await inventoryRepository.updateItem(tenantId, id, normalizedData);
+      const result = await this.inventoryRepository.updateItem(tenantId, id, normalizedData);
       return this.serializeItem(result);
     } catch (error) {
       console.error("[InventoryService.updateItem] Error:", error);
@@ -215,7 +216,7 @@ export class InventoryService {
   async deleteItemService(tenantId: string, id: string) {
     try {
       this.validateTenant(tenantId);
-      return await inventoryRepository.deleteItem(tenantId, id);
+      return await this.inventoryRepository.deleteItem(tenantId, id);
     } catch (error) {
       console.error("[InventoryService.deleteItem] Error:", error);
       return false;
@@ -234,7 +235,7 @@ export class InventoryService {
 
       for (const usage of usages) {
         try {
-          const item = await inventoryRepository.getItems(usage.tenantId, { search: usage.inventory.name });
+          const item = await this.inventoryRepository.getItems(usage.tenantId, { search: usage.inventory.name });
           const targetItem = item.find(i => i.name === usage.inventory.name);
 
           if (targetItem) {
@@ -272,4 +273,3 @@ export class InventoryService {
     }
   }
 }
-

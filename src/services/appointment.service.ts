@@ -9,14 +9,16 @@ import { ServiceRepository } from "@/repositories/service.repository";
 import { NotificationService } from "./notification.service";
 import { RoomService } from "./room.service";
 
-const appointmentRepository = new AppointmentRepository();
-const inventoryService = new InventoryService();
-const notificationService = new NotificationService();
-const patientRepository = new PatientRepository();
-const staffRepository = new StaffRepository();
-const serviceRepository = new ServiceRepository();
-
 export class AppointmentService {
+  constructor(
+    private readonly appointmentRepository = new AppointmentRepository(),
+    private readonly inventoryService = new InventoryService(),
+    private readonly notificationService = new NotificationService(),
+    private readonly patientRepository = new PatientRepository(),
+    private readonly staffRepository = new StaffRepository(),
+    private readonly serviceRepository = new ServiceRepository()
+  ) {}
+
   private normalizeString(val: string | null | undefined, fallback: string = "-"): string {
     if (!val || typeof val !== 'string') return fallback;
     const trimmed = val.trim();
@@ -69,7 +71,7 @@ export class AppointmentService {
     try {
       this.validateTenant(tenantId);
       console.log(`[AppointmentService] Fetching appointments for tenant: ${tenantId}`);
-      const appointments = await appointmentRepository.findMany(tenantId);
+      const appointments = await this.appointmentRepository.findMany(tenantId);
 
       return (appointments || []).map(apt => {
         try {
@@ -146,8 +148,8 @@ export class AppointmentService {
   async getAppointmentFormData(tenantId: string) {
     try {
       this.validateTenant(tenantId);
-      const doctors = await staffRepository.findStaff(tenantId, 'DOCTOR', { id: true, name: true });
-      const servicesRaw = await serviceRepository.findMany(tenantId, { select: { id: true, name: true, duration: true, price: true } });
+      const doctors = await this.staffRepository.findStaff(tenantId, 'DOCTOR', { id: true, name: true });
+      const servicesRaw = await this.serviceRepository.findMany(tenantId, { select: { id: true, name: true, duration: true, price: true } });
 
       const services = (servicesRaw || []).map(s => ({
         ...s,
@@ -171,7 +173,7 @@ export class AppointmentService {
     try {
       this.validateTenant(tenantId);
       if (!id) return this.getSafeFallback();
-      const apt = await appointmentRepository.findUnique(tenantId, id);
+      const apt = await this.appointmentRepository.findUnique(tenantId, id);
       if (!apt) return this.getSafeFallback(id);
       return this.serializeAppointment(apt);
     } catch (error) {
@@ -213,7 +215,7 @@ export class AppointmentService {
         });
       }
 
-      const result = await appointmentRepository.create(tenantId, {
+      const result = await this.appointmentRepository.create(tenantId, {
         patientId: data.patientId,
         doctorId: data.doctorId,
         serviceId: data.serviceId,
@@ -231,7 +233,7 @@ export class AppointmentService {
       const serialized = this.serializeAppointment(result);
 
       // Trigger Notification
-      await notificationService.notifyEvent(tenantId, 'APPOINTMENT_REMINDER', {
+      await this.notificationService.notifyEvent(tenantId, 'APPOINTMENT_REMINDER', {
         userId: data.doctorId,
         patientName: serialized.patient || "Patient",
         time: data.time,
@@ -252,15 +254,15 @@ export class AppointmentService {
     try {
       this.validateTenant(tenantId);
       // 1. Fetch current appointment to get serviceId
-      const appointment = await appointmentRepository.findUnique(tenantId, id);
+      const appointment = await this.appointmentRepository.findUnique(tenantId, id);
       
       // 2. Update status
-      const updated = await appointmentRepository.update(tenantId, id, { status });
+      const updated = await this.appointmentRepository.update(tenantId, id, { status });
 
       // 3. If completed, trigger smart logic
       if (status === 'COMPLETED' && appointment?.serviceId) {
         try {
-          await inventoryService.consumeItemsFromService(tenantId, appointment.serviceId);
+          await this.inventoryService.consumeItemsFromService(tenantId, appointment.serviceId);
         } catch (invError) {
           console.error("[AppointmentService] Inventory consumption failed but status was updated:", invError);
         }
@@ -279,7 +281,7 @@ export class AppointmentService {
   async cancelAppointment(tenantId: string, id: string) {
     try {
       this.validateTenant(tenantId);
-      const result = await appointmentRepository.delete(tenantId, id);
+      const result = await this.appointmentRepository.delete(tenantId, id);
       return this.serializeAppointment(result);
     } catch (error) {
       console.error(`[AppointmentService] Failed to cancel appointment ${id}:`, error);
@@ -322,4 +324,3 @@ export class AppointmentService {
     }
   }
 }
-

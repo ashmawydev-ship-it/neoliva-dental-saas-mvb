@@ -30,11 +30,12 @@ export interface NotificationChannel {
 const rateLimitMap = new Map<string, number[]>();
 
 export class NotificationService {
-  private repository = new NotificationRepository();
-  private preferenceRepository = new NotificationPreferenceRepository();
   private channels: NotificationChannel[] = [];
 
-  constructor() {
+  constructor(
+    private readonly repository = new NotificationRepository(),
+    private readonly preferenceRepository = new NotificationPreferenceRepository()
+  ) {
     // Registered channels (Future: Email, WhatsApp)
   }
 

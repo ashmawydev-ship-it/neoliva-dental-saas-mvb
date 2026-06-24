@@ -4,16 +4,18 @@ import { AppointmentRepository } from "@/repositories/appointment.repository";
 import { PaymentMethod } from "@/generated/client";
 import { NotificationService } from "./notification.service";
 import { TreasuryService } from "./treasury.service";
-
-import { getClinicSettings } from "./settings.service";
+import { SettingsService } from "./settings.service";
 import { prisma } from "@/lib/prisma";
 
-const billingRepository = new BillingRepository();
-const appointmentRepository = new AppointmentRepository();
-const notificationService = new NotificationService();
-const treasuryService = new TreasuryService();
-
 export class BillingService {
+  constructor(
+    private readonly billingRepository = new BillingRepository(),
+    private readonly appointmentRepository = new AppointmentRepository(),
+    private readonly notificationService = new NotificationService(),
+    private readonly treasuryService = new TreasuryService(),
+    private readonly settingsService = new SettingsService()
+  ) {}
+
   private normalizeString(val: string | null | undefined, fallback: string = "-"): string {
     if (!val || typeof val !== 'string') return fallback;
     const trimmed = val.trim();
@@ -56,17 +58,17 @@ export class BillingService {
   async generateInvoiceFromAppointment(tenantId: string, appointmentId: string) {
     try {
       this.validateTenant(tenantId);
-      const settings = await getClinicSettings(tenantId);
+      const settings = await this.settingsService.getClinicSettings(tenantId);
       if (!appointmentId) return this.getSafeInvoiceFallback(undefined, settings);
 
       // Check if invoice already exists for this appointment
-      const existing = await billingRepository.findByAppointmentId(tenantId, appointmentId);
+      const existing = await this.billingRepository.findByAppointmentId(tenantId, appointmentId);
       if (existing) {
         return this.serializeInvoice(existing, settings);
       }
 
       // Get appointment details
-      const apt = await appointmentRepository.findUnique(tenantId, appointmentId);
+      const apt = await this.appointmentRepository.findUnique(tenantId, appointmentId);
       if (!apt) {
         console.warn(`[BillingService] Appointment ${appointmentId} not found for invoice generation`);
         return this.getSafeInvoiceFallback(undefined, settings);
@@ -113,7 +115,7 @@ export class BillingService {
   async generateInvoiceFromPlan(tenantId: string, planId: string) {
     try {
       this.validateTenant(tenantId);
-      const settings = await getClinicSettings(tenantId);
+      const settings = await this.settingsService.getClinicSettings(tenantId);
       if (!planId) return this.getSafeInvoiceFallback(undefined, settings);
 
       // Check if invoice already exists for this plan
@@ -161,8 +163,8 @@ export class BillingService {
   async getInvoicesList(tenantId: string) {
     try {
       this.validateTenant(tenantId);
-      const invoices = await billingRepository.findMany(tenantId);
-      const rawSettings = await getClinicSettings(tenantId);
+      const invoices = await this.billingRepository.findMany(tenantId);
+      const rawSettings = await this.settingsService.getClinicSettings(tenantId);
       const settings = rawSettings ? { ...rawSettings, taxRate: Number(rawSettings.taxRate || 0) } : null;
       const now = new Date();
 
@@ -202,7 +204,7 @@ export class BillingService {
   async getBillingStats(tenantId: string) {
     try {
       this.validateTenant(tenantId);
-      const stats = await billingRepository.getFinancialStats(tenantId);
+      const stats = await this.billingRepository.getFinancialStats(tenantId);
       return JSON.parse(JSON.stringify(stats || { totalRevenue: 0, totalPaid: 0, totalOutstanding: 0, collectionRate: 0 }));
     } catch (error) {
       console.error("[BillingService] Failed to get billing stats:", error);
@@ -216,9 +218,9 @@ export class BillingService {
   async getInvoiceDetails(tenantId: string, id: string) {
     try {
       this.validateTenant(tenantId);
-      const settings = await getClinicSettings(tenantId);
+      const settings = await this.settingsService.getClinicSettings(tenantId);
       if (!id) return this.getSafeInvoiceFallback(undefined, settings);
-      const invoice = await billingRepository.findUnique(tenantId, id);
+      const invoice = await this.billingRepository.findUnique(tenantId, id);
       if (!invoice) return this.getSafeInvoiceFallback(id, settings);
       return this.serializeInvoice(invoice, settings);
     } catch (error) {
@@ -244,7 +246,7 @@ export class BillingService {
   }) {
     try {
       this.validateTenant(tenantId);
-      const settings = await getClinicSettings(tenantId);
+      const settings = await this.settingsService.getClinicSettings(tenantId);
       
       // Generate a simple display ID
       const displayId = `INV-${Math.floor(1000 + Math.random() * 9000)}`;
@@ -255,7 +257,7 @@ export class BillingService {
       const totalAmount = subtotal + (subtotal * (taxRate / 100));
 
       const { result, serialized } = await prisma.$transaction(async (tx) => {
-        const createResult = await billingRepository.create(tenantId, {
+        const createResult = await this.billingRepository.create(tenantId, {
           patientId: data.patientId,
           appointmentId: data.appointmentId,
           planId: data.planId,
@@ -276,7 +278,7 @@ export class BillingService {
         const ser = this.serializeInvoice(createResult, settings);
 
         // Record in Treasury (Double-Entry) - MUST succeed inside transaction!
-        await treasuryService.recordInvoiceCreation(tenantId, {
+        await this.treasuryService.recordInvoiceCreation(tenantId, {
           id: createResult.id,
           displayId: ser.displayId,
           totalAmount: ser.totalAmount,
@@ -287,7 +289,7 @@ export class BillingService {
       });
 
       // Trigger Notification
-      await notificationService.notifyEvent(tenantId, 'INVOICE_UNPAID', {
+      await this.notificationService.notifyEvent(tenantId, 'INVOICE_UNPAID', {
           invoiceId: serialized.displayId,
           patientName: serialized.patientName,
           metadata: { invoiceId: result.id }
@@ -313,10 +315,10 @@ export class BillingService {
       this.validateTenant(tenantId);
 
       const result = await prisma.$transaction(async (tx) => {
-        const paymentResult = await billingRepository.recordPayment(tenantId, invoiceId, data, tx);
+        const paymentResult = await this.billingRepository.recordPayment(tenantId, invoiceId, data, tx);
         
         // Record in Treasury (Double-Entry) - MUST succeed inside transaction!
-        await treasuryService.recordPayment(tenantId, {
+        await this.treasuryService.recordPayment(tenantId, {
           amount: data.amount,
           method: data.method,
           invoiceId: invoiceId,
@@ -338,7 +340,7 @@ export class BillingService {
   async deleteInvoice(tenantId: string, invoiceId: string) {
     try {
       this.validateTenant(tenantId);
-      return await billingRepository.delete(tenantId, invoiceId);
+      return await this.billingRepository.delete(tenantId, invoiceId);
     } catch (error) {
       console.error(`[BillingService] Failed to delete invoice ${invoiceId}:`, error);
       throw error;

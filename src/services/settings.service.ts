@@ -11,35 +11,12 @@ export type NotificationsConfig = {
   lowInventoryAlerts: boolean;
 };
 
-const DEFAULT_NOTIFICATIONS: NotificationsConfig = {
+export const DEFAULT_NOTIFICATIONS: NotificationsConfig = {
   emailReminders: true,
   smsReminders: true,
   invoiceReceipts: true,
   lowInventoryAlerts: false,
 };
-
-const settingsRepository = new SettingsRepository();
-const tenantRepository = new TenantRepository();
-const eventRepository = new EventRepository();
-
-export async function getClinicSettings(tenantId: string) {
-  let settings = await settingsRepository.findUnique(tenantId);
-
-  if (!settings) {
-    const tenant = await tenantRepository.findUnique(tenantId);
-    if (!tenant) throw new Error("Tenant not found");
-
-    settings = await settingsRepository.create(
-      tenantId,
-      tenant.name,
-      DEFAULT_NOTIFICATIONS
-    );
-    
-    logger.info('[SettingsService] Auto-created default settings', { tenantId });
-  }
-
-  return settings;
-}
 
 export type UpdateClinicSettingsInput = {
   clinicName?: string;
@@ -53,42 +30,69 @@ export type UpdateClinicSettingsInput = {
   notificationsConfig?: NotificationsConfig;
 };
 
-export async function updateClinicSettings(tenantId: string, data: UpdateClinicSettingsInput, userId: string) {
-  const previous = await getClinicSettings(tenantId);
-  
-  const updated = await settingsRepository.update(tenantId, {
-    clinicName: data.clinicName !== undefined ? data.clinicName : undefined,
-    email: data.email !== undefined ? data.email : undefined,
-    phone: data.phone !== undefined ? data.phone : undefined,
-    address: data.address !== undefined ? data.address : undefined,
-    workingHours: data.workingHours !== undefined ? (data.workingHours as Prisma.InputJsonValue) : undefined,
-    currency: data.currency !== undefined ? data.currency : undefined,
-    taxRate: data.taxRate !== undefined ? data.taxRate : undefined,
-    invoiceNote: data.invoiceNote !== undefined ? data.invoiceNote : undefined,
-    notificationsConfig: data.notificationsConfig !== undefined ? (data.notificationsConfig as unknown as Prisma.InputJsonValue) : undefined,
-  });
+export class SettingsService {
+  constructor(
+    private readonly settingsRepository = new SettingsRepository(),
+    private readonly tenantRepository = new TenantRepository(),
+    private readonly eventRepository = new EventRepository()
+  ) {}
 
-  logger.info('[SettingsService] Clinic settings updated', {
-    tenantId,
-    userId,
-    updatedFields: Object.keys(data),
-  });
+  async getClinicSettings(tenantId: string) {
+    let settings = await this.settingsRepository.findUnique(tenantId);
 
-  await eventRepository.create(tenantId, {
-    userId,
-    eventType: 'SETTINGS_UPDATED',
-    entityType: 'SETTINGS',
-    entityId: updated.id,
-    metadata: {
-      userId,
-      changedFields: Object.keys(data),
-      previous: {
-        currency: previous.currency,
-        taxRate: previous.taxRate,
-        notificationsConfig: previous.notificationsConfig,
-      }
+    if (!settings) {
+      const tenant = await this.tenantRepository.findUnique(tenantId);
+      if (!tenant) throw new Error("Tenant not found");
+
+      settings = await this.settingsRepository.create(
+        tenantId,
+        tenant.name,
+        DEFAULT_NOTIFICATIONS
+      );
+      
+      logger.info('[SettingsService] Auto-created default settings', { tenantId });
     }
-  });
 
-  return updated;
+    return settings;
+  }
+
+  async updateClinicSettings(tenantId: string, data: UpdateClinicSettingsInput, userId: string) {
+    const previous = await this.getClinicSettings(tenantId);
+    
+    const updated = await this.settingsRepository.update(tenantId, {
+      clinicName: data.clinicName !== undefined ? data.clinicName : undefined,
+      email: data.email !== undefined ? data.email : undefined,
+      phone: data.phone !== undefined ? data.phone : undefined,
+      address: data.address !== undefined ? data.address : undefined,
+      workingHours: data.workingHours !== undefined ? (data.workingHours as Prisma.InputJsonValue) : undefined,
+      currency: data.currency !== undefined ? data.currency : undefined,
+      taxRate: data.taxRate !== undefined ? data.taxRate : undefined,
+      invoiceNote: data.invoiceNote !== undefined ? data.invoiceNote : undefined,
+      notificationsConfig: data.notificationsConfig !== undefined ? (data.notificationsConfig as unknown as Prisma.InputJsonValue) : undefined,
+    });
+
+    logger.info('[SettingsService] Clinic settings updated', {
+      tenantId,
+      userId,
+      updatedFields: Object.keys(data),
+    });
+
+    await this.eventRepository.create(tenantId, {
+      userId,
+      eventType: 'SETTINGS_UPDATED',
+      entityType: 'SETTINGS',
+      entityId: updated.id,
+      metadata: {
+        userId,
+        changedFields: Object.keys(data),
+        previous: {
+          currency: previous.currency,
+          taxRate: previous.taxRate,
+          notificationsConfig: previous.notificationsConfig,
+        }
+      }
+    });
+
+    return updated;
+  }
 }

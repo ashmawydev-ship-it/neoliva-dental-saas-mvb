@@ -1,9 +1,11 @@
 import { TreasuryRepository } from "@/repositories/treasury.repository";
 import { AccountType, Prisma, PaymentMethod } from "@/generated/client";
 
-const treasuryRepository = new TreasuryRepository();
-
 export class TreasuryService {
+  constructor(
+    private readonly treasuryRepository = new TreasuryRepository()
+  ) {}
+
   /**
    * System Accounts Names
    */
@@ -20,7 +22,7 @@ export class TreasuryService {
    * Ensure standard system accounts exist for a tenant
    */
   async ensureSystemAccounts(tenantId: string, tx?: Prisma.TransactionClient) {
-    const existing = await treasuryRepository.getAccounts(tenantId, tx);
+    const existing = await this.treasuryRepository.getAccounts(tenantId, tx);
     const existingNames = new Set(existing.map((a) => a.name));
 
     const accountsToCreate = [
@@ -34,7 +36,7 @@ export class TreasuryService {
 
     for (const acc of accountsToCreate) {
       if (!existingNames.has(acc.name)) {
-        await treasuryRepository.createAccount(tenantId, { ...acc, isSystem: true }, tx);
+        await this.treasuryRepository.createAccount(tenantId, { ...acc, isSystem: true }, tx);
       }
     }
   }
@@ -68,7 +70,7 @@ export class TreasuryService {
     // 2. Resolve accounts
     const accountMappings = await Promise.all(
       data.lines.map(async (line) => {
-        const account = await treasuryRepository.findAccountByName(tenantId, line.accountName, tx);
+        const account = await this.treasuryRepository.findAccountByName(tenantId, line.accountName, tx);
         if (!account) throw new Error(`Account not found: ${line.accountName}`);
         return {
           accountId: account.id,
@@ -79,7 +81,7 @@ export class TreasuryService {
     );
 
     // 3. Persist
-    return treasuryRepository.createJournalEntry(tenantId, {
+    return this.treasuryRepository.createJournalEntry(tenantId, {
       ...data,
       lines: accountMappings,
     }, tx);
@@ -149,8 +151,8 @@ export class TreasuryService {
     // Ensure system accounts exist before fetching balances
     await this.ensureSystemAccounts(tenantId);
 
-    const balances = await treasuryRepository.getAccountBalances(tenantId);
-    const accounts = await treasuryRepository.getAccounts(tenantId);
+    const balances = await this.treasuryRepository.getAccountBalances(tenantId);
+    const accounts = await this.treasuryRepository.getAccounts(tenantId);
 
     const report = accounts.map(acc => {
       const bal = balances.find(b => b.accountId === acc.id);
