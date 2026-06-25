@@ -28,7 +28,7 @@ export function ReportsRevenueChart({ data }: ChartProps) {
             <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: "#94a3b8" }} />
             <Tooltip 
               contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
-              formatter={(value: number) => [`$${value.toLocaleString()}`, 'Revenue']}
+              formatter={((value: any) => [`$${value.toLocaleString()}`, 'Revenue']) as any}
             />
             <Area type="monotone" dataKey="revenue" stroke="#3b82f6" strokeWidth={2} fillOpacity={1} fill="url(#revGrad)" />
           </AreaChart>

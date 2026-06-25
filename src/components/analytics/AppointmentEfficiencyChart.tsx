@@ -100,7 +100,7 @@ export function AppointmentEfficiencyChart({ data, trend }: Props) {
                   ))}
                 </Pie>
                 <Tooltip
-                  formatter={(value: number, name: string) => [value, name]}
+                  formatter={((value: any, name: any) => [value, name]) as any}
                   contentStyle={{ borderRadius: 12, border: 'none', boxShadow: '0 4px 24px rgba(0,0,0,0.08)', fontSize: 12 }}
                 />
                 <Legend wrapperStyle={{ fontSize: 11 }} />

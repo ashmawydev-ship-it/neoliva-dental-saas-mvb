@@ -85,13 +85,13 @@ export function PatientFunnelChart({ data }: Props) {
                   axisLine={false}
                 />
                 <Tooltip
-                  formatter={(value: number, _name: string, props: any) => {
+                  formatter={((value: any, _name: any, props: any) => {
                     const drop = props.payload?.dropOffRate;
                     return [
                       `${value} patients${drop !== null ? ` (${drop}% drop-off)` : ''}`,
                       'Count',
                     ];
-                  }}
+                  }) as any}
                   contentStyle={{
                     borderRadius: 12,
                     border: 'none',

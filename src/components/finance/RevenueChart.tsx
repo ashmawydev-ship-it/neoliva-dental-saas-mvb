@@ -87,7 +87,7 @@ export function RevenueChart({ data, periodLabel = "Last 30 Days" }: ChartProps)
               />
               <Tooltip 
                 contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
-                formatter={(value: number) => [`$${value.toLocaleString()}`, '']}
+                formatter={((value: any) => [`$${value.toLocaleString()}`, '']) as any}
               />
               <Legend verticalAlign="top" height={36}/>
               <Area 
@@ -128,7 +128,7 @@ export function RevenueChart({ data, periodLabel = "Last 30 Days" }: ChartProps)
               <Tooltip 
                 cursor={{fill: 'transparent'}}
                 contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
-                formatter={(value: number) => [`$${value.toLocaleString()}`, '']}
+                formatter={((value: any) => [`$${value.toLocaleString()}`, '']) as any}
               />
               <Legend verticalAlign="top" height={36}/>
               <Bar dataKey="revenue" name="Revenue" fill="#10b981" radius={[4, 4, 0, 0]} />

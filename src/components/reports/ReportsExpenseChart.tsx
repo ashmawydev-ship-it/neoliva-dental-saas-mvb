@@ -28,7 +28,7 @@ export function ReportsExpenseChart({ data }: ChartProps) {
             <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: "#94a3b8" }} />
             <Tooltip 
               contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
-              formatter={(value: number) => [`$${value.toLocaleString()}`, 'Expenses']}
+              formatter={((value: any) => [`$${value.toLocaleString()}`, 'Expenses']) as any}
             />
             <Area type="monotone" dataKey="expenses" stroke="#f59e0b" strokeWidth={2} fillOpacity={1} fill="url(#expGrad)" />
           </AreaChart>

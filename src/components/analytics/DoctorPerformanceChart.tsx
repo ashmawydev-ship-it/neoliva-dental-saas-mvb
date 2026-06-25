@@ -58,7 +58,7 @@ export function DoctorPerformanceChart({ data, trend }: Props) {
             domain={[0, 100]}
           />
           <Tooltip
-            formatter={(value: number, name: string) => [`${value}%`, name === 'completionRate' ? 'Completion Rate' : 'No-Show Rate']}
+            formatter={((value: any, name: any) => [`${value}%`, name === 'completionRate' ? 'Completion Rate' : 'No-Show Rate']) as any}
             contentStyle={{ borderRadius: 12, border: 'none', boxShadow: '0 4px 24px rgba(0,0,0,0.08)', fontSize: 12 }}
           />
           <Legend

@@ -62,7 +62,7 @@ export function FinanceDashboardHeader({ period }: FinanceDashboardHeaderProps) 
       </div>
 
       <div className="flex flex-wrap items-center gap-3">
-        <Select value={period} onValueChange={handlePeriodChange}>
+        <Select value={period} onValueChange={(val) => handlePeriodChange(val ?? "")}>
           <SelectTrigger className="w-[160px] bg-white border-gray-200">
             <Calendar className="w-4 h-4 mr-2 text-gray-400" />
             <SelectValue placeholder="Select period" />

@@ -163,7 +163,7 @@ export default async function EventsDebugPage() {
                       </Button>
                     </TableCell>
                     <TableCell className="text-right">
-                      <form action={replayEvent.bind(null, event.id)}>
+                      <form action={replayEvent.bind(null, event.id) as any}>
                         <Button variant="ghost" size="sm" className="h-8 text-xs opacity-0 group-hover:opacity-100 transition-opacity">
                           <Play className="w-3 h-3 mr-2" />
                           Replay

@@ -176,7 +176,7 @@ export function NewInvoiceDialog() {
               <Label htmlFor="service" className="text-sm font-semibold text-gray-700 flex items-center gap-2">
                 <ActivityIcon className="w-4 h-4 text-gray-400" /> Quick Service Select
               </Label>
-              <Select value={watchedServiceId || undefined} onValueChange={(val: string) => handleServiceChange(val)}>
+              <Select value={watchedServiceId || undefined} onValueChange={(val) => handleServiceChange(val)}>
                 <SelectTrigger id="service" className="h-11 bg-white border-gray-200 focus:ring-blue-500 rounded-xl shadow-sm">
                   <SelectValue placeholder={fetchingData ? "Loading services..." : "Select a service to auto-fill"} />
                 </SelectTrigger>

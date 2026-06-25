@@ -22,7 +22,7 @@ export function ReportsProfitChart({ data }: ChartProps) {
             <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: "#94a3b8" }} />
             <Tooltip 
               contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
-              formatter={(value: number) => [`$${value.toLocaleString()}`, 'Profit']}
+              formatter={((value: any) => [`$${value.toLocaleString()}`, 'Profit']) as any}
             />
             <Line type="monotone" dataKey="profit" stroke="#10b981" strokeWidth={3} dot={{ r: 4, fill: "#10b981", strokeWidth: 2, stroke: "#fff" }} activeDot={{ r: 6 }} />
           </LineChart>

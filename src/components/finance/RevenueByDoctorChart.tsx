@@ -44,7 +44,7 @@ export function RevenueByDoctorChart({ data }: DoctorRevenueProps) {
             />
             <Tooltip 
               cursor={{ fill: 'transparent' }}
-              formatter={(value: number) => `$${value.toLocaleString()}`}
+              formatter={((value: any) => `$${value.toLocaleString()}`) as any}
               contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
             />
             <Bar dataKey="value" radius={[0, 4, 4, 0]} barSize={20}>
