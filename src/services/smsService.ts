@@ -6,6 +6,11 @@ interface SmsPayload {
 }
 
 export class SmsService {
+  static instance?: SmsService;
+
+  constructor(
+    private readonly eventService = EventService.instance || new EventService()
+  ) {}
   /**
    * Send a single SMS message.
    * This is an abstraction. Currently, it logs the intent and simulates a successful send.
@@ -27,7 +32,7 @@ export class SmsService {
       const simulatedId = `sms_${Math.random().toString(36).substring(2, 9)}`;
 
       // Log success using eventService
-      await EventService.trackEvent({
+      await this.eventService.trackEvent({
         tenantId,
         eventType: 'SMS_SENT',
         entityId: simulatedId,
@@ -41,7 +46,7 @@ export class SmsService {
       return { success: true, id: simulatedId };
     } catch (error: any) {
       // Log failure
-      await EventService.trackEvent({
+      await this.eventService.trackEvent({
         tenantId,
         eventType: 'SMS_FAILED',
         entityId: payload.to,

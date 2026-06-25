@@ -5,8 +5,6 @@ import { headers } from 'next/headers';
 import { AuditRepository } from '@/repositories/audit.repository';
 import type { Prisma } from '@/generated/client';
 
-const auditRepository = new AuditRepository();
-
 export interface AuditLogOptions {
   action: string;
   entityType: string;
@@ -19,11 +17,31 @@ export interface AuditLogOptions {
 export type AuditTxClient = Prisma.TransactionClient;
 
 export class AuditService {
+  static instance?: AuditService;
+
+  constructor(
+    private readonly auditRepository = new AuditRepository()
+  ) {}
+
+  static async logAudit(options: AuditLogOptions) {
+    return (AuditService.instance || new AuditService()).logAudit(options);
+  }
+
+  static async logAuditSafe(options: AuditLogOptions) {
+    return (AuditService.instance || new AuditService()).logAuditSafe(options);
+  }
+
+  static async logAuditInTx(
+    tx: AuditTxClient,
+    options: AuditLogOptions & { userId?: string; ipAddress?: string; userAgent?: string }
+  ) {
+    return (AuditService.instance || new AuditService()).logAuditInTx(tx, options);
+  }
   /**
    * Logs a security-first, immutable audit record.
    * Auto-injects context (user, tenant, IP, UA, requestId).
    */
-  static async logAudit(options: AuditLogOptions) {
+  async logAudit(options: AuditLogOptions) {
     const { action, entityType, entityId, tenantId: explicitTenantId, metadata = {} } = options;
     const trace = getTraceContextSync();
     
@@ -66,7 +84,7 @@ export class AuditService {
 
     // 4. Persistence — throws on failure so the caller can decide whether to rollback.
     //    Use logAuditSafe() if you explicitly want fire-and-forget semantics.
-    const log = await auditRepository.create(tenantId, {
+    const log = await this.auditRepository.create(tenantId, {
       userId,
       action,
       entityType,
@@ -97,7 +115,7 @@ export class AuditService {
    * must NOT propagate (e.g. failure audit log inside wrapAction catch block).
    * Logs a CRITICAL alert but does not throw.
    */
-  static async logAuditSafe(options: AuditLogOptions): Promise<void> {
+  async logAuditSafe(options: AuditLogOptions): Promise<void> {
     try {
       await this.logAudit(options);
     } catch (error) {
@@ -122,7 +140,7 @@ export class AuditService {
    * });
    * ```
    */
-  static async logAuditInTx(
+  async logAuditInTx(
     tx: AuditTxClient,
     options: AuditLogOptions & { userId?: string; ipAddress?: string; userAgent?: string }
   ) {
@@ -153,7 +171,7 @@ export class AuditService {
   /**
    * Recursively masks sensitive fields in metadata JSON
    */
-  private static maskSensitiveFields(obj: any): any {
+  private maskSensitiveFields(obj: any): any {
     if (!obj || typeof obj !== 'object') return obj;
     if (Array.isArray(obj)) return obj.map(item => this.maskSensitiveFields(item));
 

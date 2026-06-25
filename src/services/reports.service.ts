@@ -16,7 +16,11 @@ const MEMO_CACHE = new Map<string, { data: any; expiry: number }>();
 const CACHE_TTL = 60 * 1000; // 60 seconds
 
 export class ReportsService {
-  private repo = new ReportsRepository();
+  static instance?: ReportsService;
+
+  constructor(
+    private readonly repo = new ReportsRepository()
+  ) {}
 
   private getCachedData<T>(key: string): T | null {
     const cached = MEMO_CACHE.get(key);

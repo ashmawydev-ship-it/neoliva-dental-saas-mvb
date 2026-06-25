@@ -4,10 +4,13 @@ import { LabOrderStatus } from "@/generated/client";
 
 import { NotificationService } from "./notification.service";
 
-const repository = new LabOrderRepository();
-const notificationService = new NotificationService();
-
 export class LabOrderService {
+  static instance?: LabOrderService;
+
+  constructor(
+    private readonly repository = new LabOrderRepository(),
+    private readonly notificationService = NotificationService.instance || new NotificationService()
+  ) {}
   private normalizeString(val: string | undefined | null, fallback: string = ""): string {
     if (!val || typeof val !== 'string') return fallback;
     return val.trim();
@@ -64,7 +67,7 @@ export class LabOrderService {
   async getLabOrdersList(tenantId: string) {
     try {
       this.validateTenant(tenantId);
-      const orders = await repository.findMany(tenantId, {
+      const orders = await this.repository.findMany(tenantId, {
         orderBy: { createdAt: 'desc' }
       });
       return (orders || []).map(order => this.serializeLabOrder(order));
@@ -80,7 +83,7 @@ export class LabOrderService {
   async getLabOrdersStats(tenantId: string) {
     try {
       this.validateTenant(tenantId);
-      const stats = await repository.getStats(tenantId);
+      const stats = await this.repository.getStats(tenantId);
       return JSON.parse(JSON.stringify(stats || { pending: 0, sent: 0, received: 0, totalCost: 0 }));
     } catch (error) {
       console.error("[LabOrderService.getLabOrdersStats] Error:", error);
@@ -121,7 +124,7 @@ export class LabOrderService {
         appointmentId: data.appointmentId || null,
       };
 
-      const newOrder = await repository.create(tenantId, createData);
+      const newOrder = await this.repository.create(tenantId, createData);
       return this.serializeLabOrder(newOrder);
     } catch (error) {
       console.error("[LabOrderService.createLabOrder] Error:", error);
@@ -135,11 +138,11 @@ export class LabOrderService {
   async updateLabOrderStatus(tenantId: string, id: string, status: LabOrderStatus) {
     try {
       this.validateTenant(tenantId);
-      const updated = await repository.updateStatus(tenantId, id, status);
+      const updated = await this.repository.updateStatus(tenantId, id, status);
       const serialized = this.serializeLabOrder(updated);
 
       if (status === 'RECEIVED') {
-          await notificationService.notifyEvent(tenantId, 'LAB_READY', {
+          await this.notificationService.notifyEvent(tenantId, 'LAB_READY', {
               patientName: serialized.patientName || "Patient",
               itemType: serialized.itemType,
               metadata: { orderId: serialized.id }
@@ -159,7 +162,7 @@ export class LabOrderService {
   async deleteLabOrder(tenantId: string, id: string) {
     try {
       this.validateTenant(tenantId);
-      const deleted = await repository.delete(tenantId, id);
+      const deleted = await this.repository.delete(tenantId, id);
       return this.serializeLabOrder(deleted);
     } catch (error) {
       console.error("[LabOrderService.deleteLabOrder] Error:", error);

@@ -37,16 +37,49 @@ export const RoomBookingValidationSchema = z.object({
 export type RoomBookingValidation = z.infer<typeof RoomBookingValidationSchema>;
 
 export class RoomService {
+  static instance?: RoomService;
+
+  constructor(
+    private readonly prismaClient = prisma
+  ) {}
+
+  static async createRoom(tenantId: string, data: z.infer<typeof RoomSchema>) {
+    return (RoomService.instance || new RoomService()).createRoom(tenantId, data);
+  }
+  static async updateRoom(tenantId: string, roomId: string, data: Partial<z.infer<typeof RoomSchema>>) {
+    return (RoomService.instance || new RoomService()).updateRoom(tenantId, roomId, data);
+  }
+  static async changeRoomStatus(tenantId: string, roomId: string, status: RoomStatus) {
+    return (RoomService.instance || new RoomService()).changeRoomStatus(tenantId, roomId, status);
+  }
+  static async assignStaffToRoom(tenantId: string, assignment: z.infer<typeof RoomAssignmentSchema>) {
+    return (RoomService.instance || new RoomService()).assignStaffToRoom(tenantId, assignment);
+  }
+  static async removeStaffFromRoom(tenantId: string, roomId: string, userId: string) {
+    return (RoomService.instance || new RoomService()).removeStaffFromRoom(tenantId, roomId, userId);
+  }
+  static async getRoomSchedule(tenantId: string, roomId: string, date: Date) {
+    return (RoomService.instance || new RoomService()).getRoomSchedule(tenantId, roomId, date);
+  }
+  static async validateRoomBooking(tenantId: string, options: RoomBookingValidation) {
+    return (RoomService.instance || new RoomService()).validateRoomBooking(tenantId, options);
+  }
+  static async addChairToRoom(tenantId: string, roomId: string, name: string, code?: string) {
+    return (RoomService.instance || new RoomService()).addChairToRoom(tenantId, roomId, name, code);
+  }
+  static async getRoomsLiveStatus(tenantId: string) {
+    return (RoomService.instance || new RoomService()).getRoomsLiveStatus(tenantId);
+  }
   /**
    * CREATE ROOM
    */
-  static async createRoom(tenantId: string, data: z.infer<typeof RoomSchema>) {
+  async createRoom(tenantId: string, data: z.infer<typeof RoomSchema>) {
     await requirePermission(PermissionCode.ROOM_MANAGE);
 
     // Auto-generate slug if not provided
     const slug = data.slug || await this.generateUniqueRoomSlug(tenantId, data.name);
 
-    const room = await prisma.room.create({
+    const room = await this.prismaClient.room.create({
       data: {
         ...data,
         slug,
@@ -76,10 +109,10 @@ export class RoomService {
   /**
    * UPDATE ROOM
    */
-  static async updateRoom(tenantId: string, roomId: string, data: Partial<z.infer<typeof RoomSchema>>) {
+  async updateRoom(tenantId: string, roomId: string, data: Partial<z.infer<typeof RoomSchema>>) {
     await requirePermission(PermissionCode.ROOM_MANAGE);
 
-    const room = await prisma.room.update({
+    const room = await this.prismaClient.room.update({
       where: { id: roomId, tenantId },
       data,
     });
@@ -98,10 +131,10 @@ export class RoomService {
   /**
    * CHANGE ROOM STATUS
    */
-  static async changeRoomStatus(tenantId: string, roomId: string, status: RoomStatus) {
+  async changeRoomStatus(tenantId: string, roomId: string, status: RoomStatus) {
     await requirePermission(PermissionCode.ROOM_MANAGE);
 
-    const room = await prisma.room.update({
+    const room = await this.prismaClient.room.update({
       where: { id: roomId, tenantId },
       data: { status },
     });
@@ -125,10 +158,10 @@ export class RoomService {
   /**
    * ASSIGN STAFF TO ROOM
    */
-  static async assignStaffToRoom(tenantId: string, assignment: z.infer<typeof RoomAssignmentSchema>) {
+  async assignStaffToRoom(tenantId: string, assignment: z.infer<typeof RoomAssignmentSchema>) {
     await requirePermission(PermissionCode.ROOM_STAFF_ASSIGN);
 
-    const roomStaff = await prisma.roomStaff.upsert({
+    const roomStaff = await this.prismaClient.roomStaff.upsert({
       where: {
         roomId_userId: {
           roomId: assignment.roomId,
@@ -153,10 +186,10 @@ export class RoomService {
   /**
    * REMOVE STAFF FROM ROOM
    */
-  static async removeStaffFromRoom(tenantId: string, roomId: string, userId: string) {
+  async removeStaffFromRoom(tenantId: string, roomId: string, userId: string) {
     await requirePermission(PermissionCode.ROOM_STAFF_ASSIGN);
 
-    await prisma.roomStaff.delete({
+    await this.prismaClient.roomStaff.delete({
       where: {
         roomId_userId: { roomId, userId }
       }
@@ -174,7 +207,7 @@ export class RoomService {
   /**
    * GET ROOM SCHEDULE
    */
-  static async getRoomSchedule(tenantId: string, roomId: string, date: Date) {
+  async getRoomSchedule(tenantId: string, roomId: string, date: Date) {
     await requirePermission(PermissionCode.ROOM_VIEW);
 
     const startOfDay = new Date(date);
@@ -182,7 +215,7 @@ export class RoomService {
     const endOfDay = new Date(date);
     endOfDay.setHours(23, 59, 59, 999);
 
-    return prisma.appointment.findMany({
+    return this.prismaClient.appointment.findMany({
       where: {
         tenantId,
         roomId,
@@ -204,14 +237,14 @@ export class RoomService {
   /**
    * VALIDATE ROOM BOOKING (The Core Engine)
    */
-  static async validateRoomBooking(tenantId: string, options: RoomBookingValidation) {
+  async validateRoomBooking(tenantId: string, options: RoomBookingValidation) {
     const { roomId, chairId, doctorId, date, time, duration, excludeAppointmentId } = options;
 
     const startTime = new Date(time);
     const endTime = new Date(startTime.getTime() + duration * 60000);
 
     // 1. Check Room Availability (overlapping appointments in same room)
-    const roomOverlap = await prisma.appointment.findFirst({
+    const roomOverlap = await this.prismaClient.appointment.findFirst({
       where: {
         tenantId,
         roomId,
@@ -237,7 +270,7 @@ export class RoomService {
     // ExistingEnd = ExistingStart + ExistingDuration
     
     // Using raw query for precise overlap check across duration
-    const conflicts = await prisma.$queryRaw<any[]>`
+    const conflicts = await this.prismaClient.$queryRaw<any[]>`
       SELECT id, type FROM (
         -- Room Overlap
         SELECT id, 'ROOM' as type FROM appointments
@@ -296,10 +329,10 @@ export class RoomService {
   /**
    * ADD CHAIR TO ROOM
    */
-  static async addChairToRoom(tenantId: string, roomId: string, name: string, code?: string) {
+  async addChairToRoom(tenantId: string, roomId: string, name: string, code?: string) {
     await requirePermission(PermissionCode.ROOM_MANAGE);
 
-    return prisma.roomChair.create({
+    return this.prismaClient.roomChair.create({
       data: {
         roomId,
         name,
@@ -311,13 +344,13 @@ export class RoomService {
   /**
    * GET ROOMS LIVE STATUS (Queue Infrastructure)
    */
-  static async getRoomsLiveStatus(tenantId: string) {
+  async getRoomsLiveStatus(tenantId: string) {
     await requirePermission(PermissionCode.ROOM_VIEW);
 
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    return prisma.room.findMany({
+    return this.prismaClient.room.findMany({
       where: { tenantId, isActive: true },
       include: {
         roomStaff: { 
@@ -359,7 +392,7 @@ export class RoomService {
   /**
    * HELPERS: Slug generation
    */
-  private static slugify(text: string): string {
+  private slugify(text: string): string {
     return text
       .toString()
       .toLowerCase()
@@ -371,13 +404,13 @@ export class RoomService {
       .replace(/-+$/, '');      // Trim - from end of text
   }
 
-  private static async generateUniqueRoomSlug(tenantId: string, name: string): Promise<string> {
+  private async generateUniqueRoomSlug(tenantId: string, name: string): Promise<string> {
     const baseSlug = this.slugify(name) || 'room';
     let slug = baseSlug;
     let counter = 1;
 
     while (true) {
-      const existing = await prisma.room.findFirst({
+      const existing = await this.prismaClient.room.findFirst({
         where: { tenantId, slug },
         select: { id: true }
       });

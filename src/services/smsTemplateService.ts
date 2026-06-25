@@ -12,13 +12,16 @@ export interface SmsTemplateCreateInput {
   isActive: boolean;
 }
 
-const smsTemplateRepository = new SmsTemplateRepository();
-
 export class SmsTemplateService {
+  static instance?: SmsTemplateService;
+
+  constructor(
+    private readonly smsTemplateRepository = new SmsTemplateRepository()
+  ) {}
   async getTemplates(tenantId: string) {
     try {
       if (!tenantId) throw new Error("Missing tenantId");
-      return await smsTemplateRepository.findMany(tenantId);
+      return await this.smsTemplateRepository.findMany(tenantId);
     } catch (error: any) {
       console.warn("[SmsTemplateService] Failed to get templates:", error.message);
       throw error;
@@ -28,7 +31,7 @@ export class SmsTemplateService {
   async getTemplate(tenantId: string, id: string) {
     try {
       if (!tenantId || !id) throw new Error("Missing tenantId or id");
-      return await smsTemplateRepository.findUnique(tenantId, id);
+      return await this.smsTemplateRepository.findUnique(tenantId, id);
     } catch (error: any) {
       console.warn(`[SmsTemplateService] Failed to get template ${id}:`, error.message);
       throw error;
@@ -38,7 +41,7 @@ export class SmsTemplateService {
   async createTemplate(tenantId: string, data: SmsTemplateCreateInput) {
     try {
       if (!tenantId) throw new Error("Missing tenantId");
-      return await smsTemplateRepository.create(tenantId, {
+      return await this.smsTemplateRepository.create(tenantId, {
         tenantId,
         name: data.name,
         category: data.category,
@@ -55,7 +58,7 @@ export class SmsTemplateService {
   async updateTemplate(tenantId: string, id: string, data: Partial<SmsTemplateCreateInput>) {
     try {
       if (!tenantId || !id) throw new Error("Missing tenantId or id");
-      return await smsTemplateRepository.update(tenantId, id, {
+      return await this.smsTemplateRepository.update(tenantId, id, {
         name: data.name,
         category: data.category,
         message: data.message,
@@ -71,7 +74,7 @@ export class SmsTemplateService {
   async deleteTemplate(tenantId: string, id: string) {
     try {
       if (!tenantId || !id) throw new Error("Missing tenantId or id");
-      return await smsTemplateRepository.delete(tenantId, id);
+      return await this.smsTemplateRepository.delete(tenantId, id);
     } catch (error: any) {
       console.warn(`[SmsTemplateService] Failed to delete template ${id}:`, error.message);
       throw error;
@@ -83,7 +86,7 @@ export class SmsTemplateService {
       const existing = await this.getTemplate(tenantId, id);
       if (!existing) throw new Error("Template not found");
 
-      return await smsTemplateRepository.create(tenantId, {
+      return await this.smsTemplateRepository.create(tenantId, {
         tenantId,
         name: `${existing.name} (Copy)`,
         category: existing.category,

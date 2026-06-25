@@ -3,7 +3,11 @@ import { TreatmentPlanRepository } from "@/repositories/treatment-plan.repositor
 import { Prisma } from "@/generated/client";
 
 export class TreatmentPlanService {
-  private repository = new TreatmentPlanRepository();
+  static instance?: TreatmentPlanService;
+
+  constructor(
+    private readonly repository = new TreatmentPlanRepository()
+  ) {}
 
   private normalizeString(val: string | undefined | null, fallback: string = ""): string {
     if (!val || typeof val !== 'string') return fallback;

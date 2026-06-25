@@ -3,7 +3,11 @@ import { ServiceRepository } from "@/repositories/service.repository";
 import { ServiceCategory } from "@/generated/client";
 
 export class ServiceService {
-  private repository = new ServiceRepository();
+  static instance?: ServiceService;
+
+  constructor(
+    private readonly repository = new ServiceRepository()
+  ) {}
 
   private normalizeString(val: string | undefined | null): string {
     return (val || "").trim();

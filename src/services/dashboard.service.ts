@@ -3,7 +3,11 @@ import { subMonths, startOfMonth, differenceInMinutes } from "date-fns";
 import { formatDoctorName } from "@/lib/utils";
 
 export class DashboardService {
-  private dashboardRepo = new DashboardRepository();
+  static instance?: DashboardService;
+
+  constructor(
+    private readonly dashboardRepo = new DashboardRepository()
+  ) {}
 
   async getDashboardData(tenantId: string) {
     const revenueTodayRaw = await this.dashboardRepo.getDailyRevenue(tenantId);

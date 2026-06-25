@@ -2,9 +2,12 @@ import "server-only";
 import { PatientRepository } from "@/repositories/patient.repository";
 import { Prisma } from "@/generated/client";
 
-const patientRepository = new PatientRepository();
-
 export class PatientService {
+  static instance?: PatientService;
+
+  constructor(
+    private readonly patientRepository = new PatientRepository()
+  ) {}
   private normalizeString(val: string | null | undefined, fallback: string = "-"): string {
     if (!val || typeof val !== 'string') return fallback;
     const trimmed = val.trim();
@@ -136,7 +139,7 @@ export class PatientService {
   async getAllPatients(tenantId: string) {
     try {
       if (!tenantId) return [];
-      const patients = await patientRepository.findMany(tenantId, {
+      const patients = await this.patientRepository.findMany(tenantId, {
         orderBy: { createdAt: 'desc' },
         select: {
           id: true,
@@ -158,7 +161,7 @@ export class PatientService {
   async getPatientsForSelection(tenantId: string) {
     try {
       if (!tenantId) return [];
-      const data = await patientRepository.findMany(tenantId, {
+      const data = await this.patientRepository.findMany(tenantId, {
         select: {
           id: true,
           displayId: true,
@@ -216,7 +219,7 @@ export class PatientService {
 
       // Fetch the page and the total count in a single round-trip via Promise.all
       const [data, total] = await Promise.all([
-        patientRepository.findMany(tenantId, {
+        this.patientRepository.findMany(tenantId, {
           skip,
           take: safeLimit,
           orderBy: { createdAt: 'desc' },
@@ -238,7 +241,7 @@ export class PatientService {
             },
           },
         }),
-        patientRepository.count(tenantId, where),
+        this.patientRepository.count(tenantId, where),
       ]);
 
       const patients = (data || []).map((patient: any) => {
@@ -284,7 +287,7 @@ export class PatientService {
   async getPatientsList(tenantId: string) {
     try {
       if (!tenantId) return [];
-      const data = await patientRepository.findMany(tenantId, {
+      const data = await this.patientRepository.findMany(tenantId, {
         orderBy: { createdAt: 'desc' },
         select: {
           id: true,
@@ -375,7 +378,7 @@ export class PatientService {
 
       // 1. Repository Check (Truth Verification - debug only)
       if (process.env.AUTH_DEBUG === 'true') {
-        const rawPatient = await patientRepository.findUniqueGlobal(id);
+        const rawPatient = await this.patientRepository.findUniqueGlobal(id);
         console.log("[AUTH_DEBUG][PATIENT_DATABASE_REALITY]", {
           id: rawPatient?.id,
           actualTenantId: rawPatient?.tenantId,
@@ -385,7 +388,7 @@ export class PatientService {
       }
 
       // Combine both core and clinical queries into a single database findUnique call
-      const data = await patientRepository.findUnique(tenantId, id, {
+      const data = await this.patientRepository.findUnique(tenantId, id, {
         id: true,
         displayId: true,
         name: true,
@@ -487,7 +490,7 @@ export class PatientService {
         phone: data.phone?.trim() || "-",
         email: data.email?.trim() || null,
       };
-      const result = await patientRepository.create(tenantId, normalizedData);
+      const result = await this.patientRepository.create(tenantId, normalizedData);
       return this.mapSafePatient(result);
     } catch (error) {
       console.error("[PatientService.createPatient] Error:", error);
@@ -503,7 +506,7 @@ export class PatientService {
       if (typeof data.phone === 'string') normalizedData.phone = data.phone.trim();
       if (typeof data.email === 'string') normalizedData.email = data.email.trim() || null;
 
-      const result = await patientRepository.update(tenantId, id, normalizedData);
+      const result = await this.patientRepository.update(tenantId, id, normalizedData);
       return this.mapSafePatient(result);
     } catch (error) {
       console.error(`[PatientService.updatePatient] Error updating patient ${id}:`, error);
@@ -514,7 +517,7 @@ export class PatientService {
   async deletePatient(tenantId: string, id: string) {
     try {
       if (!tenantId || !id) return false;
-      return await patientRepository.delete(tenantId, id);
+      return await this.patientRepository.delete(tenantId, id);
     } catch (error) {
       console.error(`[PatientService.deletePatient] Error deleting patient ${id}:`, error);
       return false;
@@ -692,7 +695,7 @@ export class PatientService {
   async updateOralCondition(tenantId: string, patientId: string, name: string, active: boolean) {
     try {
       if (!tenantId || !patientId) return null;
-      const result = await patientRepository.upsertOralCondition(tenantId, patientId, name, active);
+      const result = await this.patientRepository.upsertOralCondition(tenantId, patientId, name, active);
       return JSON.parse(JSON.stringify(result));
     } catch (error) {
       console.error("[PatientService.updateOralCondition] Error:", error);
@@ -703,7 +706,7 @@ export class PatientService {
   async updateOralTissue(tenantId: string, patientId: string, name: string, status: string, notes: string) {
     try {
       if (!tenantId || !patientId) return null;
-      const result = await patientRepository.upsertOralTissue(tenantId, patientId, name, status, notes);
+      const result = await this.patientRepository.upsertOralTissue(tenantId, patientId, name, status, notes);
       return JSON.parse(JSON.stringify(result));
     } catch (error) {
       console.error("[PatientService.updateOralTissue] Error:", error);
@@ -714,7 +717,7 @@ export class PatientService {
   async addVisitRecord(tenantId: string, patientId: string, data: any) {
     try {
       if (!tenantId || !patientId) return null;
-      const result = await patientRepository.createVisitRecord(tenantId, patientId, data);
+      const result = await this.patientRepository.createVisitRecord(tenantId, patientId, data);
       return JSON.parse(JSON.stringify(result));
     } catch (error) {
       console.error("[PatientService.addVisitRecord] Error:", error);
@@ -725,7 +728,7 @@ export class PatientService {
   async deleteVisitRecord(tenantId: string, id: string) {
     try {
       if (!tenantId || !id) return false;
-      return await patientRepository.deleteVisitRecord(tenantId, id);
+      return await this.patientRepository.deleteVisitRecord(tenantId, id);
     } catch (error) {
       console.error("[PatientService.deleteVisitRecord] Error:", error);
       return false;
@@ -735,7 +738,7 @@ export class PatientService {
   async updateToothCondition(tenantId: string, patientId: string, toothNumber: number, condition: string, isMissing: boolean, notes: string) {
     try {
       if (!tenantId || !patientId) return null;
-      const result = await patientRepository.upsertToothCondition(tenantId, patientId, toothNumber, condition, isMissing, notes);
+      const result = await this.patientRepository.upsertToothCondition(tenantId, patientId, toothNumber, condition, isMissing, notes);
       return JSON.parse(JSON.stringify(result));
     } catch (error) {
       console.error("[PatientService.updateToothCondition] Error:", error);
@@ -746,7 +749,7 @@ export class PatientService {
   async getPeriodontalSessions(tenantId: string, patientId: string) {
     try {
       if (!tenantId || !patientId) return [];
-      const result = await patientRepository.getPeriodontalSessionsByPatient(tenantId, patientId);
+      const result = await this.patientRepository.getPeriodontalSessionsByPatient(tenantId, patientId);
       return JSON.parse(JSON.stringify(result));
     } catch (error) {
       console.error("[PatientService.getPeriodontalSessions] Error:", error);
@@ -757,7 +760,7 @@ export class PatientService {
   async createPeriodontalSession(tenantId: string, patientId: string, examinerId?: string) {
     try {
       if (!tenantId || !patientId) return null;
-      const result = await patientRepository.createPeriodontalSession(tenantId, patientId, examinerId);
+      const result = await this.patientRepository.createPeriodontalSession(tenantId, patientId, examinerId);
       return JSON.parse(JSON.stringify(result));
     } catch (error) {
       console.error("[PatientService.createPeriodontalSession] Error:", error);
@@ -768,7 +771,7 @@ export class PatientService {
   async updatePeriodontalSession(tenantId: string, sessionId: string, data: any) {
     try {
       if (!tenantId || !sessionId) return null;
-      const result = await patientRepository.updatePeriodontalSession(tenantId, sessionId, data);
+      const result = await this.patientRepository.updatePeriodontalSession(tenantId, sessionId, data);
       return JSON.parse(JSON.stringify(result));
     } catch (error) {
       console.error("[PatientService.updatePeriodontalSession] Error:", error);
@@ -779,7 +782,7 @@ export class PatientService {
   async deletePeriodontalSession(tenantId: string, sessionId: string) {
     try {
       if (!tenantId || !sessionId) return false;
-      await patientRepository.deletePeriodontalSession(tenantId, sessionId);
+      await this.patientRepository.deletePeriodontalSession(tenantId, sessionId);
       return true;
     } catch (error) {
       console.error("[PatientService.deletePeriodontalSession] Error:", error);
@@ -790,7 +793,7 @@ export class PatientService {
   async updatePeriodontalMeasurement(tenantId: string, patientId: string, sessionId: string, data: any) {
     try {
       if (!tenantId || !patientId || !sessionId) return null;
-      const result = await patientRepository.createPeriodontalMeasurement(tenantId, patientId, sessionId, data);
+      const result = await this.patientRepository.createPeriodontalMeasurement(tenantId, patientId, sessionId, data);
       
       // Calculate session metrics in the background (or we could await it)
       this.calculateSessionMetrics(tenantId, sessionId).catch(console.error);
@@ -804,7 +807,7 @@ export class PatientService {
 
   async calculateSessionMetrics(tenantId: string, sessionId: string) {
     try {
-      const session = await patientRepository.getPeriodontalSessionById(tenantId, sessionId);
+      const session = await this.patientRepository.getPeriodontalSessionById(tenantId, sessionId);
       if (!session) return;
       
       const measurements = session.measurements || [];
@@ -842,7 +845,7 @@ export class PatientService {
       const averagePocketDepth = pdCount > 0 ? pdSum / pdCount : null;
       const bopPercentage = bopTotalSites > 0 ? (bopPositiveSites / bopTotalSites) * 100 : null;
       
-      await patientRepository.updatePeriodontalSession(tenantId, sessionId, {
+      await this.patientRepository.updatePeriodontalSession(tenantId, sessionId, {
         averagePocketDepth,
         bopPercentage
       });
@@ -854,7 +857,7 @@ export class PatientService {
   async clearPeriodontalMeasurements(tenantId: string, patientId: string) {
     try {
       if (!tenantId || !patientId) return false;
-      return await patientRepository.deleteAllPeriodontalMeasurements(tenantId, patientId);
+      return await this.patientRepository.deleteAllPeriodontalMeasurements(tenantId, patientId);
     } catch (error) {
       console.error("[PatientService.clearPeriodontalMeasurements] Error:", error);
       return false;
@@ -864,7 +867,7 @@ export class PatientService {
   async addMedicalCondition(tenantId: string, patientId: string, data: any) {
     try {
       if (!tenantId || !patientId) return null;
-      const result = await patientRepository.createMedicalCondition(tenantId, patientId, data);
+      const result = await this.patientRepository.createMedicalCondition(tenantId, patientId, data);
       return JSON.parse(JSON.stringify(result));
     } catch (error) {
       console.error("[PatientService.addMedicalCondition] Error:", error);
@@ -875,7 +878,7 @@ export class PatientService {
   async deleteMedicalCondition(tenantId: string, id: string) {
     try {
       if (!tenantId || !id) return false;
-      return await patientRepository.deleteMedicalCondition(tenantId, id);
+      return await this.patientRepository.deleteMedicalCondition(tenantId, id);
     } catch (error) {
       console.error("[PatientService.deleteMedicalCondition] Error:", error);
       return false;
@@ -885,7 +888,7 @@ export class PatientService {
   async addAllergy(tenantId: string, patientId: string, data: any) {
     try {
       if (!tenantId || !patientId) return null;
-      const result = await patientRepository.createAllergy(tenantId, patientId, data);
+      const result = await this.patientRepository.createAllergy(tenantId, patientId, data);
       return JSON.parse(JSON.stringify(result));
     } catch (error) {
       console.error("[PatientService.addAllergy] Error:", error);
@@ -896,7 +899,7 @@ export class PatientService {
   async deleteAllergy(tenantId: string, id: string) {
     try {
       if (!tenantId || !id) return false;
-      return await patientRepository.deleteAllergy(tenantId, id);
+      return await this.patientRepository.deleteAllergy(tenantId, id);
     } catch (error) {
       console.error("[PatientService.deleteAllergy] Error:", error);
       return false;
@@ -906,7 +909,7 @@ export class PatientService {
   async addMedication(tenantId: string, patientId: string, data: any) {
     try {
       if (!tenantId || !patientId) return null;
-      const result = await patientRepository.createMedication(tenantId, patientId, data);
+      const result = await this.patientRepository.createMedication(tenantId, patientId, data);
       return JSON.parse(JSON.stringify(result));
     } catch (error) {
       console.error("[PatientService.addMedication] Error:", error);
@@ -917,7 +920,7 @@ export class PatientService {
   async deleteMedication(tenantId: string, id: string) {
     try {
       if (!tenantId || !id) return false;
-      return await patientRepository.deleteMedication(tenantId, id);
+      return await this.patientRepository.deleteMedication(tenantId, id);
     } catch (error) {
       console.error("[PatientService.deleteMedication] Error:", error);
       return false;
@@ -927,7 +930,7 @@ export class PatientService {
   async addSurgery(tenantId: string, patientId: string, data: any) {
     try {
       if (!tenantId || !patientId) return null;
-      const result = await patientRepository.createSurgery(tenantId, patientId, data);
+      const result = await this.patientRepository.createSurgery(tenantId, patientId, data);
       return JSON.parse(JSON.stringify(result));
     } catch (error) {
       console.error("[PatientService.addSurgery] Error:", error);
@@ -938,7 +941,7 @@ export class PatientService {
   async deleteSurgery(tenantId: string, id: string) {
     try {
       if (!tenantId || !id) return false;
-      return await patientRepository.deleteSurgery(tenantId, id);
+      return await this.patientRepository.deleteSurgery(tenantId, id);
     } catch (error) {
       console.error("[PatientService.deleteSurgery] Error:", error);
       return false;
@@ -948,7 +951,7 @@ export class PatientService {
   async addFamilyHistory(tenantId: string, patientId: string, data: any) {
     try {
       if (!tenantId || !patientId) return null;
-      const result = await patientRepository.createFamilyHistory(tenantId, patientId, data);
+      const result = await this.patientRepository.createFamilyHistory(tenantId, patientId, data);
       return JSON.parse(JSON.stringify(result));
     } catch (error) {
       console.error("[PatientService.addFamilyHistory] Error:", error);
@@ -959,7 +962,7 @@ export class PatientService {
   async deleteFamilyHistory(tenantId: string, id: string) {
     try {
       if (!tenantId || !id) return false;
-      return await patientRepository.deleteFamilyHistory(tenantId, id);
+      return await this.patientRepository.deleteFamilyHistory(tenantId, id);
     } catch (error) {
       console.error("[PatientService.deleteFamilyHistory] Error:", error);
       return false;
@@ -969,7 +972,7 @@ export class PatientService {
   async addPrescription(tenantId: string, patientId: string, data: any) {
     try {
       if (!tenantId || !patientId) return null;
-      const result = await patientRepository.createPrescription(tenantId, patientId, data);
+      const result = await this.patientRepository.createPrescription(tenantId, patientId, data);
       return JSON.parse(JSON.stringify(result));
     } catch (error) {
       console.error("[PatientService.addPrescription] Error:", error);
@@ -980,7 +983,7 @@ export class PatientService {
   async deletePrescription(tenantId: string, id: string) {
     try {
       if (!tenantId || !id) return false;
-      return await patientRepository.deletePrescription(tenantId, id);
+      return await this.patientRepository.deletePrescription(tenantId, id);
     } catch (error) {
       console.error("[PatientService.deletePrescription] Error:", error);
       return false;
@@ -990,7 +993,7 @@ export class PatientService {
   async addDocument(tenantId: string, patientId: string, data: any) {
     try {
       if (!tenantId || !patientId) return null;
-      const result = await patientRepository.createDocument(tenantId, patientId, data);
+      const result = await this.patientRepository.createDocument(tenantId, patientId, data);
       return JSON.parse(JSON.stringify(result));
     } catch (error) {
       console.error("[PatientService.addDocument] Error:", error);
@@ -1001,7 +1004,7 @@ export class PatientService {
   async deleteDocument(tenantId: string, id: string) {
     try {
       if (!tenantId || !id) return false;
-      return await patientRepository.deleteDocument(tenantId, id);
+      return await this.patientRepository.deleteDocument(tenantId, id);
     } catch (error) {
       console.error("[PatientService.deleteDocument] Error:", error);
       return false;
@@ -1011,7 +1014,7 @@ export class PatientService {
   async updateInvoiceStatus(tenantId: string, id: string, status: string) {
     try {
       if (!tenantId || !id) return null;
-      const result = await patientRepository.updateInvoice(tenantId, id, { status });
+      const result = await this.patientRepository.updateInvoice(tenantId, id, { status });
       return JSON.parse(JSON.stringify(result));
     } catch (error) {
       console.error("[PatientService.updateInvoiceStatus] Error:", error);
@@ -1022,7 +1025,7 @@ export class PatientService {
   async createInvoice(tenantId: string, patientId: string, data: any) {
     try {
       if (!tenantId || !patientId) return null;
-      const result = await patientRepository.createInvoice(tenantId, patientId, data);
+      const result = await this.patientRepository.createInvoice(tenantId, patientId, data);
       return JSON.parse(JSON.stringify(result));
     } catch (error) {
       console.error("[PatientService.createInvoice] Error:", error);
@@ -1033,7 +1036,7 @@ export class PatientService {
   async addPayment(tenantId: string, invoiceId: string, data: any) {
     try {
       if (!tenantId || !invoiceId) return null;
-      const result = await patientRepository.addPayment(tenantId, invoiceId, data);
+      const result = await this.patientRepository.addPayment(tenantId, invoiceId, data);
       return JSON.parse(JSON.stringify(result));
     } catch (error) {
       console.error("[PatientService.addPayment] Error:", error);
@@ -1044,7 +1047,7 @@ export class PatientService {
   async deleteInvoice(tenantId: string, id: string) {
     try {
       if (!tenantId || !id) return false;
-      return await patientRepository.deleteInvoice(tenantId, id);
+      return await this.patientRepository.deleteInvoice(tenantId, id);
     } catch (error) {
       console.error("[PatientService.deleteInvoice] Error:", error);
       return false;
@@ -1054,7 +1057,7 @@ export class PatientService {
   async searchPatients(tenantId: string, query: string) {
     try {
       if (!tenantId || !query) return [];
-      const data = await patientRepository.findMany(tenantId, {
+      const data = await this.patientRepository.findMany(tenantId, {
         where: {
           OR: [
             { name: { contains: query, mode: 'insensitive' } },

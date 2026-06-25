@@ -12,6 +12,13 @@ export interface CampaignFilters {
 }
 
 export class SmsCampaignService {
+  static instance?: SmsCampaignService;
+
+  constructor(
+    private readonly prismaClient = prisma,
+    private readonly smsServiceInstance = smsService,
+    private readonly eventService = EventService.instance || new EventService()
+  ) {}
   /**
    * Translates filter criteria into Prisma "where" clause for Patient.
    */
@@ -91,7 +98,7 @@ export class SmsCampaignService {
    */
   async previewAudience(tenantId: string, filters: CampaignFilters): Promise<number> {
     const where = this.buildAudienceQuery(tenantId, filters);
-    const count = await prisma.patient.count({ where });
+    const count = await this.prismaClient.patient.count({ where });
     return count;
   }
 
@@ -102,7 +109,7 @@ export class SmsCampaignService {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    const campaignsToday = await prisma.smsCampaign.findMany({
+    const campaignsToday = await this.prismaClient.smsCampaign.findMany({
       where: {
         tenantId,
         createdAt: { gte: today },
@@ -118,7 +125,7 @@ export class SmsCampaignService {
    * Create a DRAFT campaign.
    */
   async createCampaign(tenantId: string, data: { name: string; message: string; filters: CampaignFilters }) {
-    return prisma.smsCampaign.create({
+    return this.prismaClient.smsCampaign.create({
       data: {
         tenantId,
         name: data.name,
@@ -133,7 +140,7 @@ export class SmsCampaignService {
    * Process a campaign: fetches patients, replaces variables, sends batches.
    */
   async processCampaign(tenantId: string, campaignId: string) {
-    const campaign = await prisma.smsCampaign.findUnique({
+    const campaign = await this.prismaClient.smsCampaign.findUnique({
       where: { id: campaignId, tenantId }
     });
 
@@ -142,7 +149,7 @@ export class SmsCampaignService {
     }
 
     // Mark as processing
-    await prisma.smsCampaign.update({
+    await this.prismaClient.smsCampaign.update({
       where: { id: campaignId },
       data: { status: 'PROCESSING' }
     });
@@ -151,7 +158,7 @@ export class SmsCampaignService {
       const filters = campaign.filters as CampaignFilters;
       const where = this.buildAudienceQuery(tenantId, filters);
       
-      const patients = await prisma.patient.findMany({
+      const patients = await this.prismaClient.patient.findMany({
         where,
         select: {
           id: true,
@@ -195,12 +202,12 @@ export class SmsCampaignService {
         });
 
         // Use the abstract smsService
-        const result = await smsService.sendBulkSms(tenantId, payloads);
+        const result = await this.smsServiceInstance.sendBulkSms(tenantId, payloads);
         sentCount += result.sent;
         failedCount += result.failed;
       }
 
-      await prisma.smsCampaign.update({
+      await this.prismaClient.smsCampaign.update({
         where: { id: campaignId },
         data: {
           status: 'COMPLETED',
@@ -209,7 +216,7 @@ export class SmsCampaignService {
         }
       });
 
-      await EventService.trackEvent({
+      await this.eventService.trackEvent({
         tenantId,
         eventType: 'CAMPAIGN_COMPLETED',
         entityId: campaignId,
@@ -218,7 +225,7 @@ export class SmsCampaignService {
       });
 
     } catch (error: any) {
-      await prisma.smsCampaign.update({
+      await this.prismaClient.smsCampaign.update({
         where: { id: campaignId },
         data: {
           status: 'DRAFT', // Revert to DRAFT so it can be fixed/retried
@@ -230,7 +237,7 @@ export class SmsCampaignService {
   }
 
   async getCampaigns(tenantId: string) {
-    return prisma.smsCampaign.findMany({
+    return this.prismaClient.smsCampaign.findMany({
       where: { tenantId },
       orderBy: { createdAt: 'desc' }
     });

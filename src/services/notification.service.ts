@@ -30,6 +30,7 @@ export interface NotificationChannel {
 const rateLimitMap = new Map<string, number[]>();
 
 export class NotificationService {
+  static instance?: NotificationService;
   private channels: NotificationChannel[] = [];
 
   constructor(

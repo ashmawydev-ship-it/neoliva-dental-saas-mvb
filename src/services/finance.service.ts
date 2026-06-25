@@ -2,10 +2,13 @@ import { FinanceRepository } from "@/repositories/finance.repository";
 import { TreasuryService } from "./treasury.service";
 import { startOfDay, startOfMonth, subMonths, format, isSameDay, isSameMonth } from "date-fns";
 
-const financeRepository = new FinanceRepository();
-const treasuryService = new TreasuryService();
-
 export class FinanceService {
+  static instance?: FinanceService;
+
+  constructor(
+    private readonly financeRepository = new FinanceRepository(),
+    private readonly treasuryService = TreasuryService.instance || new TreasuryService()
+  ) {}
   async getFinancialDashboard(tenantId: string, period: '7d' | '30d' | '12m' = '30d') {
     const now = new Date();
     let fromDate: Date;
@@ -24,13 +27,13 @@ export class FinanceService {
       doctorRevenueRaw,
       balances
     ] = await Promise.all([
-      financeRepository.getRevenueData(tenantId, fromDate),
-      financeRepository.getExpenseData(tenantId, fromDate),
-      financeRepository.getInvoiceSummary(tenantId),
-      financeRepository.getRecentFinancialActivity(tenantId),
-      financeRepository.getTopServices(tenantId),
-      financeRepository.getRevenueByDoctor(tenantId),
-      treasuryService.getTrialBalance(tenantId)
+      this.financeRepository.getRevenueData(tenantId, fromDate),
+      this.financeRepository.getExpenseData(tenantId, fromDate),
+      this.financeRepository.getInvoiceSummary(tenantId),
+      this.financeRepository.getRecentFinancialActivity(tenantId),
+      this.financeRepository.getTopServices(tenantId),
+      this.financeRepository.getRevenueByDoctor(tenantId),
+      this.treasuryService.getTrialBalance(tenantId)
     ]);
 
     // 2. Process KPIs

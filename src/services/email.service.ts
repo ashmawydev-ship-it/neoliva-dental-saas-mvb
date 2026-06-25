@@ -12,7 +12,22 @@ if (apiKey) {
 }
 
 export class EmailService {
-  static async sendStaffInvitation({
+  static instance?: EmailService;
+
+  constructor(
+    private readonly brevoClient: BrevoClient | null = brevo
+  ) {}
+
+  static async sendStaffInvitation(args: {
+    email: string;
+    fullName: string;
+    clinicName: string;
+    inviteUrl: string;
+  }) {
+    return (EmailService.instance || new EmailService()).sendStaffInvitation(args);
+  }
+
+  async sendStaffInvitation({
     email,
     fullName,
     clinicName,
@@ -25,14 +40,14 @@ export class EmailService {
   }) {
     console.log('[EMAIL_SERVICE] sendStaffInvitation called for:', email);
     console.log('[EmailService] Start sending staff invitation to:', email);
-    if (!brevo) {
+    if (!this.brevoClient) {
       console.warn('[EmailService] BREVO_API_KEY not configured. Skipping email send.');
       return { success: false, error: new Error('Email service not configured (missing BREVO_API_KEY)') };
     }
 
     try {
       console.log('[EmailService] Before calling Brevo API...');
-      const result = await brevo.transactionalEmails.sendTransacEmail({
+      const result = await this.brevoClient.transactionalEmails.sendTransacEmail({
         sender: { name: 'Neoliva', email: 'ashmawyalaa@gmail.com' }, // Default sender email
         to: [{ email: email, name: fullName }],
         subject: `Invitation to join ${clinicName} on Neoliva`,

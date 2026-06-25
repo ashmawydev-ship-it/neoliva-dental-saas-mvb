@@ -4,8 +4,12 @@ import { Prisma } from "@/generated/client";
 import { TreasuryService } from "./treasury.service";
 
 export class ExpenseService {
-  private repository = new ExpenseRepository();
-  private treasuryService = new TreasuryService();
+  static instance?: ExpenseService;
+
+  constructor(
+    private readonly repository = new ExpenseRepository(),
+    private readonly treasuryService = TreasuryService.instance || new TreasuryService()
+  ) {}
 
   private normalizeString(val: string | undefined | null): string {
     return (val || "").trim();

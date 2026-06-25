@@ -23,7 +23,44 @@ const DERIVED_EVENT_MAP: Record<string, AlertType> = {
   TREATMENT_DELAYED:  'TREATMENT_DELAY',
 };
 
-const eventRepository = new EventRepository();
+export class AlertsService {
+  static instance?: AlertsService;
+
+  constructor(
+    private readonly eventRepository = new EventRepository()
+  ) {}
+
+  async getOperationalAlerts(tenantId: string): Promise<OperationalAlert[]> {
+    const since = new Date(Date.now() - 24 * 60 * 60 * 1000);
+
+    // Single aggregation query — pull counts for all derived event types at once
+    const rawCounts = await this.eventRepository.getOperationalAlertsCount(
+      tenantId,
+      since,
+      ['PATIENT_NO_SHOW', 'INVOICE_OVERDUE', 'TREATMENT_DELAYED']
+    );
+
+    const alerts: OperationalAlert[] = rawCounts.map(({ eventType, _count }) => {
+      const type = DERIVED_EVENT_MAP[eventType];
+      const count = _count.id;
+      const severity = getSeverity(type, count);
+
+      return {
+        type,
+        severity,
+        count,
+        message: buildMessage(type, count),
+        actionUrl: `/dashboard/events-debug?filter=${eventType}`,
+      };
+    });
+
+    // Sort HIGH → MEDIUM → LOW, then by count desc within same severity
+    return alerts.sort((a, b) => {
+      const severityDiff = SEVERITY_ORDER[a.severity] - SEVERITY_ORDER[b.severity];
+      return severityDiff !== 0 ? severityDiff : b.count - a.count;
+    });
+  }
+}
 
 function getSeverity(type: AlertType, count: number): AlertSeverity {
   const { high, medium } = SEVERITY_THRESHOLDS[type];
@@ -52,32 +89,5 @@ const SEVERITY_ORDER: Record<AlertSeverity, number> = { HIGH: 0, MEDIUM: 1, LOW:
  * actionable operational alerts, scoped strictly to the given tenant.
  */
 export async function getOperationalAlerts(tenantId: string): Promise<OperationalAlert[]> {
-  const since = new Date(Date.now() - 24 * 60 * 60 * 1000);
-
-  // Single aggregation query — pull counts for all derived event types at once
-  const rawCounts = await eventRepository.getOperationalAlertsCount(
-    tenantId,
-    since,
-    ['PATIENT_NO_SHOW', 'INVOICE_OVERDUE', 'TREATMENT_DELAYED']
-  );
-
-  const alerts: OperationalAlert[] = rawCounts.map(({ eventType, _count }) => {
-    const type = DERIVED_EVENT_MAP[eventType];
-    const count = _count.id;
-    const severity = getSeverity(type, count);
-
-    return {
-      type,
-      severity,
-      count,
-      message: buildMessage(type, count),
-      actionUrl: `/dashboard/events-debug?filter=${eventType}`,
-    };
-  });
-
-  // Sort HIGH → MEDIUM → LOW, then by count desc within same severity
-  return alerts.sort((a, b) => {
-    const severityDiff = SEVERITY_ORDER[a.severity] - SEVERITY_ORDER[b.severity];
-    return severityDiff !== 0 ? severityDiff : b.count - a.count;
-  });
+  return (AlertsService.instance || new AlertsService()).getOperationalAlerts(tenantId);
 }

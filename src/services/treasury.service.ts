@@ -2,6 +2,7 @@ import { TreasuryRepository } from "@/repositories/treasury.repository";
 import { AccountType, Prisma, PaymentMethod } from "@/generated/client";
 
 export class TreasuryService {
+  static instance?: TreasuryService;
   constructor(
     private readonly treasuryRepository = new TreasuryRepository()
   ) {}

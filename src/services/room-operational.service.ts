@@ -2,11 +2,38 @@ import { prisma } from "@/lib/prisma";
 import { AppointmentStatus, RoomStatus } from "@/generated/client";
 
 export class RoomOperationalService {
+  static instance?: RoomOperationalService;
+
+  constructor(
+    private readonly prismaClient = prisma
+  ) {}
+
+  static async getLiveRoomStatus(tenantId: string) {
+    return (RoomOperationalService.instance || new RoomOperationalService()).getLiveRoomStatus(tenantId);
+  }
+  static async startSession(tenantId: string, appointmentId: string) {
+    return (RoomOperationalService.instance || new RoomOperationalService()).startSession(tenantId, appointmentId);
+  }
+  static async endSession(tenantId: string, appointmentId: string) {
+    return (RoomOperationalService.instance || new RoomOperationalService()).endSession(tenantId, appointmentId);
+  }
+  static async transferAppointment(tenantId: string, appointmentId: string, targetRoomId: string) {
+    return (RoomOperationalService.instance || new RoomOperationalService()).transferAppointment(tenantId, appointmentId, targetRoomId);
+  }
+  static async reorderQueue(tenantId: string, roomId: string, appointmentIds: string[]) {
+    return (RoomOperationalService.instance || new RoomOperationalService()).reorderQueue(tenantId, roomId, appointmentIds);
+  }
+  static async prioritizeAppointment(tenantId: string, appointmentId: string) {
+    return (RoomOperationalService.instance || new RoomOperationalService()).prioritizeAppointment(tenantId, appointmentId);
+  }
+  static async updateRoomStatus(tenantId: string, roomId: string, status: RoomStatus) {
+    return (RoomOperationalService.instance || new RoomOperationalService()).updateRoomStatus(tenantId, roomId, status);
+  }
   /**
    * Get all rooms with live operational data
    */
-  static async getLiveRoomStatus(tenantId: string) {
-    const rooms = await prisma.room.findMany({
+  async getLiveRoomStatus(tenantId: string) {
+    const rooms = await this.prismaClient.room.findMany({
       where: { tenantId, isActive: true },
       include: {
         roomStaff: {
@@ -82,8 +109,8 @@ export class RoomOperationalService {
   /**
    * Start a session (Status: IN_PROGRESS)
    */
-  static async startSession(tenantId: string, appointmentId: string) {
-    return await prisma.appointment.update({
+  async startSession(tenantId: string, appointmentId: string) {
+    return await this.prismaClient.appointment.update({
       where: { id: appointmentId, tenantId },
       data: {
         status: 'IN_PROGRESS',
@@ -98,8 +125,8 @@ export class RoomOperationalService {
   /**
    * End a session (Status: COMPLETED)
    */
-  static async endSession(tenantId: string, appointmentId: string) {
-    const apt = await prisma.appointment.update({
+  async endSession(tenantId: string, appointmentId: string) {
+    const apt = await this.prismaClient.appointment.update({
       where: { id: appointmentId, tenantId },
       data: {
         status: 'COMPLETED',
@@ -118,8 +145,8 @@ export class RoomOperationalService {
   /**
    * Transfer appointment between rooms
    */
-  static async transferAppointment(tenantId: string, appointmentId: string, targetRoomId: string) {
-    return await prisma.appointment.update({
+  async transferAppointment(tenantId: string, appointmentId: string, targetRoomId: string) {
+    return await this.prismaClient.appointment.update({
       where: { id: appointmentId, tenantId },
       data: {
         roomId: targetRoomId
@@ -130,10 +157,10 @@ export class RoomOperationalService {
   /**
    * Reorder waiting queue for a specific room
    */
-  static async reorderQueue(tenantId: string, roomId: string, appointmentIds: string[]) {
+  async reorderQueue(tenantId: string, roomId: string, appointmentIds: string[]) {
     // To reorder, we update the 'time' field of each appointment to be 1 minute apart
     // starting from the earliest time in the queue for that room today.
-    const appointments = await prisma.appointment.findMany({
+    const appointments = await this.prismaClient.appointment.findMany({
       where: { id: { in: appointmentIds }, tenantId, roomId },
       orderBy: { time: 'asc' }
     });
@@ -146,7 +173,7 @@ export class RoomOperationalService {
       const newTime = new Date(baseTime);
       newTime.setMinutes(baseTime.getMinutes() + index);
       
-      return prisma.appointment.update({
+      return this.prismaClient.appointment.update({
         where: { id, tenantId },
         data: { time: newTime }
       });
@@ -159,15 +186,15 @@ export class RoomOperationalService {
   /**
    * Prioritize an appointment (move to top of queue)
    */
-  static async prioritizeAppointment(tenantId: string, appointmentId: string) {
-    const apt = await prisma.appointment.findUnique({
+  async prioritizeAppointment(tenantId: string, appointmentId: string) {
+    const apt = await this.prismaClient.appointment.findUnique({
       where: { id: appointmentId, tenantId }
     });
 
     if (!apt || !apt.roomId) throw new Error("Appointment not found or not assigned to a room");
 
     // Find the current top of the queue for this room
-    const topApt = await prisma.appointment.findFirst({
+    const topApt = await this.prismaClient.appointment.findFirst({
       where: { 
         roomId: apt.roomId, 
         tenantId,
@@ -182,7 +209,7 @@ export class RoomOperationalService {
     const newTime = new Date(topApt.time);
     newTime.setMinutes(topApt.time.getMinutes() - 1);
 
-    await prisma.appointment.update({
+    await this.prismaClient.appointment.update({
       where: { id: appointmentId, tenantId },
       data: { time: newTime }
     });
@@ -193,8 +220,8 @@ export class RoomOperationalService {
   /**
    * Update manual room status (e.g., from CLEANING to AVAILABLE)
    */
-  static async updateRoomStatus(tenantId: string, roomId: string, status: RoomStatus) {
-    return await prisma.room.update({
+  async updateRoomStatus(tenantId: string, roomId: string, status: RoomStatus) {
+    return await this.prismaClient.room.update({
       where: { id: roomId, tenantId },
       data: { status }
     });

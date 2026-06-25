@@ -3,7 +3,11 @@ import { StaffRepository } from "@/repositories/staff.repository";
 import { StaffRole } from "@/generated/client";
 
 export class StaffService {
-  private repository = new StaffRepository();
+  static instance?: StaffService;
+
+  constructor(
+    private readonly repository = new StaffRepository()
+  ) {}
 
   private normalizeString(val: string | undefined | null, fallback: string = ""): string {
     if (!val || typeof val !== 'string') return fallback;
