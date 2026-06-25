@@ -2,6 +2,8 @@ import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 import { randomUUID } from "crypto";
 
+export const runtime = 'nodejs';
+
 /**
  * AUTHORITATIVE PROXY LAYER (Next.js 16+ Architecture)
  * 
