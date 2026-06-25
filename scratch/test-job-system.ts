@@ -92,7 +92,7 @@ async function testJobSystem() {
 
   // Fetch and Lock pending jobs
   const claimed = await fetchAndLockPendingJobs(1);
-  const testJob = claimed.find(j => j.id === enqueued.id);
+  const testJob = claimed.find((j: any) => j.id === enqueued.id);
 
   if (!testJob) {
     logger.error('Claimed jobs did not include our test job.');
