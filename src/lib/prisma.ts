@@ -181,13 +181,13 @@ const createTenantPrisma = (rawClient: PrismaClient) => {
             const client = (ctx as any).$parent || rawClient;
             const isTxClient = typeof client.$transaction !== 'function';
             if (isTxClient) {
-              await client.$executeRawUnsafe(`SET LOCAL app.current_tenant_id = '${tenantId}'`);
+              await client.$executeRaw(Prisma.sql`SELECT set_config('app.current_tenant_id', ${tenantId}, true)`);
               return query(args);
             }
 
             // Single query outside transaction: wrap in transaction block to isolate SET LOCAL variable duration
             return rawClient.$transaction(async (tx) => {
-              await tx.$executeRawUnsafe(`SET LOCAL app.current_tenant_id = '${tenantId}'`);
+              await tx.$executeRaw(Prisma.sql`SELECT set_config('app.current_tenant_id', ${tenantId}, true)`);
               return rlsStorage.run({ inTx: true, tenantId }, () => {
                 return (tx as any)[model][operation](args);
               });
