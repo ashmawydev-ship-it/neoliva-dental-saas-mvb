@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -20,6 +21,7 @@ import { toast } from "sonner";
 import { ServiceCategory } from "@/generated/client";
 
 export function NewServiceDialog() {
+  const t = useTranslations('services');
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -40,7 +42,7 @@ export function NewServiceDialog() {
       };
 
       if (!data.name || !data.category || isNaN(data.price) || isNaN(data.duration)) {
-        toast.error("Please fill in all required fields correctly");
+        toast.error(t('toast.fillRequired'));
         setLoading(false);
         return;
       }
@@ -50,12 +52,11 @@ export function NewServiceDialog() {
       if (result?.error) {
         toast.error(result.error);
       } else {
-        toast.success("Service added successfully");
+        toast.success(t('toast.successCreate'));
         setOpen(false);
-        // Page will revalidate via action
       }
     } catch (error) {
-      toast.error("Failed to add service");
+      toast.error(t('toast.errorCreate'));
       console.error(error);
     } finally {
       setLoading(false);
@@ -66,7 +67,7 @@ export function NewServiceDialog() {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-lg shadow-blue-500/25 rounded-xl h-11 px-6 text-sm font-bold border-0 text-white">
-          <PlusCircle className="mr-2 h-4 w-4" /> Add Service
+          <PlusCircle className="mr-2 h-4 w-4" /> {t('newService')}
         </Button>
       </DialogTrigger>
       
@@ -76,7 +77,7 @@ export function NewServiceDialog() {
             <div className="bg-indigo-600 p-2 rounded-xl shadow-md shadow-indigo-200">
               <Stethoscope className="h-5 w-5 text-white" />
             </div>
-            Create New Service
+            {t('newService')}
           </DialogTitle>
         </DialogHeader>
 
@@ -88,11 +89,11 @@ export function NewServiceDialog() {
             
             {/* Service Name */}
             <div className="space-y-2">
-              <Label htmlFor="name" className="text-xs font-black uppercase tracking-widest text-gray-400">Service Name</Label>
+              <Label htmlFor="name" className="text-xs font-black uppercase tracking-widest text-gray-400">{t('form.name')}</Label>
               <Input 
                 id="name"
                 name="name"
-                placeholder="e.g. Professional Teeth Whitening" 
+                placeholder={t('form.namePlaceholder')} 
                 className="bg-gray-50 border-gray-100 focus-visible:ring-indigo-500 rounded-2xl h-12 font-medium" 
                 required
               />
@@ -100,17 +101,17 @@ export function NewServiceDialog() {
 
             {/* Category */}
             <div className="space-y-2">
-              <Label className="text-xs font-black uppercase tracking-widest text-gray-400">Category</Label>
+              <Label className="text-xs font-black uppercase tracking-widest text-gray-400">{t('form.category')}</Label>
               <div className="relative">
                 <LayoutGrid className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 z-10 pointer-events-none" />
                 <Select name="category" required>
                   <SelectTrigger className="pl-12 bg-gray-50 border-gray-100 focus:ring-indigo-500 rounded-2xl h-12 w-full font-medium">
-                    <SelectValue placeholder="Select service category" />
+                    <SelectValue placeholder={t('form.selectCategoryPlaceholder')} />
                   </SelectTrigger>
                   <SelectContent className="rounded-2xl border-gray-100 shadow-xl">
                     {Object.values(ServiceCategory).map((cat) => (
                       <SelectItem key={cat} value={cat} className="rounded-xl focus:bg-indigo-50 focus:text-indigo-600">
-                        {cat.charAt(0) + cat.slice(1).toLowerCase()}
+                        {t.has(`categories.${cat}`) ? t(`categories.${cat}`) : (cat.charAt(0) + cat.slice(1).toLowerCase())}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -121,7 +122,7 @@ export function NewServiceDialog() {
             {/* Price & Duration */}
             <div className="grid grid-cols-2 gap-6">
               <div className="space-y-2">
-                <Label htmlFor="price" className="text-xs font-black uppercase tracking-widest text-gray-400">Base Price ($)</Label>
+                <Label htmlFor="price" className="text-xs font-black uppercase tracking-widest text-gray-400">{t('form.price')}</Label>
                 <div className="relative">
                   <DollarSign className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
                   <Input 
@@ -138,7 +139,7 @@ export function NewServiceDialog() {
               </div>
               
               <div className="space-y-2">
-                <Label htmlFor="duration" className="text-xs font-black uppercase tracking-widest text-gray-400">Duration (min)</Label>
+                <Label htmlFor="duration" className="text-xs font-black uppercase tracking-widest text-gray-400">{t('form.duration')}</Label>
                 <div className="relative">
                   <Clock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
                   <Input 
@@ -157,11 +158,11 @@ export function NewServiceDialog() {
 
             {/* Description */}
             <div className="space-y-2">
-              <Label htmlFor="description" className="text-xs font-black uppercase tracking-widest text-gray-400">Service Description</Label>
+              <Label htmlFor="description" className="text-xs font-black uppercase tracking-widest text-gray-400">{t('form.description')}</Label>
               <Textarea 
                 id="description"
                 name="description"
-                placeholder="Provide a detailed description for patients..." 
+                placeholder={t('form.descriptionPlaceholder')} 
                 className="bg-gray-50 border-gray-100 focus-visible:ring-indigo-500 rounded-2xl min-h-[100px] resize-none p-4 font-medium" 
               />
             </div>
@@ -169,8 +170,8 @@ export function NewServiceDialog() {
             {/* Popular Switch */}
             <div className="flex items-center justify-between p-5 bg-indigo-50/50 border border-indigo-100 rounded-2xl">
               <div className="space-y-0.5">
-                <Label className="text-sm font-bold text-gray-900">Mark as Popular</Label>
-                <p className="text-[10px] text-indigo-600 font-bold uppercase tracking-wider">Highlight with badge</p>
+                <Label className="text-sm font-bold text-gray-900">{t('form.markPopular')}</Label>
+                <p className="text-[10px] text-indigo-600 font-bold uppercase tracking-wider">{t('form.highlightDescription')}</p>
               </div>
               <Switch id="popular" name="popular" className="data-[state=checked]:bg-indigo-600 scale-110" />
             </div>
@@ -185,7 +186,7 @@ export function NewServiceDialog() {
               disabled={loading}
               className="px-6 rounded-2xl text-gray-500 hover:text-gray-900 hover:bg-gray-100 h-12 font-bold"
             >
-              Cancel
+              {t('form.cancel')}
             </Button>
             <Button 
               type="submit" 
@@ -195,10 +196,10 @@ export function NewServiceDialog() {
               {loading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Processing...
+                  {t('form.processing')}
                 </>
               ) : (
-                "Save Service"
+                t('form.save')
               )}
             </Button>
           </DialogFooter>

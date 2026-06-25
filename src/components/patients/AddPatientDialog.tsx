@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { useTranslations } from "next-intl";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -29,6 +30,7 @@ type PatientFormValues = z.infer<typeof PatientSchema>;
 export function AddPatientDialog() {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const t = useTranslations("patients");
 
   const {
     register,
@@ -124,7 +126,7 @@ export function AddPatientDialog() {
     }}>
       <DialogTrigger asChild>
         <Button className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-lg shadow-blue-500/25 rounded-xl h-10 px-5 font-medium border-0 text-white cursor-pointer">
-          <PlusCircle className="mr-2 h-4 w-4" /> Add Patient
+          <PlusCircle className="mr-2 h-4 w-4" /> {t('addPatient')}
         </Button>
       </DialogTrigger>
       

@@ -10,30 +10,31 @@ import {
   BarChart3 
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
-
 import { resolveTenantContextOrRedirect as resolveTenantContext } from "@/lib/auth/resolve-tenant-context";
+import { getTranslations } from "next-intl/server";
 
 export default async function ServicesPage() {
   const { tenantId } = await resolveTenantContext();
   const serviceService = new ServiceService();
   const services = await serviceService.getServices(tenantId);
+  const t = await getTranslations('services');
 
-  // Mock stats for the top row (could be expanded to be real later)
+  // Stats for the top row
   const stats = [
-    { label: "Active Services", value: services.length, icon: LayoutGrid, color: "text-blue-600 bg-blue-50" },
-    { label: "Most Popular", value: services.filter(s => s.popular).length, icon: Sparkles, color: "text-amber-600 bg-amber-50" },
-    { label: "Revenue Driver", value: services.length > 0 ? "Premium" : "None", icon: Zap, color: "text-indigo-600 bg-indigo-50" },
-    { label: "Avg. Duration", value: services.length > 0 
-      ? `${Math.round(services.reduce((acc, s) => acc + s.duration, 0) / services.length)}m` 
-      : "0m", icon: BarChart3, color: "text-emerald-600 bg-emerald-50" },
+    { label: t('stats.activeServices'), value: services.length, icon: LayoutGrid, color: "text-blue-600 bg-blue-50" },
+    { label: t('stats.mostPopular'), value: services.filter(s => s.popular).length, icon: Sparkles, color: "text-amber-600 bg-amber-50" },
+    { label: t('stats.revenueDriver'), value: services.length > 0 ? t('stats.premium') : t('stats.none'), icon: Zap, color: "text-indigo-600 bg-indigo-50" },
+    { label: t('stats.avgDuration'), value: services.length > 0 
+      ? `${Math.round(services.reduce((acc, s) => acc + s.duration, 0) / services.length)} ${t('stats.m')}` 
+      : `0 ${t('stats.m')}`, icon: BarChart3, color: "text-emerald-600 bg-emerald-50" },
   ];
 
   return (
     <div className="space-y-6 animate-fade-in-up">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-gray-900">Services & Pricing</h1>
-          <p className="text-sm text-gray-500 mt-1">Manage clinic treatments and centralized pricing</p>
+          <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-gray-900">{t('title')}</h1>
+          <p className="text-sm text-gray-500 mt-1">{t('subtitle')}</p>
         </div>
         <NewServiceDialog />
       </div>

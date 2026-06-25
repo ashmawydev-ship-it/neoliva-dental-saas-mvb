@@ -15,6 +15,7 @@ import { AlertCircle } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { getTranslations } from "next-intl/server";
 import {
   ReportsRevenueChart,
   ReportsExpenseChart,
@@ -23,13 +24,13 @@ import {
   ReportsPatientGrowthChart
 } from "@/components/reports/DynamicReportsCharts";
 
-function ErrorState({ message }: { message?: string }) {
+function ErrorState({ message, t }: { message?: string; t: any }) {
   return (
     <Card className="border-red-100 bg-red-50/50">
       <CardContent className="p-6 flex flex-col items-center text-center">
         <AlertCircle className="w-8 h-8 text-red-500 mb-2" />
-        <p className="text-sm font-medium text-red-900">Failed to load data</p>
-        <p className="text-xs text-red-600 mt-1">{message || "Please check your connection and try again."}</p>
+        <p className="text-sm font-medium text-red-900">{t('errors.loadFailed')}</p>
+        <p className="text-xs text-red-600 mt-1">{message || t('errors.tryAgain')}</p>
       </CardContent>
     </Card>
   );
@@ -59,6 +60,8 @@ async function AIInsightsContainer() {
 }
 
 export default async function ReportsPage() {
+  const t = await getTranslations('reports');
+
   // Use parallel fetching with failure isolation
   const [
     kpisRes,
@@ -78,8 +81,8 @@ export default async function ReportsPage() {
     <div className="space-y-6 pb-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
       {/* Page Header */}
       <div className="flex flex-col gap-1">
-        <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-gray-900">Reports & Analytics 📊</h1>
-        <p className="text-sm text-gray-500">Comprehensive performance insights and data analysis</p>
+        <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-gray-900">{t('title')} 📊</h1>
+        <p className="text-sm text-gray-500">{t('subtitle')}</p>
       </div>
 
       {/* Section 1: KPI Cards */}
@@ -87,7 +90,7 @@ export default async function ReportsPage() {
         <ReportsKPIs data={kpisRes.data} />
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <ErrorState message={kpisRes.error} />
+          <ErrorState message={kpisRes.error} t={t} />
         </div>
       )}
 
@@ -101,7 +104,7 @@ export default async function ReportsPage() {
           </>
         ) : (
           <div className="lg:col-span-3">
-            <ErrorState message={trendsRes.error} />
+            <ErrorState message={trendsRes.error} t={t} />
           </div>
         )}
       </div>
@@ -118,13 +121,13 @@ export default async function ReportsPage() {
         {treatmentsRes.success && treatmentsRes.data ? (
           <ReportsTreatmentChart data={treatmentsRes.data} />
         ) : (
-          <ErrorState message={treatmentsRes.error} />
+          <ErrorState message={treatmentsRes.error} t={t} />
         )}
         
         {growthRes.success && growthRes.data ? (
           <ReportsPatientGrowthChart data={growthRes.data} />
         ) : (
-          <ErrorState message={growthRes.error} />
+          <ErrorState message={growthRes.error} t={t} />
         )}
       </div>
 
@@ -133,7 +136,7 @@ export default async function ReportsPage() {
         {inventoryRes.success && inventoryRes.data ? (
           <ReportsInventoryAlerts items={inventoryRes.data.lowStock} />
         ) : (
-          <ErrorState message={inventoryRes.error} />
+          <ErrorState message={inventoryRes.error} t={t} />
         )}
       </div>
     </div>

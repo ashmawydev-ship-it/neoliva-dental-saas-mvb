@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { 
   Calendar as CalendarIcon, 
   Clock, 
@@ -49,6 +50,7 @@ interface NewAppointmentDialogProps {
 export function NewAppointmentDialog({ doctors, services }: NewAppointmentDialogProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const t = useTranslations("appointments");
 
   const {
     register,
@@ -179,8 +181,8 @@ export function NewAppointmentDialog({ doctors, services }: NewAppointmentDialog
       <DialogTrigger asChild>
         <Button className="bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 md:px-6 h-10 md:h-12 rounded-xl md:rounded-2xl shadow-lg shadow-blue-500/20 transition-all flex items-center gap-2 border-0 cursor-pointer">
           <Plus className="w-4 h-4 md:w-5 md:h-5" />
-          <span className="hidden sm:inline">New Appointment</span>
-          <span className="sm:hidden">New</span>
+          <span className="hidden sm:inline">{t('newAppointment')}</span>
+          <span className="sm:hidden">{t('newAppointment')}</span>
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[600px] p-0 overflow-hidden bg-white border-0 shadow-2xl rounded-2xl md:rounded-3xl">
@@ -189,7 +191,7 @@ export function NewAppointmentDialog({ doctors, services }: NewAppointmentDialog
             <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl md:rounded-2xl bg-blue-600 flex items-center justify-center text-white shadow-lg shadow-blue-500/20">
               <CalendarIcon className="w-5 h-5 md:w-6 md:h-6" />
             </div>
-            New Appointment
+            {t('newAppointment')}
           </DialogTitle>
         </DialogHeader>
 
@@ -199,7 +201,7 @@ export function NewAppointmentDialog({ doctors, services }: NewAppointmentDialog
               {/* Patient Selection (Async Combobox Search) */}
               <div className="space-y-2 relative">
                 <Label className="text-xs md:text-sm font-bold text-gray-700 uppercase tracking-wider flex items-center gap-2">
-                  <UserPlus className="w-4 h-4 text-blue-500" /> Patient
+                  <UserPlus className="w-4 h-4 text-blue-500" /> {t('form.patient')}
                 </Label>
                 {watchedPatientId ? (
                   <div className="flex items-center justify-between h-10 md:h-12 px-4 border border-blue-200 bg-blue-50/30 rounded-xl md:rounded-2xl">
@@ -270,11 +272,11 @@ export function NewAppointmentDialog({ doctors, services }: NewAppointmentDialog
               {/* Doctor Selection */}
               <div className="space-y-2">
                 <Label className="text-xs md:text-sm font-bold text-gray-700 uppercase tracking-wider flex items-center gap-2">
-                  <Stethoscope className="w-4 h-4 text-blue-500" /> Doctor
+                  <Stethoscope className="w-4 h-4 text-blue-500" /> {t('form.doctor')}
                 </Label>
                 <Select value={watchedDoctorId} onValueChange={(val) => setValue("doctorId", val ?? "", { shouldValidate: true })}>
                   <SelectTrigger className="h-10 md:h-12 border-gray-200 focus:ring-blue-500/20 rounded-xl md:rounded-2xl bg-gray-50/50">
-                    <SelectValue placeholder="Select doctor" />
+                    <SelectValue placeholder={t('form.selectDoctor')} />
                   </SelectTrigger>
                   <SelectContent className="rounded-xl md:rounded-2xl border-gray-100 shadow-xl p-1 bg-white">
                     {doctors.map(d => (
@@ -288,11 +290,11 @@ export function NewAppointmentDialog({ doctors, services }: NewAppointmentDialog
               {/* Service Selection */}
               <div className="space-y-2">
                 <Label className="text-xs md:text-sm font-bold text-gray-700 uppercase tracking-wider flex items-center gap-2">
-                  <ClipboardList className="w-4 h-4 text-blue-500" /> Service
+                  <ClipboardList className="w-4 h-4 text-blue-500" /> {t('form.service')}
                 </Label>
                 <Select value={watchedServiceId} onValueChange={(val) => handleServiceChange(val ?? "")}>
                   <SelectTrigger className="h-10 md:h-12 border-gray-200 focus:ring-blue-500/20 rounded-xl md:rounded-2xl bg-gray-50/50">
-                    <SelectValue placeholder="Select service" />
+                    <SelectValue placeholder={t('form.selectService')} />
                   </SelectTrigger>
                   <SelectContent className="rounded-xl md:rounded-2xl border-gray-100 shadow-xl p-1 bg-white">
                     {services.map(s => (
@@ -319,7 +321,7 @@ export function NewAppointmentDialog({ doctors, services }: NewAppointmentDialog
               {/* Date */}
               <div className="space-y-2">
                 <Label className="text-xs md:text-sm font-bold text-gray-700 uppercase tracking-wider flex items-center gap-2">
-                  <CalendarIcon className="w-4 h-4 text-blue-500" /> Date
+                  <CalendarIcon className="w-4 h-4 text-blue-500" /> {t('form.date')}
                 </Label>
                 <Input 
                   type="date" 
@@ -333,7 +335,7 @@ export function NewAppointmentDialog({ doctors, services }: NewAppointmentDialog
               {/* Time */}
               <div className="space-y-2">
                 <Label className="text-xs md:text-sm font-bold text-gray-700 uppercase tracking-wider flex items-center gap-2">
-                  <Clock className="w-4 h-4 text-blue-500" /> Time
+                  <Clock className="w-4 h-4 text-blue-500" /> {t('form.time')}
                 </Label>
                 <Input 
                   type="time" 
@@ -364,7 +366,7 @@ export function NewAppointmentDialog({ doctors, services }: NewAppointmentDialog
 
             {/* Notes */}
             <div className="space-y-2">
-              <Label className="text-xs md:text-sm font-bold text-gray-700 uppercase tracking-wider">Clinical Notes</Label>
+              <Label className="text-xs md:text-sm font-bold text-gray-700 uppercase tracking-wider">{t('form.notes')}</Label>
               <Textarea 
                 {...register("notes")}
                 placeholder="Any special instructions or clinical notes..." 

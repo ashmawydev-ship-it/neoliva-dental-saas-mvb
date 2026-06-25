@@ -10,7 +10,7 @@ import {
   Clock
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { formatDistanceToNow } from "date-fns";
+import { useTranslations, useFormatter } from 'next-intl';
 
 interface Activity {
   id: string;
@@ -25,6 +25,9 @@ interface ActivityFeedProps {
 }
 
 export function ActivityFeed({ activities }: ActivityFeedProps) {
+  const t = useTranslations('dashboard');
+  const format = useFormatter();
+
   const getIcon = (type: string) => {
     switch (type) {
       case 'payment': return CreditCard;
@@ -51,7 +54,7 @@ export function ActivityFeed({ activities }: ActivityFeedProps) {
             <History className="w-4 h-4 text-indigo-600" />
           </div>
           <CardTitle className="text-lg font-bold text-gray-800">
-            Real-time Feed
+            {t('feed.title')}
           </CardTitle>
         </div>
       </CardHeader>
@@ -60,7 +63,7 @@ export function ActivityFeed({ activities }: ActivityFeedProps) {
           {activities.length === 0 ? (
             <div className="p-12 text-center text-gray-400">
               <History className="w-8 h-8 mx-auto mb-2 opacity-20" />
-              <p className="text-sm">No recent activity detected.</p>
+              <p className="text-sm">{t('feed.empty')}</p>
             </div>
           ) : (
             activities.map((activity, index) => {
@@ -85,7 +88,7 @@ export function ActivityFeed({ activities }: ActivityFeedProps) {
                         </h4>
                         <div className="flex items-center gap-1 text-[10px] font-medium text-gray-400">
                           <Clock className="w-2.5 h-2.5" />
-                          {formatDistanceToNow(new Date(activity.time), { addSuffix: true })}
+                          {format.relativeTime(new Date(activity.time))}
                         </div>
                       </div>
                       <p className="text-xs text-gray-500 line-clamp-1">
@@ -104,7 +107,7 @@ export function ActivityFeed({ activities }: ActivityFeedProps) {
       </CardContent>
       <div className="p-3 bg-gray-50/50 border-t border-gray-50">
         <button className="w-full py-2 text-xs font-bold text-gray-400 hover:text-indigo-600 transition-colors uppercase tracking-widest">
-          VIEW AUDIT LOG
+          {t('feed.viewLog')}
         </button>
       </div>
     </Card>

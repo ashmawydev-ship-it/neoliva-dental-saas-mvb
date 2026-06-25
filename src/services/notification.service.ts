@@ -177,6 +177,14 @@ export class NotificationService {
     return this.repository.markAsRead(tenantId, id);
   }
 
+  async archive(tenantId: string, id: string) {
+    return this.repository.archive(tenantId, id);
+  }
+
+  async delete(tenantId: string, id: string) {
+    return this.repository.delete(tenantId, id);
+  }
+
   async markAllAsRead(tenantId: string, userId: string) {
     return this.repository.markAllAsRead(tenantId, userId);
   }

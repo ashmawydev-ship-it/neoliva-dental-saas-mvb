@@ -14,6 +14,7 @@ import { FinanceQuickActions } from "@/components/finance/FinanceQuickActions";
 import { buttonVariants } from "@/components/ui/button-variants";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 import { 
   TrendingUp, 
 } from "lucide-react";
@@ -29,13 +30,15 @@ export default async function FinancePage({
   const { tenantId } = await resolveTenantContext();
   await requirePermission(PermissionCode.FINANCE_VIEW);
 
+  const t = await getTranslations('finance');
+
   const financeService = new FinanceService();
   let data;
   let errorMsg = "";
   try {
     data = await financeService.getFinancialDashboard(tenantId, period as any);
   } catch (err: any) {
-    errorMsg = err.message || "You do not have permission to view the financial dashboard or an error occurred while fetching data.";
+    errorMsg = err.message || t('errors.accessDenied');
   }
 
   if (!data) {
@@ -44,7 +47,7 @@ export default async function FinancePage({
         <div className="p-4 bg-rose-50 dark:bg-rose-500/10 rounded-full">
           <TrendingUp className="w-10 h-10 text-rose-500" />
         </div>
-        <h2 className="text-xl font-bold">Access Denied or Load Error</h2>
+        <h2 className="text-xl font-bold">{t('errors.accessDenied')}</h2>
         <p className="text-slate-500 max-w-md text-center">
           {errorMsg}
         </p>
@@ -58,11 +61,11 @@ export default async function FinancePage({
     );
   }
   const periodLabel = {
-    "7d": "Last 7 Days",
-    "30d": "Last 30 Days",
-    "90d": "Last 90 Days",
-    "12m": "Last 12 Months"
-  }[period] || "Last 30 Days";
+    "7d": t('period.7d'),
+    "30d": t('period.30d'),
+    "90d": t('period.90d'),
+    "12m": t('period.year')
+  }[period] || t('period.30d');
 
   return (
     <div className="p-6 space-y-8 animate-in fade-in duration-500">

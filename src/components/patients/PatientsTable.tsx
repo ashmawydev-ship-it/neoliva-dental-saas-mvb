@@ -21,6 +21,7 @@ interface PatientTableProps {
   totalPages: number;
   currentPage: number;
   currentSearch: string;
+  searchPlaceholder?: string;
 }
 
 export function PatientsTable({
@@ -29,6 +30,7 @@ export function PatientsTable({
   totalPages,
   currentPage,
   currentSearch,
+  searchPlaceholder,
 }: PatientTableProps) {
   const router       = useRouter();
   const searchParams = useSearchParams();
@@ -48,20 +50,19 @@ export function PatientsTable({
           params.delete(key);
         }
       });
-      return `/patients?${params.toString()}`;
+      return `?${params.toString()}`;
     },
     [searchParams]
   );
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
+    const val = e.target.value;
     if (debounceRef.current) clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(() => {
       startTransition(() => {
-        // Reset to page 1 whenever the search term changes
-        router.push(buildUrl({ search: value || undefined, page: "1" }));
+        router.push(buildUrl({ search: val, page: "1" }));
       });
-    }, 400);
+    }, 450);
   };
 
   const goToPage = (page: number) => {
@@ -74,19 +75,18 @@ export function PatientsTable({
     if (!confirm(`Are you sure you want to delete patient ${name}? This action cannot be undone.`)) {
       return;
     }
-
     setIsDeleting(id);
     try {
-      const result = await deletePatient(id);
-      if (result.success) {
+      const res = await deletePatient(id);
+      if (res.success) {
         toast.success("Patient deleted successfully");
-        // Refresh current page data after deletion
         startTransition(() => router.refresh());
       } else {
-        toast.error(result.error || "Failed to delete patient");
+        toast.error(res.error || "Failed to delete patient");
       }
-    } catch (error) {
+    } catch (e) {
       toast.error("An unexpected error occurred");
+      console.error(e);
     } finally {
       setIsDeleting(null);
     }
@@ -102,7 +102,7 @@ export function PatientsTable({
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
         <Input
           id="patients-search"
-          placeholder="Search by name, phone, or ID..."
+          placeholder={searchPlaceholder || "Search by name, phone, or ID..."}
           className="pl-10 h-10 rounded-xl bg-card border-border focus-visible:ring-blue-500/20 text-foreground placeholder:text-muted-foreground/70"
           defaultValue={currentSearch}
           onChange={handleSearchChange}

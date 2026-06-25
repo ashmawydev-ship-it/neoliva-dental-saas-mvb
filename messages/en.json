@@ -1,0 +1,787 @@
+{
+  "nav": {
+    "dashboard": "Dashboard",
+    "appointments": "Appointments",
+    "patients": "Patients",
+    "billing": "Billing",
+    "inventory": "Inventory",
+    "staff": "Staff",
+    "reports": "Reports",
+    "settings": "Settings",
+    "labOrders": "Lab Orders",
+    "expenses": "Expenses",
+    "rooms": "Rooms",
+    "campaigns": "Campaigns",
+    "services": "Services",
+    "operations": "Operations",
+    "financialDashboard": "Financial Dashboard",
+    "smsTemplates": "SMS Templates"
+  },
+  "navGroups": {
+    "overview": "Overview",
+    "clinical": "Clinical",
+    "financial": "Financial",
+    "management": "Management"
+  },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Add",
+    "search": "Search",
+    "loading": "Loading...",
+    "noResults": "No results found",
+    "confirm": "Confirm",
+    "back": "Back"
+  },
+  "patients": {
+    "title": "Patients",
+    "addPatient": "Add Patient",
+    "searchPlaceholder": "Search by name, phone, or ID...",
+    "registered": "{count} registered patients",
+    "name": "Name",
+    "phone": "Phone",
+    "email": "Email",
+    "dateOfBirth": "Date of Birth"
+  },
+  "appointments": {
+    "title": "Appointments",
+    "subtitle": "Manage and track all clinic appointments",
+    "newAppointment": "New Appointment",
+    "stats": {
+      "totalToday": "Total Today",
+      "completed": "Completed",
+      "inProgress": "In Progress",
+      "cancelled": "Cancelled"
+    },
+    "form": {
+      "patient": "Patient",
+      "doctor": "Doctor",
+      "service": "Service",
+      "date": "Date",
+      "time": "Time",
+      "notes": "Notes",
+      "selectPatient": "Select patient",
+      "selectDoctor": "Select doctor",
+      "selectService": "Select service"
+    },
+    "status": {
+      "SCHEDULED": "Scheduled",
+      "COMPLETED": "Completed",
+      "CANCELLED": "Cancelled",
+      "NO_SHOW": "No Show",
+      "IN_PROGRESS": "In Progress"
+    }
+  },
+  "dashboard": {
+    "title": "Clinic Intelligence",
+    "subtitle": "Real-time operational & financial control center.",
+    "activity": {
+      "newPatient": "New Patient",
+      "joinedClinic": "{name} joined the clinic."
+    },
+    "kpis": {
+      "todayAppointments": "Today's Appointments",
+      "todayAppointmentsSub": "Appointments scheduled for today",
+      "totalPatients": "Total Patients",
+      "totalPatientsSub": "Active registered patients",
+      "monthlyRevenue": "Monthly Revenue",
+      "monthlyRevenueSub": "Revenue collected this month",
+      "pendingInvoices": "Pending Invoices",
+      "pendingInvoicesSub": "Unpaid patient invoices"
+    },
+    "quickActions": {
+      "newPatient": "New Patient",
+      "newAppointment": "New Appointment",
+      "createInvoice": "Create Invoice"
+    },
+    "queue": {
+      "title": "Operational Queue",
+      "waiting": "WAITING",
+      "empty": "The queue is currently empty.",
+      "viewAll": "VIEW FULL CLINIC QUEUE",
+      "minWait": "{n} min",
+      "status": {
+        "inProgress": "In Progress",
+        "waiting": "Waiting",
+        "completed": "Completed"
+      }
+    },
+    "feed": {
+      "title": "Real-time Feed",
+      "empty": "No recent activity detected.",
+      "viewLog": "VIEW AUDIT LOG"
+    }
+  },
+  "dateFormats": {
+    "today": "Today is {date}"
+  },
+  "billing": {
+    "title": "Billing & Invoices",
+    "subtitle": "Financial overview and payment tracking",
+    "newInvoice": "New Invoice",
+    "viewInvoices": "View Invoices",
+    "exportCsv": "Export CSV",
+    "recentTransactions": "Recent Transactions",
+    "noTransactions": "No transactions found.",
+    "kpis": {
+      "totalRevenue": "Total Revenue",
+      "pendingPayments": "Pending Payments",
+      "paidInvoices": "Paid Invoices"
+    },
+    "table": {
+      "invoiceNum": "Invoice #",
+      "patient": "Patient",
+      "amount": "Amount",
+      "status": "Status",
+      "date": "Date",
+      "actions": "Actions"
+    },
+    "status": {
+      "PAID": "Paid",
+      "PENDING": "Pending",
+      "OVERDUE": "Overdue",
+      "DRAFT": "Draft",
+      "CANCELLED": "Cancelled"
+    },
+    "form": {
+      "patient": "Patient",
+      "services": "Services",
+      "discount": "Discount",
+      "tax": "Tax",
+      "notes": "Notes",
+      "createInvoice": "Create Invoice"
+    },
+    "confirm": {
+      "deleteInvoice": "Are you sure you want to delete this invoice?",
+      "markPaid": "Confirm Payment"
+    }
+  },
+  "staff": {
+    "title": "Staff & Roles",
+    "subtitle": "Manage team members and access control (RBAC)",
+    "inviteStaff": "Invite Staff Member",
+    "roles": {
+      "admin": "Admin",
+      "doctor": "Doctor",
+      "assistant": "Assistant",
+      "receptionist": "Receptionist",
+      "accountant": "Accountant",
+      "nurse": "Nurse",
+      "manager": "Manager",
+      "owner": "Owner"
+    },
+    "table": {
+      "name": "Staff Member",
+      "role": "Role",
+      "email": "Contact",
+      "status": "Status",
+      "actions": "Actions"
+    },
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive",
+      "pending": "Invited"
+    },
+    "form": {
+      "name": "Full Name",
+      "email": "Email Address",
+      "role": "Role",
+      "selectRole": "Select Role",
+      "sendInvitation": "Send Invitation",
+      "cancel": "Cancel"
+    }
+  },
+  "inventory": {
+    "title": "Inventory Management",
+    "subtitle": "Monitor clinic supplies and track stock movements.",
+    "addItem": "Add New Item",
+    "stats": {
+      "totalItems": "Total Items",
+      "totalItemsDesc": "Unique supply items",
+      "lowStockAlerts": "Low Stock Alerts",
+      "actionRequired": "Action Required",
+      "allGood": "All good",
+      "lastAudit": "Last Audit Activity",
+      "lastAuditDesc": "Recent stock movement"
+    },
+    "search": "Search items by name or category...",
+    "filter": {
+      "all": "All Categories",
+      "lowStockOnly": "Show Low Stock"
+    },
+    "table": {
+      "item": "Item Name",
+      "category": "Category",
+      "stock": "Current Stock",
+      "unit": "Unit",
+      "minLevel": "Min. Level",
+      "status": "Status",
+      "actions": "Actions"
+    },
+    "status": {
+      "lowStock": "LOW STOCK",
+      "ok": "IN STOCK"
+    },
+    "dialog": {
+      "addItem": "New Inventory Item",
+      "addStock": "Add Stock",
+      "deductStock": "Deduct Stock",
+      "viewHistory": "Audit History",
+      "noHistory": "No history records found.",
+      "confirmDelete": "Are you sure you want to delete this item? This action cannot be undone.",
+      "noItemsFound": "No items found",
+      "allStocked": "Great! All items are well stocked.",
+      "adjustFilters": "Try adjusting your search filters or add a new item to get started."
+    },
+    "actions": {
+      "addStock": "Add Stock",
+      "deductStock": "Deduct Stock",
+      "viewHistory": "View History",
+      "edit": "Edit Item",
+      "delete": "Delete Item"
+    },
+    "form": {
+      "quantity": "Quantity",
+      "reason": "Reason / Reference",
+      "save": "Save Changes",
+      "cancel": "Cancel",
+      "close": "Close",
+      "initialStock": "Initial Stock (Optional)",
+      "namePlaceholder": "e.g. Disposable Gloves",
+      "categoryPlaceholder": "e.g. Consumables",
+      "unitPlaceholder": "e.g. boxes, pcs",
+      "reasonPlaceholderIn": "e.g. New Shipment #552",
+      "reasonPlaceholderOut": "e.g. Weekly Consumption",
+      "availableStock": "Available stock: {stock} {unit}",
+      "creating": "Creating...",
+      "updating": "Updating...",
+      "processing": "Processing..."
+    },
+    "toast": {
+      "stockAdded": "Added {quantity} {unit} to {name}",
+      "stockDeducted": "Deducted {quantity} {unit} from {name}",
+      "itemCreated": "Item created successfully",
+      "itemUpdated": "Item updated successfully",
+      "itemDeleted": "Item deleted successfully",
+      "error": "Action failed"
+    }
+  },
+  "expenses": {
+    "title": "Expenses",
+    "subtitle": "Manage and track your clinic's operating costs.",
+    "newExpense": "Add Expense",
+    "export": "Export CSV",
+    "thisMonth": "This Month",
+    "ofTotal": "of total",
+    "kpis": {
+      "totalExpenses": "Total Expenses",
+      "pendingPayments": "Pending Payments",
+      "largestCategory": "Largest Category"
+    },
+    "table": {
+      "description": "Expense Details",
+      "category": "Category",
+      "amount": "Amount",
+      "date": "Date",
+      "status": "Status",
+      "actions": "Actions"
+    },
+    "status": {
+      "PAID": "PAID",
+      "PENDING": "PENDING",
+      "CANCELLED": "CANCELLED"
+    },
+    "form": {
+      "title": "Expense Title",
+      "titlePlaceholder": "e.g. Monthly Rent, Medical Supplies...",
+      "description": "Description",
+      "descriptionPlaceholder": "e.g. Dental composites & syringes (optional)...",
+      "amount": "Amount ($)",
+      "date": "Date",
+      "category": "Category",
+      "status": "Status",
+      "paymentMethod": "Payment Method",
+      "notes": "Additional Notes",
+      "notesPlaceholder": "Any additional details or reference numbers...",
+      "selectPlaceholder": "Select",
+      "save": "Save Expense",
+      "cancel": "Cancel",
+      "optional": "optional"
+    },
+    "actions": {
+      "edit": "Edit",
+      "delete": "Delete Expense",
+      "markPaid": "Mark as Paid",
+      "markPending": "Mark as Pending"
+    },
+    "categories": {
+      "supplies": "Supplies",
+      "utilities": "Utilities",
+      "equipment": "Equipment",
+      "rent": "Rent",
+      "marketing": "Marketing",
+      "other": "Other"
+    },
+    "toast": {
+      "successCreate": "Expense created successfully",
+      "errorCreate": "Failed to create expense",
+      "deleteSuccess": "Expense deleted successfully",
+      "deleteError": "Failed to delete expense",
+      "statusUpdated": "Status updated to {status}",
+      "statusUpdateError": "Failed to update status",
+      "noDataExport": "No data to export",
+      "exportSuccess": "CSV export successful",
+      "exportError": "Failed to export CSV"
+    },
+    "dialog": {
+      "confirmDelete": "Are you sure you want to delete this expense?",
+      "noExpensesFound": "No expenses found."
+    },
+    "searchPlaceholder": "Search expenses by title, description or category..."
+  },
+  "labOrders": {
+    "title": "Lab Orders",
+    "subtitle": "Manage and track external laboratory work for prosthetics and orthodontics.",
+    "newOrder": "New Order",
+    "orderManagement": "Order Management",
+    "liveUpdate": "Live Update",
+    "stats": {
+      "activeCases": "Active Cases",
+      "activeCasesDesc": "Sent or In Progress",
+      "dueThisWeek": "Due This Week",
+      "dueThisWeekDesc": "Requiring attention",
+      "received": "Received",
+      "receivedDesc": "Ready for delivery",
+      "monthlyCost": "Monthly Cost",
+      "monthlyCostDesc": "Current month spend"
+    },
+    "table": {
+      "orderNum": "Order #",
+      "patient": "Patient",
+      "lab": "Laboratory",
+      "type": "Type",
+      "status": "Status",
+      "dueDate": "Due Date",
+      "cost": "Cost",
+      "actions": "Actions",
+      "orderIdLab": "Order ID / Lab",
+      "itemTooth": "Item / Tooth",
+      "timelines": "Timelines",
+      "tooth": "Tooth: {number}",
+      "sent": "Sent",
+      "due": "Due"
+    },
+    "status": {
+      "PENDING": "PENDING",
+      "SENT": "SENT",
+      "IN_PROGRESS": "IN PROGRESS",
+      "RECEIVED": "RECEIVED",
+      "DELIVERED": "DELIVERED",
+      "CANCELLED": "CANCELLED"
+    },
+    "dialog": {
+      "createOrder": "Create Lab Order",
+      "confirmDelete": "Are you sure you want to delete this lab order?",
+      "noOrdersFound": "No lab orders found matching your search."
+    },
+    "actions": {
+      "viewPatient": "View Patient",
+      "updateStatus": "Update Status",
+      "markSent": "Mark as Sent",
+      "markReceived": "Mark as Received",
+      "markDelivered": "Mark as Delivered",
+      "cancelOrder": "Cancel Order",
+      "deleteOrder": "Delete Order"
+    },
+    "form": {
+      "infoBox": "Ensure all technical specifications (shade, material, prep details) are included in the notes for the technician.",
+      "patientSelection": "Patient Selection",
+      "selectPatientPlaceholder": "Select patient...",
+      "labName": "Laboratory Name",
+      "labNamePlaceholder": "e.g. Elite Dental Labs",
+      "itemType": "Item Type",
+      "itemTypePlaceholder": "e.g. Zirconia Crown",
+      "toothNumber": "Tooth # (Optional)",
+      "toothNumberPlaceholder": "e.g. 16, 24, or All",
+      "cost": "Estimated Cost",
+      "expectedDate": "Expected Return Date",
+      "notes": "Additional Instructions",
+      "notesPlaceholder": "Include shade (e.g. A2), material specifics, or special requests...",
+      "discard": "DISCARD",
+      "submit": "SUBMIT ORDER",
+      "submitting": "Submitting..."
+    },
+    "toast": {
+      "fillRequired": "Please fill in all required fields",
+      "createSuccess": "Lab order created successfully!",
+      "createError": "Failed to create lab order",
+      "error": "An error occurred",
+      "statusUpdated": "Status updated to {status}",
+      "statusUpdateError": "Failed to update status",
+      "deleteSuccess": "Lab order deleted",
+      "deleteError": "Failed to delete lab order"
+    },
+    "tabs": {
+      "all": "ALL ORDERS"
+    },
+    "searchPlaceholder": "Search by patient, ID or lab..."
+  },
+  "services": {
+    "title": "Services & Pricing",
+    "subtitle": "Manage clinic treatments and centralized pricing",
+    "newService": "Add Service",
+    "filterAll": "All",
+    "stats": {
+      "activeServices": "Active Services",
+      "mostPopular": "Most Popular",
+      "revenueDriver": "Revenue Driver",
+      "avgDuration": "Avg. Duration",
+      "m": "m",
+      "premium": "Premium",
+      "none": "None"
+    },
+    "table": {
+      "name": "Name",
+      "category": "Category",
+      "duration": "Duration",
+      "price": "Price",
+      "popular": "Popular",
+      "actions": "Actions"
+    },
+    "form": {
+      "name": "Service Name",
+      "namePlaceholder": "e.g. Professional Teeth Whitening",
+      "category": "Category",
+      "selectCategoryPlaceholder": "Select service category",
+      "duration": "Duration (min)",
+      "price": "Base Price ($)",
+      "description": "Service Description",
+      "descriptionPlaceholder": "Provide a detailed description for patients...",
+      "markPopular": "Mark as Popular",
+      "highlightDescription": "Highlight with badge",
+      "save": "Save Service",
+      "cancel": "Cancel",
+      "processing": "Processing...",
+      "updating": "Updating...",
+      "optional": "optional",
+      "minute": "min",
+      "noDescription": "No description provided."
+    },
+    "actions": {
+      "edit": "Edit Service",
+      "delete": "Delete",
+      "clearFilters": "Clear all filters"
+    },
+    "dialog": {
+      "confirmDelete": "Are you sure you want to delete this service?",
+      "noServicesFound": "No services match your criteria"
+    },
+    "toast": {
+      "fillRequired": "Please fill in all required fields correctly",
+      "successCreate": "Service added successfully",
+      "errorCreate": "Failed to add service",
+      "updateSuccess": "Service updated successfully",
+      "updateError": "Failed to update service",
+      "deleteSuccess": "Service deleted successfully",
+      "deleteError": "Failed to delete service",
+      "error": "An unexpected error occurred"
+    },
+    "categories": {
+      "PREVENTIVE": "Preventive",
+      "RESTORATIVE": "Restorative",
+      "SURGICAL": "Surgical",
+      "ORTHODONTICS": "Orthodontics",
+      "DIAGNOSTIC": "Diagnostic",
+      "COSMETIC": "Cosmetic",
+      "ENDODONTIC": "Endodontic",
+      "PERIODONTIC": "Periodontic",
+      "PROSTHODONTIC": "Prosthodontic",
+      "OTHER": "Other"
+    },
+    "searchPlaceholder": "Search services..."
+  },
+  "reports": {
+    "title": "Reports",
+    "subtitle": "Financial, operational, and clinical analytics",
+    "errors": {
+      "loadFailed": "Failed to load data",
+      "tryAgain": "Please check your connection and try again."
+    },
+    "kpis": {
+      "totalRevenue": "Total Revenue",
+      "totalExpenses": "Total Expenses",
+      "netProfit": "Net Profit",
+      "totalPatients": "Total Patients"
+    },
+    "charts": {
+      "revenueOverTime": "Revenue Over Time",
+      "expenseBreakdown": "Expense Breakdown",
+      "profitLoss": "Profit & Loss",
+      "treatmentDistribution": "Treatment Distribution",
+      "patientGrowth": "Patient Growth"
+    },
+    "aiInsights": {
+      "title": "AI Clinical Insights",
+      "noData": "No insights available"
+    },
+    "inventoryAlerts": {
+      "title": "Low Stock Alerts",
+      "noAlerts": "No alerts"
+    }
+  },
+  "finance": {
+    "title": "Financial Dashboard",
+    "subtitle": "Overview of the clinic's financial situation",
+    "errors": {
+      "accessDenied": "Access Denied or Load Error"
+    },
+    "period": {
+      "7d": "Last 7 Days",
+      "30d": "Last 30 Days",
+      "90d": "Last 90 Days",
+      "year": "This Year"
+    },
+    "kpis": {
+      "monthlyRevenue": "Monthly Revenue",
+      "monthlyExpenses": "Monthly Expenses",
+      "netProfit": "Net Profit",
+      "cashBalance": "Cash Balance",
+      "receivables": "Receivables",
+      "payables": "Payables"
+    },
+    "quickActions": {
+      "title": "Finance Actions",
+      "newInvoice": "New Invoice",
+      "recordPayment": "Record Payment",
+      "addExpense": "Add Expense",
+      "viewReports": "View Reports"
+    }
+  },
+  "settings": {
+    "title": "Settings",
+    "subtitle": "Manage clinic preferences and system options.",
+    "tabs": {
+      "clinic": "Clinic",
+      "notifications": "Notifications",
+      "billing": "Billing"
+    },
+    "clinic": {
+      "title": "Clinic Information",
+      "description": "Update details used across invoices and profiles.",
+      "clinicName": "Clinic Name",
+      "email": "Support Email",
+      "phone": "Phone",
+      "address": "Address",
+      "saveChanges": "Save Changes",
+      "errors": {
+        "clinicNameRequired": "Clinic Name is required",
+        "invalidEmail": "Invalid email"
+      }
+    },
+    "notifications": {
+      "title": "Notifications",
+      "description": "Configure automated communications.",
+      "emailReminders": "Email Reminders",
+      "emailRemindersDesc": "Send 24h before appointments",
+      "smsReminders": "SMS Reminders",
+      "smsRemindersDesc": "Include confirm/cancel link",
+      "invoiceReceipts": "Invoice Receipts",
+      "invoiceReceiptsDesc": "Auto-email PDF on payment",
+      "lowInventoryAlerts": "Low Inventory Alerts",
+      "lowInventoryAlertsDesc": "Notify below min stock",
+      "saveChanges": "Save Settings"
+    },
+    "billingSettings": {
+      "title": "Billing Settings",
+      "description": "Invoice templates and tax configuration.",
+      "currency": "Currency",
+      "taxRate": "Tax Rate (%)",
+      "invoiceNote": "Invoice Note",
+      "saveChanges": "Save Settings"
+    }
+  },
+  "notifications": {
+    "title": "Notification Center",
+    "subtitle": "Manage your alerts, reminders and system updates",
+    "settings": "Settings",
+    "actionRequired": "Action Required",
+    "errors": {
+      "loadFailed": "Unable to load notifications",
+      "tryAgain": "Try Again"
+    },
+    "tabs": {
+      "all": "All",
+      "unread": "Unread",
+      "read": "Read",
+      "archived": "Archived"
+    },
+    "filter": {
+      "allTypes": "All Categories",
+      "appointment": "Appointment",
+      "invoice": "Invoice",
+      "inventory": "Inventory",
+      "lab": "Lab",
+      "system": "System",
+      "allPriorities": "Any Priority",
+      "high": "High",
+      "medium": "Medium",
+      "low": "Low"
+    },
+    "actions": {
+      "markAllRead": "Mark all read",
+      "archiveSelected": "Archive All Old",
+      "markAsRead": "Done",
+      "archive": "Archive",
+      "delete": "Delete"
+    },
+    "empty": {
+      "title": "No notifications found",
+      "subtitle": "We couldn't find any notifications matching your current filters."
+    },
+    "pagination": {
+      "previous": "Previous",
+      "next": "Next",
+      "page": "Page"
+    },
+    "priority": {
+      "LOW": "Low",
+      "MEDIUM": "Medium",
+      "HIGH": "High",
+      "CRITICAL": "Critical"
+    },
+    "toast": {
+      "markAllReadSuccess": "All notifications marked as read",
+      "archiveOldSuccess": "Old notifications moved to archive",
+      "markAsReadSuccess": "Notification marked as read",
+      "markAsReadError": "Failed to mark notification as read",
+      "archiveSuccess": "Notification archived successfully",
+      "archiveError": "Failed to archive notification",
+      "deleteSuccess": "Notification deleted successfully",
+      "deleteError": "Failed to delete notification"
+    }
+  },
+  "campaigns": {
+    "title": "SMS Campaigns",
+    "subtitle": "Send SMS campaigns to patients",
+    "newCampaign": "New Campaign",
+    "dailyLimit": "Daily Limit: {limit} SMS",
+    "form": {
+      "campaignName": "Campaign Name",
+      "selectTemplate": "Select Template",
+      "selectRecipients": "Select Recipients",
+      "messagePreview": "Message Preview",
+      "campaignNameInternal": "Campaign Name (Internal)",
+      "campaignNamePlaceholder": "e.g., Whitening Promo Q3",
+      "messageLabel": "Message",
+      "messagePlaceholder": "Hi '{{patient_name}}', we miss you at '{{clinic_name}}'! Book your next checkup today.",
+      "variablesLabel": "Insert Variables:",
+      "variablePatientName": "+ Patient Name",
+      "variableClinicName": "+ Clinic Name",
+      "variableApptDate": "+ Appt Date",
+      "previewPlaceholder": "Preview will appear here...",
+      "composeTitle": "Compose Message",
+      "composeDescription": "Write your SMS campaign content",
+      "chars": "chars"
+    },
+    "actions": {
+      "sendNow": "Send Now",
+      "schedule": "Schedule",
+      "saveDraft": "Save Draft",
+      "launchCampaign": "Launch Campaign",
+      "launchCampaignWithCount": "Launch Campaign ({count} patients)",
+      "cancel": "Cancel",
+      "createTemplate": "Create Template",
+      "updateTemplate": "Update Template",
+      "duplicate": "Duplicate",
+      "edit": "Edit",
+      "delete": "Delete"
+    },
+    "stats": {
+      "totalRecipients": "Total Recipients",
+      "estimatedCost": "Estimated Cost",
+      "audienceSize": "Audience Size"
+    },
+    "smsTemplates": {
+      "title": "SMS Templates",
+      "newTemplate": "New Template",
+      "templateName": "Template Name",
+      "messageBody": "Message Body",
+      "description": "Manage reusable text templates for reminders, occasions, and campaigns.",
+      "charsHelp": "160 chars per SMS",
+      "categories": {
+        "reminders": "Reminders",
+        "occasions": "Occasions",
+        "campaigns": "Campaigns"
+      },
+      "editorHelp": "Configure your SMS template and insert dynamic variables.",
+      "templateNamePlaceholder": "e.g., Appointment Confirmation",
+      "active": "Active",
+      "inactive": "Inactive",
+      "noTemplates": "No templates found in this category.",
+      "insertVariables": "Insert Variables:",
+      "previewPlaceholder": "Preview will appear here...",
+      "charsCount": "{count} chars",
+      "segmentCount": "{count} SMS segment",
+      "segmentsCount": "{count} SMS segments",
+      "confirmDelete": "Are you sure you want to delete this template?"
+    },
+    "filters": {
+      "title": "Audience Filters",
+      "description": "Select who should receive this campaign",
+      "lastVisit": "Last Visit (Months Ago)",
+      "lastVisitPlaceholder": "e.g., 6 for > 6 months",
+      "lastVisitHelp": "Patients whose last visit was more than N months ago",
+      "minAge": "Min Age",
+      "maxAge": "Max Age",
+      "gender": "Gender",
+      "genderAny": "Any",
+      "genderMale": "Male",
+      "genderFemale": "Female",
+      "genderOther": "Other",
+      "anyGender": "Any Gender",
+      "procedure": "Procedure Type (Optional)",
+      "procedurePlaceholder": "e.g., Teeth Whitening, Implant (Comma separated)",
+      "procedureHelp": "e.g., Teeth Whitening, Implant (Comma separated)",
+      "outstandingBalance": "Only patients with outstanding balance"
+    },
+    "tabs": {
+      "builder": "Campaign Builder",
+      "history": "History & Stats"
+    },
+    "history": {
+      "title": "Campaign History",
+      "description": "Overview of your past and ongoing campaigns",
+      "empty": "No campaigns found. Start building your first campaign!",
+      "status": "Status",
+      "sent": "Sent",
+      "failed": "Failed",
+      "created": "Created {time}"
+    },
+    "errors": {
+      "loadHistoryFailed": "Failed to load history",
+      "launchFailed": "Failed to launch campaign",
+      "nameRequired": "Campaign name is required",
+      "messageRequired": "Message is required",
+      "audienceEmpty": "Audience is empty",
+      "audienceLimitExceeded": "Cannot exceed 1000 patients limit",
+      "loadTemplatesFailed": "Error loading templates",
+      "noPermission": "You don't have permission to edit templates",
+      "updateFailed": "Failed to update status",
+      "duplicateFailed": "Failed to duplicate template",
+      "deleteFailed": "Failed to delete template",
+      "saveTemplateFailed": "Failed to save template",
+      "invalidVariables": "Template contains invalid variables. Allowed:"
+    },
+    "toasts": {
+      "campaignLaunched": "Campaign launched successfully!",
+      "templateActivated": "Template activated",
+      "templateDeactivated": "Template deactivated",
+      "templateDuplicated": "Template duplicated successfully",
+      "templateDeleted": "Template deleted",
+      "templateCreated": "Template created successfully",
+      "templateUpdated": "Template updated successfully"
+    }
+  }
+}

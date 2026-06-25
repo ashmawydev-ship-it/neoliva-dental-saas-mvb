@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -52,6 +53,7 @@ const categoryIcons: Record<ServiceCategory, string> = {
 };
 
 export function ServicesView({ initialServices }: ServicesViewProps) {
+  const t = useTranslations('services');
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState<ServiceCategory | "ALL">("ALL");
   const [editingService, setEditingService] = useState<Service | null>(null);
@@ -65,17 +67,17 @@ export function ServicesView({ initialServices }: ServicesViewProps) {
   });
 
   async function handleDelete(id: string) {
-    if (!confirm("Are you sure you want to delete this service?")) return;
+    if (!confirm(t('dialog.confirmDelete'))) return;
 
     try {
       const result = await deleteServiceAction(id);
       if (result.success) {
-        toast.success("Service deleted successfully");
+        toast.success(t('toast.deleteSuccess'));
       } else {
-        toast.error(result.error || "Failed to delete service");
+        toast.error(result.error || t('toast.deleteError'));
       }
     } catch (error) {
-      toast.error("An unexpected error occurred");
+      toast.error(t('toast.error'));
     }
   }
 
@@ -91,7 +93,7 @@ export function ServicesView({ initialServices }: ServicesViewProps) {
         <div className="relative w-full md:w-96">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
           <Input 
-            placeholder="Search services..." 
+            placeholder={t('searchPlaceholder')} 
             className="pl-10 bg-gray-50 border-0 focus-visible:ring-indigo-500 rounded-xl h-11"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
@@ -107,7 +109,7 @@ export function ServicesView({ initialServices }: ServicesViewProps) {
               categoryFilter === "ALL" ? "bg-indigo-600 text-white" : "text-gray-600 border-gray-200"
             }`}
           >
-            All
+            {t('filterAll')}
           </Button>
           {Object.values(ServiceCategory).map((cat) => (
             <Button
@@ -119,7 +121,7 @@ export function ServicesView({ initialServices }: ServicesViewProps) {
                 categoryFilter === cat ? "bg-indigo-600 text-white" : "text-gray-600 border-gray-200"
               }`}
             >
-              {cat.charAt(0) + cat.slice(1).toLowerCase()}
+              {t.has(`categories.${cat}`) ? t(`categories.${cat}`) : (cat.charAt(0) + cat.slice(1).toLowerCase())}
             </Button>
           ))}
         </div>
@@ -131,13 +133,13 @@ export function ServicesView({ initialServices }: ServicesViewProps) {
           <div className="w-16 h-16 bg-gray-50 rounded-2xl flex items-center justify-center mb-4">
             <SearchX className="w-8 h-8 text-gray-300" />
           </div>
-          <p className="text-gray-500 font-medium">No services match your criteria</p>
+          <p className="text-gray-500 font-medium">{t('dialog.noServicesFound')}</p>
           <Button 
             variant="link" 
             className="text-indigo-600"
             onClick={() => { setSearch(""); setCategoryFilter("ALL"); }}
           >
-            Clear all filters
+            {t('actions.clearFilters')}
           </Button>
         </div>
       ) : (
@@ -147,7 +149,7 @@ export function ServicesView({ initialServices }: ServicesViewProps) {
               {service.popular && (
                 <div className="absolute top-4 right-12 z-10">
                   <Badge className="bg-gradient-to-r from-amber-400 to-orange-500 text-white border-none text-[10px] font-bold rounded-full px-2 shadow-sm">
-                    <Sparkles className="w-2.5 h-2.5 mr-1" /> Popular
+                    <Sparkles className="w-2.5 h-2.5 mr-1" /> {t('table.popular')}
                   </Badge>
                 </div>
               )}
@@ -164,13 +166,13 @@ export function ServicesView({ initialServices }: ServicesViewProps) {
                       className="text-gray-600 focus:text-indigo-600 cursor-pointer rounded-lg"
                       onClick={() => handleEditClick(service)}
                     >
-                      <Edit2 className="w-4 h-4 mr-2" /> Edit Service
+                      <Edit2 className="w-4 h-4 mr-2" /> {t('actions.edit')}
                     </DropdownMenuItem>
                     <DropdownMenuItem 
                       className="text-red-600 focus:text-red-700 cursor-pointer rounded-lg"
                       onClick={() => handleDelete(service.id)}
                     >
-                      <Trash2 className="w-4 h-4 mr-2" /> Delete
+                      <Trash2 className="w-4 h-4 mr-2" /> {t('actions.delete')}
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
@@ -179,14 +181,14 @@ export function ServicesView({ initialServices }: ServicesViewProps) {
               <CardContent className="p-6">
                 <div className="flex items-start gap-4">
                   <div className="w-14 h-14 rounded-2xl bg-gray-50 flex items-center justify-center text-3xl flex-shrink-0 group-hover:scale-110 transition-transform shadow-inner">
-                    {categoryIcons[service.category]}
+                    {categoryIcons[service.category] || "🦷"}
                   </div>
                   <div className="flex-1 min-w-0 pr-6">
                     <h3 className="text-base font-bold text-gray-900 mb-1 group-hover:text-indigo-600 transition-colors">
                       {service.name}
                     </h3>
                     <p className="text-xs text-gray-500 leading-relaxed line-clamp-2">
-                      {service.description || "No description provided."}
+                      {service.description || t('form.noDescription')}
                     </p>
                   </div>
                 </div>
@@ -194,10 +196,10 @@ export function ServicesView({ initialServices }: ServicesViewProps) {
                 <div className="mt-6 pt-5 border-t border-gray-50 flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <div className="flex items-center gap-1.5 text-xs font-medium text-gray-600 bg-gray-50 px-2.5 py-1 rounded-lg">
-                      <Clock className="w-3.5 h-3.5 text-indigo-500" /> {service.duration} min
+                      <Clock className="w-3.5 h-3.5 text-indigo-500" /> {service.duration} {t('form.minute')}
                     </div>
-                    <Badge variant="outline" className={`text-[10px] uppercase tracking-wider font-bold rounded-full border px-2.5 py-0.5 ${categoryColors[service.category]}`}>
-                      {service.category.replace('_', ' ')}
+                    <Badge variant="outline" className={`text-[10px] uppercase tracking-wider font-bold rounded-full border px-2.5 py-0.5 ${categoryColors[service.category] || 'bg-gray-50 text-gray-700'}`}>
+                      {t.has(`categories.${service.category}`) ? t(`categories.${service.category}`) : service.category.replace('_', ' ')}
                     </Badge>
                   </div>
                   <div className="text-right">

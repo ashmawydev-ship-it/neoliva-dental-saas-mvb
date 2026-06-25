@@ -10,6 +10,7 @@ import {
   ArrowDownRight,
   Clock
 } from "lucide-react";
+import { useTranslations, useLocale } from "next-intl";
 
 interface KPIProps {
   data: {
@@ -24,12 +25,15 @@ interface KPIProps {
 }
 
 export function FinanceKPIs({ data }: KPIProps) {
+  const t = useTranslations('finance');
+  const locale = useLocale();
+
   const formatCurrency = (val: number) => 
-    new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(val);
+    new Intl.NumberFormat(locale, { style: 'currency', currency: 'USD' }).format(val);
 
   const kpis = [
     {
-      title: "Monthly Revenue",
+      title: t('kpis.monthlyRevenue'),
       value: formatCurrency(data.revenueMonth),
       description: `Today: ${formatCurrency(data.revenueToday)}`,
       icon: DollarSign,
@@ -38,7 +42,7 @@ export function FinanceKPIs({ data }: KPIProps) {
       trend: data.revenueMonth > 0 ? "up" : "neutral"
     },
     {
-      title: "Monthly Expenses",
+      title: t('kpis.monthlyExpenses'),
       value: formatCurrency(data.expensesMonth),
       description: "Operative costs",
       icon: TrendingDown,
@@ -47,7 +51,7 @@ export function FinanceKPIs({ data }: KPIProps) {
       trend: "down"
     },
     {
-      title: "Net Profit",
+      title: t('kpis.netProfit'),
       value: formatCurrency(data.netProfit),
       description: "Revenue - Expenses",
       icon: TrendingUp,
@@ -56,7 +60,7 @@ export function FinanceKPIs({ data }: KPIProps) {
       trend: data.netProfit >= 0 ? "up" : "down"
     },
     {
-      title: "Cash Balance",
+      title: t('kpis.cashBalance'),
       value: formatCurrency(data.cashBalance),
       description: "Liquid assets",
       icon: Wallet,
@@ -64,17 +68,25 @@ export function FinanceKPIs({ data }: KPIProps) {
       bg: "bg-indigo-500/10",
     },
     {
-      title: "Receivables",
+      title: t('kpis.receivables'),
       value: formatCurrency(data.receivables),
       description: "Pending Invoices",
       icon: Clock,
       color: "text-orange-500",
       bg: "bg-orange-500/10",
+    },
+    {
+      title: t('kpis.payables'),
+      value: formatCurrency(data.payables),
+      description: "Pending Bills",
+      icon: Clock,
+      color: "text-rose-500",
+      bg: "bg-rose-500/10",
     }
   ];
 
   return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
+    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
       {kpis.map((kpi, i) => (
         <Card key={i} className="p-4 flex flex-col gap-3 hover:shadow-md transition-shadow border-slate-200/60 dark:border-slate-800/60">
           <div className="flex items-center justify-between">

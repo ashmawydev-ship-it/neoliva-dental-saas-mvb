@@ -2,6 +2,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import { useTranslations } from "next-intl";
 
 interface GrowthData {
   month: string;
@@ -9,10 +10,12 @@ interface GrowthData {
 }
 
 export function ReportsPatientGrowthChart({ data }: { data: GrowthData[] }) {
+  const t = useTranslations('reports');
+
   return (
     <Card className="border-0 shadow-sm">
       <CardHeader>
-        <CardTitle className="text-base font-semibold">Patient Growth</CardTitle>
+        <CardTitle className="text-base font-semibold">{t('charts.patientGrowth')}</CardTitle>
         <p className="text-xs text-gray-500">New patients per month</p>
       </CardHeader>
       <CardContent className="h-[350px]">

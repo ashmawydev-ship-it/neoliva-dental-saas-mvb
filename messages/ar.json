@@ -1,0 +1,877 @@
+{
+  "nav": {
+    "dashboard": "لوحة التحكم",
+    "appointments": "المواعيد",
+    "patients": "المرضى",
+    "billing": "الفواتير",
+    "inventory": "المخزون",
+    "staff": "الموظفون",
+    "reports": "التقارير",
+    "settings": "الإعدادات",
+    "labOrders": "طلبات المعمل",
+    "expenses": "المصروفات",
+    "rooms": "الغرف",
+    "campaigns": "الحملات",
+    "services": "الخدمات",
+    "operations": "العمليات",
+    "financialDashboard": "لوحة التحكم المالية",
+    "smsTemplates": "قوالب الرسائل القصيرة"
+  },
+  "navGroups": {
+    "overview": "نظرة عامة",
+    "clinical": "الإدارة السريرية",
+    "financial": "المالية",
+    "management": "الإدارة"
+  },
+  "common": {
+    "save": "حفظ",
+    "cancel": "إلغاء",
+    "delete": "حذف",
+    "edit": "تعديل",
+    "add": "إضافة",
+    "search": "بحث",
+    "loading": "جاري التحميل...",
+    "noResults": "لم يتم العثور على نتائج",
+    "confirm": "تأكيد",
+    "back": "رجوع",
+    "export": "تصدير",
+    "print": "طباعة",
+    "yes": "نعم",
+    "no": "لا",
+    "actions": "الإجراءات",
+    "status": "الحالة",
+    "date": "التاريخ",
+    "name": "الاسم",
+    "phone": "الهاتف",
+    "email": "البريد الإلكتروني",
+    "amount": "المبلغ",
+    "notes": "ملاحظات",
+    "description": "الوصف"
+  },
+  "patients": {
+    "title": "المرضى",
+    "subtitle": "إدارة سجلات المرضى والملفات الطبية والبيانات الديموغرافية",
+    "addPatient": "إضافة مريض",
+    "searchPlaceholder": "ابحث باسم المريض أو رقم الهاتف أو المعرف...",
+    "registered": "{count} مريض مسجل",
+    "name": "الاسم الكامل",
+    "phone": "رقم الهاتف",
+    "email": "البريد الإلكتروني",
+    "dateOfBirth": "تاريخ الميلاد",
+    "gender": "الجنس",
+    "maritalStatus": "الحالة الاجتماعية",
+    "occupation": "المهنة",
+    "insurance": "التأمين الصحي",
+    "ssn": "الرقم التأميني",
+    "idNumber": "رقم الهوية",
+    "medicalAlert": "تنبيه طبي",
+    "referredBy": "تم التحويل بواسطة",
+    "notes": "ملاحظات إضافية",
+    "signature": "التوقيع",
+    "deceased": "المريض متوفى",
+    "saveInfo": "حفظ البيانات",
+    "discard": "تجاهل التغييرات",
+    "saving": "جاري الحفظ...",
+    "successCreate": "تم إنشاء ملف المريض بنجاح",
+    "errorCreate": "فشل إنشاء ملف المريض",
+    "formTitle": "نموذج بيانات المريض",
+    "generalProfile": "بيانات الملف الشخصي العامة",
+    "contactDetails": "بيانات الاتصال",
+    "privateInfo": "البيانات الخاصة",
+    "additionalInfo": "معلومات إضافية"
+  },
+  "appointments": {
+    "title": "جدول المواعيد",
+    "subtitle": "إدارة ومتابعة جميع مواعيد المرضى والعيادة",
+    "newAppointment": "موعد جديد",
+    "selectPatient": "اختر مريضاً",
+    "selectDoctor": "اختر طبيباً",
+    "selectService": "اختر خدمة",
+    "stats": {
+      "totalToday": "إجمالي اليوم",
+      "completed": "المكتملة",
+      "inProgress": "قيد الإجراء",
+      "cancelled": "الملغية"
+    },
+    "form": {
+      "patient": "المريض",
+      "doctor": "الطبيب",
+      "service": "الخدمة المطلوبة",
+      "date": "التاريخ",
+      "time": "الوقت",
+      "notes": "الملاحظات السريرية",
+      "selectPatient": "ابحث عن مريض...",
+      "selectDoctor": "اختر طبيباً من القائمة",
+      "selectService": "اختر الخدمة أو العلاج"
+    },
+    "status": {
+      "SCHEDULED": "مجدول",
+      "COMPLETED": "مكتمل",
+      "CANCELLED": "ملغي",
+      "NO_SHOW": "عدم حضور",
+      "IN_PROGRESS": "قيد المعالجة"
+    },
+    "toast": {
+      "successCreate": "تم حجز الموعد بنجاح",
+      "errorCreate": "حدث خطأ أثناء حجز الموعد"
+    }
+  },
+  "dashboard": {
+    "title": "ذكاء العيادة",
+    "subtitle": "مركز التحكم التشغيلي والمالي في الوقت الفعلي",
+    "activity": {
+      "newPatient": "مريض جديد",
+      "joinedClinic": "انضم {name} إلى العيادة."
+    },
+    "kpis": {
+      "todayAppointments": "مواعيد اليوم",
+      "todayAppointmentsSub": "مواعيد اليوم المجدولة",
+      "totalPatients": "إجمالي المرضى",
+      "totalPatientsSub": "المرضى النشطين المسجلين",
+      "monthlyRevenue": "الإيرادات الشهرية",
+      "monthlyRevenueSub": "الإيرادات المُحصّلة هذا الشهر",
+      "pendingInvoices": "الفواتير المعلقة",
+      "pendingInvoicesSub": "فواتير المرضى غير المدفوعة"
+    },
+    "quickActions": {
+      "newPatient": "مريض جديد",
+      "newAppointment": "موعد جديد",
+      "createInvoice": "إنشاء فاتورة"
+    },
+    "queue": {
+      "title": "قائمة انتظار العيادة",
+      "waiting": "في الانتظار",
+      "empty": "قائمة الانتظار فارغة حالياً.",
+      "viewAll": "عرض قائمة الانتظار الكاملة",
+      "minWait": "{n} دقيقة",
+      "status": {
+        "inProgress": "جارٍ",
+        "waiting": "في الانتظار",
+        "completed": "مكتمل"
+      }
+    },
+    "feed": {
+      "title": "التغذية الفورية",
+      "empty": "لا يوجد نشاط حديث.",
+      "viewLog": "عرض سجل التدقيق"
+    }
+  },
+  "billing": {
+    "title": "الفواتير والمدفوعات",
+    "subtitle": "إدارة الحسابات المالية، إصدار الفواتير ومتابعة المعاملات المالية",
+    "newInvoice": "فاتورة جديدة",
+    "viewInvoices": "عرض الفواتير",
+    "exportCsv": "تصدير كملف CSV",
+    "recentTransactions": "آخر المعاملات المالية",
+    "noTransactions": "لا توجد معاملات مسجلة.",
+    "kpis": {
+      "totalRevenue": "إجمالي الإيرادات",
+      "pendingPayments": "المدفوعات المعلقة",
+      "paidInvoices": "الفواتير المدفوعة"
+    },
+    "table": {
+      "invoiceNum": "رقم الفاتورة",
+      "patient": "المريض",
+      "amount": "المبلغ الإجمالي",
+      "status": "الحالة",
+      "date": "تاريخ الإصدار",
+      "actions": "الخيارات"
+    },
+    "status": {
+      "PAID": "مدفوعة كاملة",
+      "PENDING": "معلقة / غير مدفوعة",
+      "OVERDUE": "متأخرة السداد",
+      "DRAFT": "مسودة فاتورة",
+      "CANCELLED": "ملغية"
+    },
+    "form": {
+      "patient": "الاسم",
+      "services": "الخدمات المقدمة",
+      "discount": "خصم مقدر",
+      "tax": "الضريبة المضافة",
+      "notes": "ملاحظات الفاتورة",
+      "createInvoice": "إصدار الفاتورة"
+    },
+    "confirm": {
+      "deleteInvoice": "هل أنت متأكد من حذف هذه الفاتورة نهائياً؟",
+      "markPaid": "تأكيد سداد الفاتورة"
+    },
+    "toast": {
+      "successCreate": "تم إصدار الفاتورة بنجاح",
+      "errorCreate": "حدث خطأ أثناء إصدار الفاتورة",
+      "successDelete": "تم حذف الفاتورة بنجاح",
+      "successMarkPaid": "تم وضع علامة مدفوع بنجاح"
+    }
+  },
+  "staff": {
+    "title": "الموظفون والأدوار",
+    "subtitle": "إدارة أعضاء الفريق وصلاحيات الوصول",
+    "inviteStaff": "دعوة موظف",
+    "roles": {
+      "admin": "مدير",
+      "doctor": "طبيب",
+      "assistant": "مساعد",
+      "receptionist": "موظف استقبال",
+      "accountant": "محاسب",
+      "nurse": "ممرض",
+      "manager": "مشرف",
+      "owner": "المالك"
+    },
+    "table": {
+      "name": "الاسم",
+      "role": "الدور",
+      "email": "البريد الإلكتروني",
+      "status": "الحالة",
+      "actions": "الإجراءات"
+    },
+    "status": {
+      "active": "نشط",
+      "inactive": "غير نشط",
+      "pending": "في الانتظار"
+    },
+    "form": {
+      "name": "الاسم",
+      "email": "البريد الإلكتروني",
+      "role": "الدور",
+      "selectRole": "اختر دوراً",
+      "sendInvitation": "إرسال الدعوة",
+      "cancel": "إلغاء"
+    }
+  },
+  "inventory": {
+    "title": "المخزون",
+    "subtitle": "إدارة مستلزمات العيادة ومتابعة المخزون",
+    "addItem": "إضافة صنف",
+    "stats": {
+      "totalItems": "إجمالي الأصناف",
+      "totalItemsDesc": "الأصناف الفريدة",
+      "lowStockAlerts": "تنبيهات نقص المخزون",
+      "actionRequired": "مطلوب إجراء",
+      "allGood": "كل شيء على ما يرام",
+      "lastAudit": "آخر جرد",
+      "lastAuditDesc": "حركة المخزون الأخيرة"
+    },
+    "search": "البحث في الأصناف...",
+    "filter": {
+      "all": "جميع الفئات",
+      "lowStockOnly": "نقص المخزون فقط"
+    },
+    "table": {
+      "item": "الصنف",
+      "category": "الفئة",
+      "stock": "المخزون",
+      "unit": "الوحدة",
+      "minLevel": "الحد الأدنى",
+      "status": "الحالة",
+      "actions": "الإجراءات"
+    },
+    "status": {
+      "lowStock": "مخزون منخفض",
+      "ok": "طبيعي"
+    },
+    "dialog": {
+      "addItem": "إضافة صنف جديد",
+      "addStock": "إضافة مخزون",
+      "deductStock": "خصم مخزون",
+      "viewHistory": "سجل الحركات",
+      "noHistory": "لم يتم العثور على سجل حركات.",
+      "confirmDelete": "هل أنت متأكد من رغبتك في حذف هذا الصنف؟ لا يمكن التراجع عن هذا الإجراء.",
+      "noItemsFound": "لم يتم العثور على أصناف",
+      "allStocked": "ممتاز! جميع الأصناف متوفرة بمخزون جيد.",
+      "adjustFilters": "حاول تغيير فلاتر البحث أو أضف صنفاً جديداً للبدء."
+    },
+    "actions": {
+      "addStock": "إضافة مخزون",
+      "deductStock": "خصم مخزون",
+      "viewHistory": "عرض السجل",
+      "edit": "تعديل",
+      "delete": "حذف"
+    },
+    "form": {
+      "quantity": "الكمية",
+      "reason": "السبب",
+      "save": "حفظ",
+      "cancel": "إلغاء",
+      "close": "إغلاق",
+      "initialStock": "المخزون الابتدائي (اختياري)",
+      "namePlaceholder": "مثال: قفازات طبية",
+      "categoryPlaceholder": "مثال: مستهلكات",
+      "unitPlaceholder": "مثال: علبة، قطعة",
+      "reasonPlaceholderIn": "مثال: شحنة جديدة #552",
+      "reasonPlaceholderOut": "مثال: استهلاك أسبوعي",
+      "availableStock": "المخزون المتاح: {stock} {unit}",
+      "creating": "جاري الإنشاء...",
+      "updating": "جاري التحديث...",
+      "processing": "جاري المعالجة..."
+    },
+    "toast": {
+      "stockAdded": "تمت إضافة {quantity} {unit} من {name}",
+      "stockDeducted": "تم خصم {quantity} {unit} من {name}",
+      "itemCreated": "تم إنشاء الصنف بنجاح",
+      "itemUpdated": "تم تحديث الصنف بنجاح",
+      "itemDeleted": "تم حذف الصنف",
+      "error": "حدث خطأ، يرجى المحاولة مرة أخرى"
+    }
+  },
+  "expenses": {
+    "title": "المصروفات",
+    "subtitle": "إدارة ومتابعة تكاليف تشغيل العيادة",
+    "newExpense": "مصروف جديد",
+    "export": "تصدير",
+    "thisMonth": "هذا الشهر",
+    "ofTotal": "من الإجمالي",
+    "kpis": {
+      "totalExpenses": "إجمالي المصروفات",
+      "pendingPayments": "مدفوعات معلقة",
+      "largestCategory": "أكبر فئة"
+    },
+    "table": {
+      "description": "الوصف",
+      "category": "الفئة",
+      "amount": "المبلغ",
+      "date": "التاريخ",
+      "status": "الحالة",
+      "actions": "الإجراءات"
+    },
+    "status": {
+      "PAID": "مدفوع",
+      "PENDING": "معلق",
+      "CANCELLED": "ملغي"
+    },
+    "form": {
+      "title": "عنوان المصروف",
+      "titlePlaceholder": "مثال: إيجار شهري، مستلزمات طبية...",
+      "description": "الوصف",
+      "descriptionPlaceholder": "مثال: حشوات أسنان وحقن (اختياري)...",
+      "amount": "المبلغ",
+      "date": "التاريخ",
+      "category": "الفئة",
+      "status": "الحالة",
+      "paymentMethod": "طريقة الدفع",
+      "notes": "ملاحظات",
+      "notesPlaceholder": "أي تفاصيل إضافية أو أرقام مراجع...",
+      "selectPlaceholder": "اختر...",
+      "save": "حفظ",
+      "cancel": "إلغاء",
+      "optional": "اختياري"
+    },
+    "actions": {
+      "edit": "تعديل",
+      "delete": "حذف",
+      "markPaid": "تسجيل كمدفوع",
+      "markPending": "تسجيل كمعلق"
+    },
+    "categories": {
+      "supplies": "مستلزمات",
+      "utilities": "مرافق",
+      "equipment": "أدوات/معدات",
+      "rent": "إيجار",
+      "marketing": "تسويق",
+      "other": "أخرى"
+    },
+    "toast": {
+      "successCreate": "تم تسجيل المصروف بنجاح",
+      "errorCreate": "حدث خطأ أثناء تسجيل المصروف",
+      "deleteSuccess": "تم حذف المصروف بنجاح",
+      "deleteError": "حدث خطأ أثناء حذف المصروف",
+      "statusUpdated": "تم تحديث الحالة بنجاح إلى {status}",
+      "statusUpdateError": "حدث خطأ أثناء تحديث الحالة",
+      "noDataExport": "لا توجد بيانات لتصديرها",
+      "exportSuccess": "تم تصدير ملف CSV بنجاح",
+      "exportError": "حدث خطأ أثناء تصدير ملف CSV"
+    },
+    "dialog": {
+      "confirmDelete": "هل أنت متأكد من رغبتك في حذف هذا المصروف؟",
+      "noExpensesFound": "لم يتم العثور على مصروفات."
+    },
+    "searchPlaceholder": "البحث في المصروفات بالاسم، الوصف أو الفئة..."
+  },
+  "labOrders": {
+    "title": "طلبات المعمل",
+    "subtitle": "إدارة طلبات المختبر السني",
+    "newOrder": "طلب جديد",
+    "orderManagement": "إدارة الطلبات",
+    "liveUpdate": "تحديث مباشر",
+    "stats": {
+      "activeCases": "الحالات النشطة",
+      "activeCasesDesc": "مُرسلة أو جارية",
+      "dueThisWeek": "مستحقة هذا الأسبوع",
+      "dueThisWeekDesc": "تحتاج اهتماماً",
+      "received": "مستلمة",
+      "receivedDesc": "جاهزة للتسليم",
+      "monthlyCost": "التكلفة الشهرية",
+      "monthlyCostDesc": "إنفاق الشهر الحالي"
+    },
+    "table": {
+      "orderNum": "رقم الطلب",
+      "patient": "المريض",
+      "lab": "المختبر",
+      "type": "النوع",
+      "status": "الحالة",
+      "dueDate": "تاريخ الاستحقاق",
+      "cost": "التكلفة",
+      "actions": "الإجراءات",
+      "orderIdLab": "رقم الطلب / المختبر",
+      "itemTooth": "التركيبة / السن",
+      "timelines": "التواريخ",
+      "tooth": "السن: {number}",
+      "sent": "تم الإرسال",
+      "due": "تاريخ التسليم"
+    },
+    "status": {
+      "PENDING": "معلق",
+      "SENT": "مُرسل",
+      "IN_PROGRESS": "جارٍ",
+      "RECEIVED": "مستلم",
+      "DELIVERED": "تم التسليم للمريض",
+      "CANCELLED": "ملغي"
+    },
+    "dialog": {
+      "createOrder": "إنشاء طلب معمل",
+      "confirmDelete": "هل أنت متأكد من رغبتك في حذف هذا الطلب؟",
+      "noOrdersFound": "لم يتم العثور على طلبات معمل تطابق بحثك."
+    },
+    "actions": {
+      "viewPatient": "عرض المريض",
+      "updateStatus": "تحديث الحالة",
+      "markSent": "تسجيل كمرسل",
+      "markReceived": "تسجيل كمستلم",
+      "markDelivered": "تسجيل كمستلم من المريض",
+      "cancelOrder": "إلغاء الطلب",
+      "deleteOrder": "حذف الطلب"
+    },
+    "form": {
+      "infoBox": "تأكد من إدراج جميع المواصفات الفنية (اللون، المادة، تفاصيل التحضير) في الملاحظات للمنهي الفني.",
+      "patientSelection": "اختر المريض",
+      "selectPatientPlaceholder": "اختر مريضاً...",
+      "labName": "اسم المختبر",
+      "labNamePlaceholder": "مثال: معمل إيليت للأسنان",
+      "itemType": "نوع الصنف",
+      "itemTypePlaceholder": "مثال: تاج زركونيا",
+      "toothNumber": "رقم السن (اختياري)",
+      "toothNumberPlaceholder": "مثال: 16، 24، أو الكل",
+      "cost": "التكلفة التقديرية",
+      "expectedDate": "تاريخ الاستلام المتوقع",
+      "notes": "تعليمات إضافية",
+      "notesPlaceholder": "تضمين تفاصيل اللون (مثال: A2)، نوع المادة، أو أي طلبات خاصة...",
+      "discard": "تجاهل",
+      "submit": "إرسال الطلب",
+      "submitting": "جاري الإرسال..."
+    },
+    "toast": {
+      "fillRequired": "يرجى ملء جميع الحقول المطلوبة",
+      "createSuccess": "تم إنشاء طلب المعمل بنجاح!",
+      "createError": "فشل إنشاء طلب المعمل",
+      "error": "حدث خطأ غير متوقع",
+      "statusUpdated": "تم تحديث الحالة بنجاح إلى {status}",
+      "statusUpdateError": "فشل تحديث الحالة",
+      "deleteSuccess": "تم حذف طلب المعمل",
+      "deleteError": "فشل حذف طلب المعمل"
+    },
+    "tabs": {
+      "all": "كل الطلبات"
+    },
+    "searchPlaceholder": "البحث باسم المريض، المعرف أو المختبر..."
+  },
+  "services": {
+    "title": "الخدمات والتسعير",
+    "subtitle": "إدارة علاجات العيادة وقائمة الأسعار",
+    "newService": "خدمة جديدة",
+    "filterAll": "الكل",
+    "stats": {
+      "activeServices": "الخدمات النشطة",
+      "mostPopular": "الأكثر طلباً",
+      "revenueDriver": "قائد الإيراد",
+      "avgDuration": "متوسط المدة",
+      "m": "د",
+      "premium": "ممتاز",
+      "none": "لا يوجد"
+    },
+    "table": {
+      "name": "الاسم",
+      "category": "الفئة",
+      "duration": "المدة",
+      "price": "السعر",
+      "popular": "شائع",
+      "actions": "الإجراءات"
+    },
+    "form": {
+      "name": "اسم الخدمة",
+      "namePlaceholder": "مثال: تبييض الأسنان الاحترافي",
+      "category": "الفئة",
+      "selectCategoryPlaceholder": "اختر فئة الخدمة",
+      "duration": "المدة (بالدقائق)",
+      "price": "السعر",
+      "description": "الوصف",
+      "descriptionPlaceholder": "قدم وصفاً مفصلاً للمرضى...",
+      "markPopular": "تمييز كشائع",
+      "highlightDescription": "تمييز مع شارة خاصة",
+      "save": "حفظ",
+      "cancel": "إلغاء",
+      "processing": "جاري الحفظ...",
+      "updating": "جاري التعديل...",
+      "optional": "اختياري",
+      "minute": "دقيقة",
+      "noDescription": "لا يوجد وصف متوفر."
+    },
+    "actions": {
+      "edit": "تعديل الخدمة",
+      "delete": "حذف",
+      "clearFilters": "مسح جميع الفلاتر"
+    },
+    "dialog": {
+      "confirmDelete": "هل أنت متأكد من رغبتك في حذف هذه الخدمة؟",
+      "noServicesFound": "لم يتم العثور على خدمات تطابق معايير البحث."
+    },
+    "toast": {
+      "fillRequired": "يرجى ملء جميع الحقول المطلوبة بشكل صحيح",
+      "successCreate": "تمت إضافة الخدمة بنجاح",
+      "errorCreate": "فشل إضافة الخدمة",
+      "updateSuccess": "تم تحديث الخدمة بنجاح",
+      "updateError": "فشل تحديث الخدمة",
+      "deleteSuccess": "تم حذف الخدمة بنجاح",
+      "deleteError": "فشل حذف الخدمة",
+      "error": "حدث خطأ غير متوقع"
+    },
+    "categories": {
+      "PREVENTIVE": "وقائي",
+      "RESTORATIVE": "ترميمي",
+      "SURGICAL": "جراحي",
+      "ORTHODONTICS": "تقويم الأسنان",
+      "DIAGNOSTIC": "تشخيصي",
+      "COSMETIC": "تجميلي",
+      "ENDODONTIC": "علاج الجذور",
+      "PERIODONTIC": "علاج اللثة",
+      "PROSTHODONTIC": "تركيبات الأسنان",
+      "OTHER": "أخرى"
+    },
+    "searchPlaceholder": "البحث في الخدمات..."
+  },
+  "reports": {
+    "title": "التقارير",
+    "subtitle": "تحليلات مالية وتشغيلية وسريرية",
+    "errors": {
+      "loadFailed": "فشل تحميل البيانات",
+      "tryAgain": "يرجى التحقق من الاتصال والمحاولة مرة أخرى."
+    },
+    "kpis": {
+      "totalRevenue": "إجمالي الإيرادات",
+      "totalExpenses": "إجمالي المصروفات",
+      "netProfit": "صافي الربح",
+      "totalPatients": "إجمالي المرضى"
+    },
+    "charts": {
+      "revenueOverTime": "الإيرادات عبر الزمن",
+      "expenseBreakdown": "تفصيل المصروفات",
+      "profitLoss": "الأرباح والخسائر",
+      "treatmentDistribution": "توزيع العلاجات",
+      "patientGrowth": "نمو المرضى"
+    },
+    "aiInsights": {
+      "title": "رؤى الذكاء الاصطناعي السريرية",
+      "noData": "لا توجد رؤى متاحة حالياً"
+    },
+    "inventoryAlerts": {
+      "title": "تنبيهات نقص المخزون",
+      "noAlerts": "لا توجد تنبيهات"
+    }
+  },
+  "finance": {
+    "title": "لوحة المالية",
+    "subtitle": "نظرة شاملة على الوضع المالي للعيادة",
+    "cashFlow": "التدفق النقدي للعيادة",
+    "treasuryAccounts": "حسابات الخزينة",
+    "recentActivity": "آخر الأنشطة المالية",
+    "alerts": "التنبيهات والمخاطر المالية",
+    "errors": {
+      "accessDenied": "تم رفض الوصول أو فشل التحميل"
+    },
+    "period": {
+      "7d": "آخر 7 أيام",
+      "30d": "آخر 30 يوم",
+      "90d": "آخر 90 يوم",
+      "year": "هذه السنة"
+    },
+    "kpis": {
+      "totalInflow": "إجمالي التدفقات الواردة",
+      "totalOutflow": "إجمالي التدفقات الصادرة",
+      "currentBalance": "الرصيد المالي الحالي",
+      "pendingInvoicesValue": "إجمالي الفواتير قيد الانتظار",
+      "monthlyRevenue": "إيرادات الشهر",
+      "monthlyExpenses": "مصروفات الشهر",
+      "netProfit": "صافي الربح",
+      "cashBalance": "الرصيد النقدي",
+      "receivables": "المستحقات",
+      "payables": "المديونيات"
+    },
+    "quickActions": {
+      "title": "إجراءات مالية",
+      "recordPayment": "تسجيل دفعة",
+      "addFunds": "إيداع مالي",
+      "withdraw": "سحب من الخزينة",
+      "transfer": "تحويل مالي بين الحسابات",
+      "newInvoice": "فاتورة جديدة",
+      "addExpense": "إضافة مصروف",
+      "viewReports": "عرض التقارير"
+    }
+  },
+  "settings": {
+    "title": "الإعدادات",
+    "subtitle": "إدارة تفضيلات العيادة وخيارات النظام",
+    "clinicSettings": "بيانات العيادة العامة",
+    "billingSettingsLabel": "إعدادات الفواتير والضرائب",
+    "notificationSettings": "تفضيلات الإشعارات والتنبيهات",
+    "tabs": {
+      "clinic": "العيادة",
+      "notifications": "الإشعارات",
+      "billing": "الفواتير"
+    },
+    "clinic": {
+      "title": "معلومات العيادة",
+      "description": "تحديث البيانات المستخدمة في الفواتير والملفات الشخصية",
+      "clinicName": "اسم العيادة",
+      "email": "البريد الإلكتروني",
+      "phone": "رقم الهاتف",
+      "address": "العنوان",
+      "saveChanges": "حفظ التغييرات",
+      "errors": {
+        "clinicNameRequired": "اسم العيادة مطلوب",
+        "invalidEmail": "بريد إلكتروني غير صالح"
+      }
+    },
+    "notifications": {
+      "title": "الإشعارات",
+      "description": "تهيئة الاتصالات والرسائل التلقائية",
+      "emailReminders": "تذكيرات البريد الإلكتروني",
+      "emailRemindersDesc": "إرسال قبل 24 ساعة من الموعد",
+      "smsReminders": "تذكيرات الرسائل القصيرة",
+      "smsRemindersDesc": "تضمين رابط التأكيد أو الإلغاء",
+      "invoiceReceipts": "إيصالات الفواتير",
+      "invoiceReceiptsDesc": "إرسال الفاتورة تلقائياً عند الدفع",
+      "lowInventoryAlerts": "تنبيهات نقص المخزون",
+      "lowInventoryAlertsDesc": "التنبيه عند انخفاض المخزون عن الحد الأدنى",
+      "saveChanges": "حفظ التغييرات"
+    },
+    "billingSettings": {
+      "title": "إعدادات الفواتير",
+      "description": "قوالب الفواتير وتهيئة الضرائب",
+      "currency": "العملة",
+      "taxRate": "نسبة الضريبة (%)",
+      "invoiceNote": "ملاحظة الفاتورة",
+      "saveChanges": "حفظ التغييرات"
+    },
+    "clinicForm": {
+      "name": "اسم العيادة الرسمي",
+      "address": "العنوان الفعلي",
+      "phone": "رقم هاتف العيادة",
+      "taxId": "الرقم الضريبي للعيادة"
+    },
+    "billingForm": {
+      "currency": "العملة الافتراضية",
+      "taxRate": "نسبة الضريبة الافتراضية (%)",
+      "invoicePrefix": "البادئة الترقيمية للفواتير"
+    },
+    "notificationsForm": {
+      "emailAlerts": "إرسال الإشعارات عبر البريد الإلكتروني",
+      "smsAlerts": "إرسال الإشعارات عبر الرسائل النصية القصيرة (SMS)",
+      "whatsappAlerts": "تنبيهات تطبيق الواتساب للمرضى"
+    },
+    "toast": {
+      "successUpdate": "تم حفظ الإعدادات وتطبيقها بنجاح",
+      "errorUpdate": "حدث خطأ أثناء حفظ الإعدادات"
+    }
+  },
+  "notifications": {
+    "title": "مركز الإشعارات",
+    "subtitle": "متابعة جميع التنبيهات، تحديثات المواعيد والعمليات داخل العيادة",
+    "settings": "الإعدادات",
+    "actionRequired": "مطلوب إجراء",
+    "errors": {
+      "loadFailed": "تعذر تحميل الإشعارات",
+      "tryAgain": "حاول مجدداً"
+    },
+    "tabs": {
+      "all": "الكل",
+      "unread": "غير مقروء",
+      "read": "المقروءة",
+      "archived": "المؤرشفة"
+    },
+    "filter": {
+      "allTypes": "جميع الأنواع",
+      "appointment": "المواعيد",
+      "invoice": "الفواتير",
+      "inventory": "المخزون",
+      "lab": "المختبر",
+      "system": "النظام",
+      "allPriorities": "جميع الأولويات",
+      "high": "عالية",
+      "medium": "متوسطة",
+      "low": "منخفضة"
+    },
+    "actions": {
+      "markAllRead": "تحديد الكل كمقروء",
+      "archiveSelected": "أرشفة المحدد",
+      "markAsRead": "تحديد كمقروء",
+      "archive": "أرشفة",
+      "delete": "حذف"
+    },
+    "empty": {
+      "title": "لا توجد إشعارات",
+      "subtitle": "أنت على علم بكل شيء!"
+    },
+    "pagination": {
+      "previous": "السابق",
+      "next": "التالي",
+      "page": "الصفحة"
+    },
+    "priority": {
+      "LOW": "منخفضة",
+      "MEDIUM": "متوسطة",
+      "HIGH": "عالية",
+      "CRITICAL": "حرجة"
+    },
+    "toast": {
+      "markAllReadSuccess": "تم تحديد جميع الإشعارات كمقروءة",
+      "archiveOldSuccess": "تم نقل الإشعارات القديمة إلى الأرشيف",
+      "markAsReadSuccess": "تم تحديد الإشعار كمقروء",
+      "markAsReadError": "فشل تحديد الإشعار كمقروء",
+      "archiveSuccess": "تم أرشفة الإشعار بنجاح",
+      "archiveError": "فشل أرشفة الإشعار",
+      "deleteSuccess": "تم حذف الإشعار بنجاح",
+      "deleteError": "فشل حذف الإشعار"
+    }
+  },
+  "campaigns": {
+    "title": "الحملات التسويقية",
+    "subtitle": "إرسال حملات رسائل نصية للمرضى",
+    "newCampaign": "حملة جديدة",
+    "dailyLimit": "الحد اليومي: {limit} رسالة",
+    "form": {
+      "campaignName": "اسم الحملة",
+      "selectTemplate": "اختر قالباً",
+      "selectRecipients": "اختر المستلمين",
+      "messagePreview": "معاينة الرسالة",
+      "campaignNameInternal": "اسم الحملة (داخلي)",
+      "campaignNamePlaceholder": "مثال: عرض التبييض الربع الثالث",
+      "messageLabel": "نص الرسالة",
+      "messagePlaceholder": "مرحباً '{{patient_name}}'، نحن نفتقدك في '{{clinic_name}}'! احجز موعدك القادم اليوم.",
+      "variablesLabel": "إدراج متغيرات:",
+      "variablePatientName": "+ اسم المريض",
+      "variableClinicName": "+ اسم العيادة",
+      "variableApptDate": "+ تاريخ الموعد",
+      "previewPlaceholder": "ستظهر المعاينة هنا...",
+      "composeTitle": "إنشاء الرسالة",
+      "composeDescription": "اكتب محتوى حملة الرسائل القصيرة الخاصة بك",
+      "chars": "حرفاً"
+    },
+    "actions": {
+      "sendNow": "إرسال الآن",
+      "schedule": "جدولة",
+      "saveDraft": "حفظ كمسودة",
+      "launchCampaign": "إطلاق الحملة",
+      "launchCampaignWithCount": "إطلاق الحملة ({count} مريض)",
+      "cancel": "إلغاء",
+      "createTemplate": "إنشاء قالب",
+      "updateTemplate": "تحديث قالب",
+      "duplicate": "تكرار",
+      "edit": "تعديل",
+      "delete": "حذف"
+    },
+    "stats": {
+      "totalRecipients": "إجمالي المستلمين",
+      "estimatedCost": "التكلفة المتوقعة",
+      "audienceSize": "حجم الجمهور المستهدف"
+    },
+    "smsTemplates": {
+      "title": "قوالب الرسائل",
+      "newTemplate": "قالب جديد",
+      "templateName": "اسم القالب",
+      "messageBody": "نص الرسالة",
+      "description": "إدارة قوالب الرسائل القابلة لإعادة الاستخدام للتذكيرات، المناسبات، والحملات.",
+      "charsHelp": "160 حرفاً لكل رسالة",
+      "categories": {
+        "reminders": "تذكيرات المواعيد",
+        "occasions": "مناسبات خاصة",
+        "campaigns": "حملات تسويقية"
+      },
+      "editorHelp": "تكوين قالب الرسائل القصيرة وإدراج المتغيرات الديناميكية.",
+      "templateNamePlaceholder": "مثال: تأكيد الموعد",
+      "active": "نشط",
+      "inactive": "غير نشط",
+      "noTemplates": "لا توجد قوالب في هذه الفئة.",
+      "insertVariables": "إدراج المتغيرات:",
+      "previewPlaceholder": "ستظهر المعاينة هنا...",
+      "charsCount": "{count} حرفاً",
+      "segmentCount": "{count} رسالة قصيرة",
+      "segmentsCount": "{count} رسائل قصيرة",
+      "confirmDelete": "هل أنت متأكد من رغبتك في حذف هذا القالب؟"
+    },
+    "filters": {
+      "title": "فلاتر الجمهور",
+      "description": "حدد من يجب أن يتلقى هذه الحملة",
+      "lastVisit": "آخر زيارة (قبل أشهر)",
+      "lastVisitPlaceholder": "مثال: 6 ليكون > 6 أشهر",
+      "lastVisitHelp": "المرضى الذين كانت زيارتهم الأخيرة قبل أكثر من N من الأشهر",
+      "minAge": "الحد الأدنى للسن",
+      "maxAge": "الحد الأقصى للسن",
+      "gender": "الجنس",
+      "genderAny": "الكل",
+      "genderMale": "ذكر",
+      "genderFemale": "أنثى",
+      "genderOther": "آخر",
+      "anyGender": "جميع الأجناس",
+      "procedure": "نوع الإجراء (اختياري)",
+      "procedurePlaceholder": "مثال: تبييض، زراعة (مفصولة بفاصلة)",
+      "procedureHelp": "مثال: تبييض الأسنان، زراعة (مفصولة بفاصلة)",
+      "outstandingBalance": "المرضى الذين لديهم مستحقات مالية معلقة فقط"
+    },
+    "tabs": {
+      "builder": "منشئ الحملات",
+      "history": "السجل والإحصائيات"
+    },
+    "history": {
+      "title": "سجل الحملات",
+      "description": "نظرة عامة على حملاتك السابقة والجارية",
+      "empty": "لم يتم العثور على أي حملات. ابدأ بإنشاء حملتك الأولى!",
+      "status": "الحالة",
+      "sent": "تم الإرسال",
+      "failed": "فشل",
+      "created": "تم الإنشاء {time}"
+    },
+    "errors": {
+      "loadHistoryFailed": "فشل تحميل سجل الحملات",
+      "launchFailed": "فشل إطلاق الحملة",
+      "nameRequired": "اسم الحملة مطلوب",
+      "messageRequired": "نص الرسالة مطلوب",
+      "audienceEmpty": "الجمهور المستهدف فارغ",
+      "audienceLimitExceeded": "لا يمكن تجاوز الحد الأقصى البالغ 1000 مريض",
+      "loadTemplatesFailed": "حدث خطأ أثناء تحميل القوالب",
+      "noPermission": "ليس لديك الصلاحية لتعديل القوالب",
+      "updateFailed": "فشل تحديث الحالة",
+      "duplicateFailed": "فشل تكرار القالب",
+      "deleteFailed": "فشل حذف القالب",
+      "saveTemplateFailed": "فشل حفظ القالب",
+      "invalidVariables": "يحتوي القالب على متغيرات غير صالحة. المسموح به:"
+    },
+    "toasts": {
+      "campaignLaunched": "تم إطلاق الحملة بنجاح!",
+      "templateActivated": "تم تفعيل القالب بنجاح",
+      "templateDeactivated": "تم إلغاء تفعيل القالب بنجاح",
+      "templateDuplicated": "تم تكرار القالب بنجاح",
+      "templateDeleted": "تم حذف القالب بنجاح",
+      "templateCreated": "تم إنشاء القالب بنجاح",
+      "templateUpdated": "تم تحديث القالب بنجاح"
+    }
+  },
+  "errors": {
+    "notFound": "عذراً، الصفحة التي تبحث عنها غير موجودة.",
+    "unauthorized": "ليس لديك الصلاحيات الكافية للوصول إلى هذه الصفحة.",
+    "serverError": "حدث خطأ داخلي في الخادم. يرجى المحاولة لاحقاً.",
+    "networkError": "يرجى التحقق من اتصالك بالإنترنت والمحاولة مجدداً.",
+    "tryAgain": "أعد المحاولة",
+    "contactSupport": "تواصل مع الدعم الفني"
+  },
+  "dateFormats": {
+    "today": "اليوم هو {date}"
+  }
+}

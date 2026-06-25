@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -32,6 +33,7 @@ interface NewLabOrderDialogProps {
 }
 
 export function NewLabOrderDialog({ patients }: NewLabOrderDialogProps) {
+  const t = useTranslations('labOrders');
   const [open, setOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   
@@ -50,7 +52,7 @@ export function NewLabOrderDialog({ patients }: NewLabOrderDialogProps) {
     e.preventDefault();
     
     if (!formData.patientId || !formData.labName || !formData.itemType) {
-      toast.error("Please fill in all required fields");
+      toast.error(t('toast.fillRequired'));
       return;
     }
 
@@ -62,7 +64,7 @@ export function NewLabOrderDialog({ patients }: NewLabOrderDialogProps) {
       });
 
       if (res.success) {
-        toast.success("Lab order created successfully!");
+        toast.success(t('toast.createSuccess'));
         setOpen(false);
         setFormData({
           patientId: "",
@@ -74,10 +76,10 @@ export function NewLabOrderDialog({ patients }: NewLabOrderDialogProps) {
           notes: ""
         });
       } else {
-        toast.error(res.error || "Failed to create lab order");
+        toast.error(res.error || t('toast.createError'));
       }
     } catch (error) {
-      toast.error("An error occurred");
+      toast.error(t('toast.error'));
     } finally {
       setIsSubmitting(false);
     }
@@ -87,7 +89,7 @@ export function NewLabOrderDialog({ patients }: NewLabOrderDialogProps) {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button className="bg-purple-600 hover:bg-purple-700 text-white font-bold px-6 h-12 rounded-2xl shadow-lg shadow-purple-500/20 transition-all flex items-center gap-2 border-0 cursor-pointer">
-          <Plus className="w-5 h-5" /> New Order
+          <Plus className="w-5 h-5" /> {t('newOrder')}
         </Button>
       </DialogTrigger>
       
@@ -97,7 +99,7 @@ export function NewLabOrderDialog({ patients }: NewLabOrderDialogProps) {
             <div className="bg-purple-600 p-3 rounded-2xl text-white shadow-lg shadow-purple-500/30">
               <Beaker className="h-6 w-6" />
             </div>
-            Create Lab Order
+            {t('dialog.createOrder')}
           </DialogTitle>
         </DialogHeader>
 
@@ -110,21 +112,21 @@ export function NewLabOrderDialog({ patients }: NewLabOrderDialogProps) {
                 <FileText className="w-4 h-4" />
               </div>
               <p className="text-sm text-blue-800 font-medium leading-relaxed">
-                Ensure all technical specifications (shade, material, prep details) are included in the notes for the technician.
+                {t('form.infoBox')}
               </p>
             </div>
 
             {/* Patient Selection */}
             <div className="space-y-2">
               <Label className="text-xs font-bold text-gray-400 uppercase tracking-widest flex items-center gap-2">
-                <User className="w-4 h-4" /> Patient Selection
+                <User className="w-4 h-4" /> {t('form.patientSelection')}
               </Label>
               <Select 
                 value={formData.patientId} 
                 onValueChange={(val) => setFormData({ ...formData, patientId: val ?? "" })}
               >
                 <SelectTrigger className="h-12 border-gray-200 focus:ring-purple-500/20 rounded-2xl bg-gray-50/50">
-                  <SelectValue placeholder="Select patient..." />
+                  <SelectValue placeholder={t('form.selectPatientPlaceholder')} />
                 </SelectTrigger>
                 <SelectContent className="rounded-2xl border-gray-100 shadow-2xl p-1">
                   {patients.map(p => (
@@ -140,10 +142,10 @@ export function NewLabOrderDialog({ patients }: NewLabOrderDialogProps) {
               {/* Lab Name */}
               <div className="space-y-2">
                 <Label className="text-xs font-bold text-gray-400 uppercase tracking-widest flex items-center gap-2">
-                  <Truck className="w-4 h-4" /> Laboratory Name
+                  <Truck className="w-4 h-4" /> {t('form.labName')}
                 </Label>
                 <Input 
-                  placeholder="e.g. Elite Dental Labs" 
+                  placeholder={t('form.labNamePlaceholder')} 
                   value={formData.labName}
                   onChange={(e) => setFormData({ ...formData, labName: e.target.value })}
                   className="h-12 border-gray-200 focus:ring-purple-500/20 rounded-2xl bg-gray-50/50" 
@@ -153,10 +155,10 @@ export function NewLabOrderDialog({ patients }: NewLabOrderDialogProps) {
               {/* Item Type */}
               <div className="space-y-2">
                 <Label className="text-xs font-bold text-gray-400 uppercase tracking-widest flex items-center gap-2">
-                  <Tag className="w-4 h-4" /> Item Type
+                  <Tag className="w-4 h-4" /> {t('form.itemType')}
                 </Label>
                 <Input 
-                  placeholder="e.g. Zirconia Crown" 
+                  placeholder={t('form.itemTypePlaceholder')} 
                   value={formData.itemType}
                   onChange={(e) => setFormData({ ...formData, itemType: e.target.value })}
                   className="h-12 border-gray-200 focus:ring-purple-500/20 rounded-2xl bg-gray-50/50" 
@@ -166,10 +168,10 @@ export function NewLabOrderDialog({ patients }: NewLabOrderDialogProps) {
               {/* Tooth Number */}
               <div className="space-y-2">
                 <Label className="text-xs font-bold text-gray-400 uppercase tracking-widest flex items-center gap-2">
-                  <Stethoscope className="w-4 h-4" /> Tooth # (Optional)
+                  <Stethoscope className="w-4 h-4" /> {t('form.toothNumber')}
                 </Label>
                 <Input 
-                  placeholder="e.g. 16, 24, or All" 
+                  placeholder={t('form.toothNumberPlaceholder')} 
                   value={formData.toothNumber}
                   onChange={(e) => setFormData({ ...formData, toothNumber: e.target.value })}
                   className="h-12 border-gray-200 focus:ring-purple-500/20 rounded-2xl bg-gray-50/50" 
@@ -179,7 +181,7 @@ export function NewLabOrderDialog({ patients }: NewLabOrderDialogProps) {
               {/* Cost */}
               <div className="space-y-2">
                 <Label className="text-xs font-bold text-gray-400 uppercase tracking-widest flex items-center gap-2">
-                  <DollarSign className="w-4 h-4" /> Estimated Cost
+                  <DollarSign className="w-4 h-4" /> {t('form.cost')}
                 </Label>
                 <div className="relative">
                   <Input 
@@ -197,7 +199,7 @@ export function NewLabOrderDialog({ patients }: NewLabOrderDialogProps) {
             {/* Due Date */}
             <div className="space-y-2">
               <Label className="text-xs font-bold text-gray-400 uppercase tracking-widest flex items-center gap-2">
-                <CalendarIcon className="w-4 h-4" /> Expected Return Date
+                <CalendarIcon className="w-4 h-4" /> {t('form.expectedDate')}
               </Label>
               <Input 
                 type="date"
@@ -209,9 +211,9 @@ export function NewLabOrderDialog({ patients }: NewLabOrderDialogProps) {
 
             {/* Notes */}
             <div className="space-y-2">
-              <Label className="text-xs font-bold text-gray-400 uppercase tracking-widest">Additional Instructions</Label>
+              <Label className="text-xs font-bold text-gray-400 uppercase tracking-widest">{t('form.notes')}</Label>
               <Textarea 
-                placeholder="Include shade (e.g. A2), material specifics, or special requests..." 
+                placeholder={t('form.notesPlaceholder')} 
                 value={formData.notes}
                 onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
                 className="min-h-[100px] border-gray-200 focus:ring-purple-500/20 rounded-2xl bg-gray-50/50 resize-none p-4" 
@@ -228,14 +230,14 @@ export function NewLabOrderDialog({ patients }: NewLabOrderDialogProps) {
               className="h-12 px-6 rounded-2xl border-gray-200 font-semibold hover:bg-white cursor-pointer"
               disabled={isSubmitting}
             >
-              DISCARD
+              {t('form.discard')}
             </Button>
             <Button 
               type="submit" 
               className="h-12 px-10 rounded-2xl bg-purple-600 hover:bg-purple-700 text-white font-bold shadow-lg shadow-purple-500/25 cursor-pointer"
               disabled={isSubmitting}
             >
-              {isSubmitting ? "Submitting..." : "SUBMIT ORDER"}
+              {isSubmitting ? t('form.submitting') : t('form.submit')}
             </Button>
           </DialogFooter>
         </form>

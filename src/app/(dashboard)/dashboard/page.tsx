@@ -7,11 +7,17 @@ import { LayoutDashboard, Sparkles } from "lucide-react";
 import { differenceInMinutes } from "date-fns";
 import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { cookies } from "next/headers";
+import { formatDate } from "@/lib/format";
+import { getTranslations } from "next-intl/server";
 
 export const dynamic = 'force-dynamic';
 
 async function DashboardContent() {
   const stats = await getDashboardStats();
+  const cookieStore = await cookies();
+  const locale = cookieStore.get("locale")?.value || "en";
+  const t = await getTranslations("dashboard");
 
   const queue = stats.upcomingAppointments.map((a: any) => {
     const timeComp = a.time instanceof Date ? a.time : new Date(a.time);
@@ -24,7 +30,7 @@ async function DashboardContent() {
       id: a.id,
       patientName: a.patient?.name || "Unknown",
       doctorName: a.doctor?.name || "Unassigned",
-      time: scheduledDateTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+      time: formatDate(scheduledDateTime, locale, { hour: '2-digit', minute: '2-digit' }),
       waitTime: waitTime > 0 ? waitTime : 0,
       status: a.status || "SCHEDULED"
     }
@@ -33,8 +39,8 @@ async function DashboardContent() {
   const activities = stats.recentPatients.map((p: any) => ({
     id: p.id,
     type: 'patient' as const,
-    title: 'New Patient',
-    description: `${p.name} joined the clinic.`,
+    title: t('activity.newPatient'),
+    description: t('activity.joinedClinic', { name: p.name }),
     time: p.createdAt || new Date()
   }));
 
@@ -58,7 +64,9 @@ async function DashboardContent() {
   );
 }
 
-export default function DashboardPage() {
+export default async function DashboardPage() {
+  const t = await getTranslations("dashboard");
+
   return (
     <div className="space-y-6 animate-fade-in-up pb-10">
       {/* Page header */}
@@ -68,12 +76,12 @@ export default function DashboardPage() {
             <LayoutDashboard className="w-7 h-7" />
           </div>
           <div>
-            <h1 className="text-3xl font-black tracking-tight text-gray-900">
-              Clinic Intelligence
+            <h1 className="text-3xl font-black tracking-tight text-foreground">
+              {t('title')}
             </h1>
-            <p className="text-sm text-gray-500 mt-1 flex items-center gap-1.5 font-medium">
+            <p className="text-sm text-muted-foreground mt-1 flex items-center gap-1.5 font-medium">
               <Sparkles className="w-4 h-4 text-amber-400 animate-pulse" />
-              Real-time operational & financial control center.
+              {t('subtitle')}
             </p>
           </div>
         </div>

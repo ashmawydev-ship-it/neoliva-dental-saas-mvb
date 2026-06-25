@@ -28,8 +28,10 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 
 export function NotificationCenter() {
+  const t = useTranslations('notifications');
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -54,14 +56,14 @@ export function NotificationCenter() {
       if (res.success) {
         setNotifications(res.data as Notification[]);
       } else {
-        setError(res.error || "Failed to fetch notifications");
+        setError(res.error || t('errors.loadFailed'));
       }
     } catch (err) {
-      setError("An unexpected error occurred");
+      setError(t('errors.loadFailed'));
     } finally {
       setLoading(false);
     }
-  }, [filter, page]);
+  }, [filter, page, t]);
 
   useEffect(() => {
     fetchNotifications();
@@ -71,14 +73,14 @@ export function NotificationCenter() {
     const res = await markAllAsRead();
     if (res.success) {
       setNotifications(prev => prev.map(n => ({ ...n, isRead: true })));
-      toast.success("All notifications marked as read");
+      toast.success(t('toast.markAllReadSuccess') || "All notifications marked as read");
     }
   };
 
   const handleArchiveOld = async () => {
     const res = await archiveNotifications();
     if (res.success) {
-      toast.success("Old notifications moved to archive");
+      toast.success(t('toast.archiveOldSuccess') || "Old notifications moved to archive");
       fetchNotifications();
     }
   };
@@ -87,19 +89,38 @@ export function NotificationCenter() {
     setNotifications(prev => prev.map(n => n.id === id ? { ...n, isRead: true } : n));
   };
 
+  const handleItemArchive = (id: string) => {
+    setNotifications(prev => prev.filter(n => n.id !== id));
+  };
+
+  const handleItemDelete = (id: string) => {
+    setNotifications(prev => prev.filter(n => n.id !== id));
+  };
+
+  const getTypeValue = (type: string) => {
+    switch (type) {
+      case 'APPOINTMENT': return t('filter.appointment');
+      case 'BILLING': return t('filter.invoice');
+      case 'INVENTORY': return t('filter.inventory');
+      case 'LAB': return t('filter.lab');
+      case 'SYSTEM': return t('filter.system');
+      default: return type;
+    }
+  };
+
   return (
     <div className="space-y-6 max-w-5xl mx-auto">
       {/* Header & Global Actions */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">Notification Center</h1>
-          <p className="text-slate-500 text-sm mt-1">Manage your alerts, reminders and system updates</p>
+          <h1 className="text-2xl font-bold text-slate-900">{t('title')}</h1>
+          <p className="text-slate-500 text-sm mt-1">{t('subtitle')}</p>
         </div>
         <div className="flex items-center gap-3">
           <Link href="/settings/notifications">
             <Button variant="outline" size="sm" className="rounded-full h-10 border-slate-200">
               <Settings2 className="w-4 h-4 mr-2" />
-              Settings
+              {t('settings')}
             </Button>
           </Link>
           <Button 
@@ -110,7 +131,7 @@ export function NotificationCenter() {
             className="rounded-full h-10 px-5 border-slate-200 hover:bg-slate-50 text-slate-600"
           >
             <CheckCheck className="w-4 h-4 mr-2 text-green-500" />
-            Mark all read
+            {t('actions.markAllRead')}
           </Button>
           {!filter.isArchived && (
             <Button 
@@ -120,7 +141,7 @@ export function NotificationCenter() {
               className="rounded-full h-10 border-slate-200 hover:bg-slate-50"
             >
               <Archive className="w-4 h-4 mr-2 text-slate-400" />
-              Archive All Old
+              {t('actions.archiveSelected')}
             </Button>
           )}
         </div>
@@ -139,10 +160,10 @@ export function NotificationCenter() {
             }}
           >
             <TabsList className="bg-white border border-slate-200 p-1 rounded-full h-11">
-              <TabsTrigger value="all" className="rounded-full data-[state=active]:bg-blue-600 data-[state=active]:text-white px-6 h-9">All</TabsTrigger>
-              <TabsTrigger value="unread" className="rounded-full data-[state=active]:bg-blue-600 data-[state=active]:text-white px-6 h-9">Unread</TabsTrigger>
-              <TabsTrigger value="read" className="rounded-full data-[state=active]:bg-blue-600 data-[state=active]:text-white px-6 h-9">Read</TabsTrigger>
-              <TabsTrigger value="archived" className="rounded-full data-[state=active]:bg-slate-800 data-[state=active]:text-white px-6 h-9">Archived</TabsTrigger>
+              <TabsTrigger value="all" className="rounded-full data-[state=active]:bg-blue-600 data-[state=active]:text-white px-6 h-9">{t('tabs.all')}</TabsTrigger>
+              <TabsTrigger value="unread" className="rounded-full data-[state=active]:bg-blue-600 data-[state=active]:text-white px-6 h-9">{t('tabs.unread')}</TabsTrigger>
+              <TabsTrigger value="read" className="rounded-full data-[state=active]:bg-blue-600 data-[state=active]:text-white px-6 h-9">{t('tabs.read')}</TabsTrigger>
+              <TabsTrigger value="archived" className="rounded-full data-[state=active]:bg-slate-800 data-[state=active]:text-white px-6 h-9">{t('tabs.archived')}</TabsTrigger>
             </TabsList>
           </Tabs>
 
@@ -151,12 +172,12 @@ export function NotificationCenter() {
             setPage(0);
           }}>
             <SelectTrigger className="w-[180px] h-11 rounded-full bg-white border-slate-200 shadow-sm font-medium">
-              <SelectValue placeholder="All Categories" />
+              <SelectValue placeholder={t('filter.allTypes')} />
             </SelectTrigger>
             <SelectContent className="rounded-2xl">
-              <SelectItem value="ALL">All Categories</SelectItem>
-              {Object.values(NotificationType).map(t => (
-                <SelectItem key={t} value={t}>{t.charAt(0) + t.slice(1).toLowerCase()}</SelectItem>
+              <SelectItem value="ALL">{t('filter.allTypes')}</SelectItem>
+              {Object.values(NotificationType).map(item => (
+                <SelectItem key={item} value={item}>{getTypeValue(item)}</SelectItem>
               ))}
             </SelectContent>
           </Select>
@@ -166,12 +187,12 @@ export function NotificationCenter() {
             setPage(0);
           }}>
             <SelectTrigger className="w-[160px] h-11 rounded-full bg-white border-slate-200 shadow-sm font-medium">
-              <SelectValue placeholder="Any Priority" />
+              <SelectValue placeholder={t('filter.allPriorities')} />
             </SelectTrigger>
             <SelectContent className="rounded-2xl">
-              <SelectItem value="ALL">Any Priority</SelectItem>
+              <SelectItem value="ALL">{t('filter.allPriorities')}</SelectItem>
               {Object.values(NotificationPriority).map(p => (
-                <SelectItem key={p} value={p}>{p}</SelectItem>
+                <SelectItem key={p} value={p}>{t(`priority.${p}`)}</SelectItem>
               ))}
             </SelectContent>
           </Select>
@@ -187,7 +208,7 @@ export function NotificationCenter() {
           >
             <ChevronLeft className="w-4 h-4" />
           </Button>
-          <span className="text-xs font-bold text-slate-600 min-w-[60px] text-center uppercase tracking-wider">Page {page + 1}</span>
+          <span className="text-xs font-bold text-slate-600 min-w-[60px] text-center uppercase tracking-wider">{t('pagination.page')} {page + 1}</span>
           <Button 
             variant="ghost" 
             size="icon" 
@@ -217,10 +238,10 @@ export function NotificationCenter() {
             <div className="w-16 h-16 bg-red-50 rounded-2xl flex items-center justify-center mb-6">
               <AlertCircle className="w-8 h-8 text-red-500" />
             </div>
-            <h3 className="text-xl font-bold text-slate-900">Unable to load notifications</h3>
+            <h3 className="text-xl font-bold text-slate-900">{t('errors.loadFailed')}</h3>
             <p className="text-slate-500 mt-2 max-w-xs">{error}</p>
             <Button variant="outline" className="mt-8 rounded-full px-8 border-red-200 text-red-600 hover:bg-red-50" onClick={fetchNotifications}>
-              Try Again
+              {t('errors.tryAgain')}
             </Button>
           </div>
         ) : notifications.length === 0 ? (
@@ -228,10 +249,9 @@ export function NotificationCenter() {
             <div className="w-24 h-24 bg-slate-50 rounded-full flex items-center justify-center mb-8">
               <Inbox className="w-12 h-12 text-slate-200" />
             </div>
-            <h3 className="text-2xl font-bold text-slate-900">No notifications found</h3>
+            <h3 className="text-2xl font-bold text-slate-900">{t('empty.title')}</h3>
             <p className="text-slate-500 mt-2 max-w-sm">
-              We couldn't find any notifications matching your current filters. 
-              {filter.isArchived ? " Your archive is empty." : " Try adjusted your search."}
+              {t('empty.subtitle')}
             </p>
           </div>
         ) : (
@@ -241,6 +261,8 @@ export function NotificationCenter() {
                 key={n.id} 
                 notification={n} 
                 onRead={handleItemRead}
+                onArchive={handleItemArchive}
+                onDelete={handleItemDelete}
               />
             ))}
           </div>

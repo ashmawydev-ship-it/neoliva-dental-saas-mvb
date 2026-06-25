@@ -3,6 +3,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { AlertTriangle, Package } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 interface InventoryItem {
   id: string;
@@ -14,13 +15,15 @@ interface InventoryItem {
 }
 
 export function ReportsInventoryAlerts({ items }: { items: InventoryItem[] }) {
+  const t = useTranslations('reports');
+
   return (
     <Card className="border-0 shadow-sm overflow-hidden">
       <CardHeader className="bg-red-50/50">
         <div className="flex items-center gap-2">
           <AlertTriangle className="w-5 h-5 text-red-500" />
           <div>
-            <CardTitle className="text-base font-semibold text-red-900">Inventory Critical Alerts</CardTitle>
+            <CardTitle className="text-base font-semibold text-red-900">{t('inventoryAlerts.title')}</CardTitle>
             <p className="text-xs text-red-600">Items below minimum stock levels</p>
           </div>
         </div>
@@ -53,7 +56,7 @@ export function ReportsInventoryAlerts({ items }: { items: InventoryItem[] }) {
           ) : (
             <div className="p-12 text-center">
               <Package className="w-12 h-12 text-gray-200 mx-auto mb-3" />
-              <p className="text-sm text-gray-500">All inventory levels are healthy</p>
+              <p className="text-sm text-gray-500">{t('inventoryAlerts.noAlerts')}</p>
             </div>
           )}
         </div>

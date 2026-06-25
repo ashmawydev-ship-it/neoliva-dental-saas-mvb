@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
+import { useLocale, useTranslations } from "next-intl";
 
 import { usePermission } from "@/components/providers/permission-provider";
 import { PermissionCode } from "@/types/permissions";
@@ -25,44 +26,46 @@ interface NavGroup {
   items: NavItem[];
 }
 
-const navGroups: NavGroup[] = [
-  {
-    label: "Overview",
-    items: [
-      { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-    ],
-  },
-  {
-    label: "Clinical",
-    items: [
-      { name: "Appointments", href: "/appointments", icon: Calendar, permission: PermissionCode.APPOINTMENT_VIEW },
-      { name: "Patients", href: "/patients", icon: Users, permission: PermissionCode.PATIENT_VIEW },
-      { name: "Services", href: "/services", icon: Stethoscope, permission: PermissionCode.SETTINGS_SERVICES_MANAGE },
-      { name: "Lab Orders", href: "/lab-orders", icon: Truck, permission: PermissionCode.CLINICAL_LAB_ORDER_MANAGE },
-    ],
-  },
-  {
-    label: "Financial",
-    items: [
-      { name: "Financial Dashboard", href: "/dashboard/finance", icon: DollarSign, permission: PermissionCode.FINANCE_VIEW },
-      { name: "Billing", href: "/billing", icon: FileText, permission: PermissionCode.BILLING_VIEW },
-      { name: "Expenses", href: "/expenses", icon: Wallet, permission: PermissionCode.BILLING_VIEW },
-      { name: "Inventory", href: "/inventory", icon: Package, permission: PermissionCode.INVENTORY_VIEW },
-    ],
-  },
-  {
-    label: "Management",
-    items: [
-      { name: "Rooms", href: "/dashboard/rooms", icon: DoorOpen, permission: PermissionCode.ROOM_VIEW },
-      { name: "Staff", href: "/staff", icon: UserCog, permission: PermissionCode.STAFF_MANAGE },
-      { name: "Reports", href: "/reports", icon: BarChart3, permission: PermissionCode.STAFF_REPORTS_VIEW },
-      { name: "Operations", href: "/dashboard/operations", icon: Activity, permission: PermissionCode.ADMIN_FULL_ACCESS },
-      { name: "Campaigns", href: "/communications/campaigns", icon: MessageSquareText, permission: PermissionCode.STAFF_MANAGE },
-      { name: "SMS Templates", href: "/settings/sms-templates", icon: MessageSquareText, permission: PermissionCode.SETTINGS_CLINIC_EDIT },
-      { name: "Settings", href: "/settings", icon: Settings, permission: PermissionCode.SETTINGS_CLINIC_EDIT },
-    ],
-  },
-];
+function getNavGroups(tNav: any, tGroup: any): NavGroup[] {
+  return [
+    {
+      label: tGroup("overview"),
+      items: [
+        { name: tNav("dashboard"), href: "/dashboard", icon: LayoutDashboard },
+      ],
+    },
+    {
+      label: tGroup("clinical"),
+      items: [
+        { name: tNav("appointments"), href: "/appointments", icon: Calendar, permission: PermissionCode.APPOINTMENT_VIEW },
+        { name: tNav("patients"), href: "/patients", icon: Users, permission: PermissionCode.PATIENT_VIEW },
+        { name: tNav("services"), href: "/services", icon: Stethoscope, permission: PermissionCode.SETTINGS_SERVICES_MANAGE },
+        { name: tNav("labOrders"), href: "/lab-orders", icon: Truck, permission: PermissionCode.CLINICAL_LAB_ORDER_MANAGE },
+      ],
+    },
+    {
+      label: tGroup("financial"),
+      items: [
+        { name: tNav("financialDashboard"), href: "/dashboard/finance", icon: DollarSign, permission: PermissionCode.FINANCE_VIEW },
+        { name: tNav("billing"), href: "/billing", icon: FileText, permission: PermissionCode.BILLING_VIEW },
+        { name: tNav("expenses"), href: "/expenses", icon: Wallet, permission: PermissionCode.BILLING_VIEW },
+        { name: tNav("inventory"), href: "/inventory", icon: Package, permission: PermissionCode.INVENTORY_VIEW },
+      ],
+    },
+    {
+      label: tGroup("management"),
+      items: [
+        { name: tNav("rooms"), href: "/dashboard/rooms", icon: DoorOpen, permission: PermissionCode.ROOM_VIEW },
+        { name: tNav("staff"), href: "/staff", icon: UserCog, permission: PermissionCode.STAFF_MANAGE },
+        { name: tNav("reports"), href: "/reports", icon: BarChart3, permission: PermissionCode.STAFF_REPORTS_VIEW },
+        { name: tNav("operations"), href: "/dashboard/operations", icon: Activity, permission: PermissionCode.ADMIN_FULL_ACCESS },
+        { name: tNav("campaigns"), href: "/communications/campaigns", icon: MessageSquareText, permission: PermissionCode.STAFF_MANAGE },
+        { name: tNav("smsTemplates"), href: "/settings/sms-templates", icon: MessageSquareText, permission: PermissionCode.SETTINGS_CLINIC_EDIT },
+        { name: tNav("settings"), href: "/settings", icon: Settings, permission: PermissionCode.SETTINGS_CLINIC_EDIT },
+      ],
+    },
+  ];
+}
 
 import { signOut } from "@/app/actions/signout";
 import { toast } from "sonner";
@@ -86,6 +89,12 @@ export function Sidebar({ user, settings }: SidebarProps) {
   const [collapsed, setCollapsed] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const { hasPermission, permissions } = usePermission();
+  const locale = useLocale();
+  const isRtl = locale === "ar";
+
+  const tNav = useTranslations("nav");
+  const tGroup = useTranslations("navGroups");
+  const navGroups = getNavGroups(tNav, tGroup);
 
   const handleLogout = async () => {
     setIsLoggingOut(true);
@@ -117,7 +126,7 @@ export function Sidebar({ user, settings }: SidebarProps) {
     <aside
       className={cn(
         "hidden md:flex flex-col h-full transition-all duration-300 ease-in-out relative z-20",
-        "bg-[oklch(0.14_0.025_255)] text-white",
+        "bg-sidebar text-white",
         collapsed ? "w-[72px]" : "w-[260px]"
       )}
     >
@@ -134,7 +143,7 @@ export function Sidebar({ user, settings }: SidebarProps) {
               <Stethoscope className="w-5 h-5 text-white" />
             )}
           </div>
-          <div className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-400 rounded-full border-2 border-[oklch(0.14_0.025_255)] animate-pulse-soft" />
+          <div className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-400 rounded-full border-2 border-sidebar animate-pulse-soft" />
         </div>
         {!collapsed && (
           <div className="animate-slide-in overflow-hidden">
@@ -147,9 +156,9 @@ export function Sidebar({ user, settings }: SidebarProps) {
       {/* Collapse toggle */}
       <button
         onClick={() => setCollapsed(!collapsed)}
-        className="absolute -right-3 top-[68px] w-6 h-6 rounded-full bg-white shadow-lg border border-gray-200 flex items-center justify-center z-50 hover:scale-110 transition-transform"
+        className="absolute -right-3 top-[68px] w-6 h-6 rounded-full bg-white shadow-lg border border-gray-200 flex items-center justify-center z-50 hover:scale-110 transition-transform sidebar-collapse-btn"
       >
-        <ChevronLeft className={cn("w-3.5 h-3.5 text-gray-600 transition-transform duration-300", collapsed && "rotate-180")} />
+        <ChevronLeft className={cn("w-3.5 h-3.5 text-gray-600 transition-transform duration-300", collapsed && (isRtl ? "-rotate-180" : "rotate-180"))} />
       </button>
 
       {/* Nav groups */}
@@ -221,7 +230,7 @@ export function Sidebar({ user, settings }: SidebarProps) {
               <div className="w-9 h-9 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-xs shadow-lg">
                 {initials}
               </div>
-              <div className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-400 rounded-full border-2 border-[oklch(0.14_0.025_255)]" />
+              <div className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-400 rounded-full border-2 border-sidebar" />
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-[13px] font-semibold text-white/90 truncate">{userName}</p>

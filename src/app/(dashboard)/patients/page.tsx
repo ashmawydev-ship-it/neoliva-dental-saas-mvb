@@ -6,6 +6,7 @@ import { PatientService } from "@/services/patient.service";
 import { resolveTenantContextOrRedirect as resolveTenantContext } from "@/lib/auth/resolve-tenant-context";
 import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { getTranslations } from "next-intl/server";
 
 const patientService = new PatientService();
 
@@ -23,13 +24,15 @@ async function PatientsListContent({ searchParams }: { searchParams: Promise<{ p
     { page, limit: PATIENTS_PER_PAGE, search }
   );
 
+  const t = await getTranslations("patients");
+
   return (
     <>
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-gray-900">Patients</h1>
-          <p className="text-sm text-gray-500 mt-1">
-            <span className="font-medium text-gray-700">{total}</span> registered patients
+          <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-foreground">{t('title')}</h1>
+          <p className="text-sm text-muted-foreground mt-1">
+            {t('registered', { count: total })}
           </p>
         </div>
         <AddPatientDialog />
@@ -41,6 +44,7 @@ async function PatientsListContent({ searchParams }: { searchParams: Promise<{ p
         totalPages={totalPages}
         currentPage={page}
         currentSearch={search}
+        searchPlaceholder={t('searchPlaceholder')}
       />
     </>
   );

@@ -2,6 +2,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from "recharts";
+import { useTranslations } from "next-intl";
 
 interface TreatmentData {
   name: string;
@@ -9,12 +10,13 @@ interface TreatmentData {
 }
 
 export function ReportsTreatmentChart({ data }: { data: TreatmentData[] }) {
+  const t = useTranslations('reports');
   const COLORS = ['#3b82f6', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981'];
 
   return (
     <Card className="border-0 shadow-sm">
       <CardHeader>
-        <CardTitle className="text-base font-semibold">Treatment Distribution</CardTitle>
+        <CardTitle className="text-base font-semibold">{t('charts.treatmentDistribution')}</CardTitle>
         <p className="text-xs text-gray-500">Top procedures by frequency</p>
       </CardHeader>
       <CardContent className="h-[350px]">

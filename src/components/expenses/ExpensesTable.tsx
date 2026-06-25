@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { Badge } from "@/components/ui/badge";
 import {
   Table,
@@ -14,6 +15,7 @@ import { useState } from "react";
 import { ExpenseRowActions } from "./ExpenseClientActions";
 
 export function ExpensesTable({ initialExpenses }: { initialExpenses: any[] }) {
+  const t = useTranslations('expenses');
   const [search, setSearch] = useState("");
 
   const filteredExpenses = (initialExpenses || []).filter(e => {
@@ -38,7 +40,7 @@ export function ExpensesTable({ initialExpenses }: { initialExpenses: any[] }) {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
           <input
             type="text"
-            placeholder="Search expenses by title, description or category..."
+            placeholder={t('searchPlaceholder')}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="w-full pl-9 pr-4 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all"
@@ -48,11 +50,11 @@ export function ExpensesTable({ initialExpenses }: { initialExpenses: any[] }) {
       <Table>
         <TableHeader className="bg-gray-50/50">
           <TableRow className="border-b-gray-100 hover:bg-transparent">
-            <TableHead className="font-semibold text-gray-500 uppercase text-xs tracking-wider">Date</TableHead>
-            <TableHead className="font-semibold text-gray-500 uppercase text-xs tracking-wider">Category</TableHead>
-            <TableHead className="font-semibold text-gray-500 uppercase text-xs tracking-wider">Expense Details</TableHead>
-            <TableHead className="font-semibold text-gray-500 uppercase text-xs tracking-wider">Amount</TableHead>
-            <TableHead className="font-semibold text-gray-500 uppercase text-xs tracking-wider">Status</TableHead>
+            <TableHead className="font-semibold text-gray-500 uppercase text-xs tracking-wider">{t('table.date')}</TableHead>
+            <TableHead className="font-semibold text-gray-500 uppercase text-xs tracking-wider">{t('table.category')}</TableHead>
+            <TableHead className="font-semibold text-gray-500 uppercase text-xs tracking-wider">{t('table.description')}</TableHead>
+            <TableHead className="font-semibold text-gray-500 uppercase text-xs tracking-wider">{t('table.amount')}</TableHead>
+            <TableHead className="font-semibold text-gray-500 uppercase text-xs tracking-wider">{t('table.status')}</TableHead>
             <TableHead className="w-[50px]"></TableHead>
           </TableRow>
         </TableHeader>
@@ -64,7 +66,7 @@ export function ExpensesTable({ initialExpenses }: { initialExpenses: any[] }) {
               </TableCell>
               <TableCell>
                 <Badge variant="outline" className="bg-gray-50 text-gray-600 border-gray-200 rounded-full font-medium shadow-sm capitalize">
-                  {expense.category}
+                  {t.has(`categories.${expense.category}`) ? t(`categories.${expense.category}`) : expense.category}
                 </Badge>
               </TableCell>
               <TableCell className="text-gray-600">
@@ -83,7 +85,7 @@ export function ExpensesTable({ initialExpenses }: { initialExpenses: any[] }) {
                       : "bg-amber-100 text-amber-800 hover:bg-amber-200"
                   }`}
                 >
-                  {expense.status}
+                  {t(`status.${expense.status?.toUpperCase() || 'PENDING'}`)}
                 </Badge>
               </TableCell>
               <TableCell>
@@ -94,7 +96,7 @@ export function ExpensesTable({ initialExpenses }: { initialExpenses: any[] }) {
           {filteredExpenses.length === 0 && (
             <TableRow>
               <TableCell colSpan={6} className="h-32 text-center text-gray-500 font-medium bg-gray-50/30">
-                No expenses found.
+                {t('dialog.noExpensesFound')}
               </TableCell>
             </TableRow>
           )}

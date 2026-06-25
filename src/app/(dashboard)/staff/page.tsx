@@ -3,6 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { NewStaffDialog } from "@/components/staff/NewStaffDialog";
 import { StaffTable } from "@/components/staff/StaffTable";
 import { getStaff } from "@/app/actions/staff";
+import { getTranslations } from "next-intl/server";
 
 const roleConfig: Record<string, { bg: string; text: string; icon: string }> = {
   Admin: { bg: "bg-purple-100", text: "text-purple-700", icon: "👑" },
@@ -13,13 +14,14 @@ const roleConfig: Record<string, { bg: string; text: string; icon: string }> = {
 
 export default async function StaffPage() {
   const staffList = await getStaff();
+  const t = await getTranslations('staff');
 
   return (
     <div className="space-y-6 animate-fade-in-up">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-gray-900">Staff & Roles</h1>
-          <p className="text-sm text-gray-500 mt-1">Manage team members and access control (RBAC)</p>
+          <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-gray-900">{t('title')}</h1>
+          <p className="text-sm text-gray-500 mt-1">{t('subtitle')}</p>
         </div>
         <NewStaffDialog />
       </div>
@@ -34,7 +36,9 @@ export default async function StaffPage() {
               </div>
               <div>
                 <p className="text-xl font-bold text-gray-900">{staffList.filter((s) => s.role === role).length}</p>
-                <p className="text-xs text-gray-500">{role}s</p>
+                <p className="text-xs text-gray-500">
+                  {t.has(`roles.${role.toLowerCase()}`) ? t(`roles.${role.toLowerCase()}`) : role}
+                </p>
               </div>
             </CardContent>
           </Card>

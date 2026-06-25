@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useMemo, useEffect } from "react";
+import { useTranslations } from "next-intl";
 import { 
   Package, 
   AlertTriangle, 
@@ -68,6 +69,7 @@ interface InventoryClientProps {
 }
 
 export function InventoryClient({ initialItems, initialStats }: InventoryClientProps) {
+  const t = useTranslations('inventory');
   const [items, setItems] = useState(initialItems);
   const [stats, setStats] = useState(initialStats);
   const [search, setSearch] = useState("");
@@ -132,11 +134,14 @@ export function InventoryClient({ initialItems, initialStats }: InventoryClientP
     }
 
     if (res.success) {
-      toast.success(stockModal.type === 'IN' ? "Stock added successfully" : "Stock deducted successfully");
+      const message = stockModal.type === 'IN'
+        ? t('toast.stockAdded', { quantity, unit: stockModal.item.unit, name: stockModal.item.name })
+        : t('toast.stockDeducted', { quantity, unit: stockModal.item.unit, name: stockModal.item.name });
+      toast.success(message);
       setStockModal({ open: false, item: null, type: null });
       fetchInventory();
     } else {
-      toast.error(res.error || "Action failed");
+      toast.error(res.error || t('toast.error'));
     }
     setLoading(false);
   };
@@ -152,11 +157,11 @@ export function InventoryClient({ initialItems, initialStats }: InventoryClientP
     const res = await createItemAction({ name, category: categoryName, unit, minimumStock, initialStock });
     
     if (res.success) {
-      toast.success("Item created successfully");
+      toast.success(t('toast.itemCreated'));
       setIsAddItemOpen(false);
       fetchInventory();
     } else {
-      toast.error(res.error || "Failed to create item");
+      toast.error(res.error || t('toast.error'));
     }
     setLoading(false);
   };
@@ -182,26 +187,26 @@ export function InventoryClient({ initialItems, initialStats }: InventoryClientP
     const res = await updateItemAction(stockModal.item.id, { name, category: categoryName, unit, minimumStock });
     
     if (res.success) {
-      toast.success("Item updated successfully");
+      toast.success(t('toast.itemUpdated'));
       setStockModal({ open: false, item: null, type: null });
       fetchInventory();
     } else {
-      toast.error(res.error || "Failed to update item");
+      toast.error(res.error || t('toast.error'));
     }
     setLoading(false);
   };
 
   const handleDeleteItem = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this item? This action cannot be undone.")) return;
+    if (!confirm(t('dialog.confirmDelete'))) return;
 
     setLoading(true);
     const res = await deleteItemAction(id);
     
     if (res.success) {
-      toast.success("Item deleted successfully");
+      toast.success(t('toast.itemDeleted'));
       fetchInventory();
     } else {
-      toast.error(res.error || "Failed to delete item");
+      toast.error(res.error || t('toast.error'));
     }
     setLoading(false);
   };
@@ -211,12 +216,12 @@ export function InventoryClient({ initialItems, initialStats }: InventoryClientP
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Inventory Management</h1>
-          <p className="text-muted-foreground mt-1">Monitor clinic supplies and track stock movements.</p>
+          <h1 className="text-3xl font-bold tracking-tight">{t('title')}</h1>
+          <p className="text-muted-foreground mt-1">{t('subtitle')}</p>
         </div>
         <Button onClick={() => setIsAddItemOpen(true)} className="bg-primary hover:bg-primary/90 shadow-lg shadow-primary/20">
           <PlusCircle className="mr-2 h-4 w-4" />
-          Add New Item
+          {t('addItem')}
         </Button>
       </div>
 
@@ -228,11 +233,11 @@ export function InventoryClient({ initialItems, initialStats }: InventoryClientP
               <Package size={80} />
             </div>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-blue-600 dark:text-blue-400">Total Items</CardTitle>
+              <CardTitle className="text-sm font-medium text-blue-600 dark:text-blue-400">{t('stats.totalItems')}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-bold">{stats.totalItems}</div>
-              <p className="text-xs text-muted-foreground mt-1">Unique supply items</p>
+              <p className="text-xs text-muted-foreground mt-1">{t('stats.totalItemsDesc')}</p>
             </CardContent>
           </Card>
         </motion.div>
@@ -243,12 +248,12 @@ export function InventoryClient({ initialItems, initialStats }: InventoryClientP
               <AlertTriangle size={80} />
             </div>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-amber-600 dark:text-amber-400">Low Stock Alerts</CardTitle>
+              <CardTitle className="text-sm font-medium text-amber-600 dark:text-amber-400">{t('stats.lowStockAlerts')}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-bold">{stats.lowStockAlerts}</div>
               <Badge variant={stats.lowStockAlerts > 0 ? "destructive" : "secondary"} className="mt-1">
-                {stats.lowStockAlerts > 0 ? 'Action Required' : 'All good'}
+                {stats.lowStockAlerts > 0 ? t('stats.actionRequired') : t('stats.allGood')}
               </Badge>
             </CardContent>
           </Card>
@@ -260,11 +265,11 @@ export function InventoryClient({ initialItems, initialStats }: InventoryClientP
               <History size={80} />
             </div>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-emerald-600 dark:text-emerald-400">Last Audit Activity</CardTitle>
+              <CardTitle className="text-sm font-medium text-emerald-600 dark:text-emerald-400">{t('stats.lastAudit')}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-bold text-ellipsis truncate">{stats.lastAuditDate}</div>
-              <p className="text-xs text-muted-foreground mt-1">Recent stock movement</p>
+              <p className="text-xs text-muted-foreground mt-1">{t('stats.lastAuditDesc')}</p>
             </CardContent>
           </Card>
         </motion.div>
@@ -277,7 +282,7 @@ export function InventoryClient({ initialItems, initialStats }: InventoryClientP
             <div className="relative w-full md:w-96">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input 
-                placeholder="Search items by name or category..." 
+                placeholder={t('search')} 
                 className="pl-9 bg-background"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
@@ -286,16 +291,16 @@ export function InventoryClient({ initialItems, initialStats }: InventoryClientP
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <Filter size={14} />
-                <span>Category:</span>
+                <span>{t('table.category')}:</span>
               </div>
               <Select value={category} onValueChange={(val) => setCategory(val ?? 'all')}>
                 <SelectTrigger className="w-[180px] bg-background">
-                  <SelectValue placeholder="All Categories" />
+                  <SelectValue placeholder={t('filter.all')} />
                 </SelectTrigger>
                 <SelectContent>
                   {categories.map(cat => (
                     <SelectItem key={cat} value={cat}>
-                      {cat.charAt(0).toUpperCase() + cat.slice(1)}
+                      {cat === 'all' ? t('filter.all') : (cat.charAt(0).toUpperCase() + cat.slice(1))}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -308,7 +313,7 @@ export function InventoryClient({ initialItems, initialStats }: InventoryClientP
                 className="gap-2"
               >
                 <AlertTriangle size={14} />
-                {showLowStockOnly ? "Showing Low Stock" : "Show Low Stock"}
+                {t('filter.lowStockOnly')}
               </Button>
             </div>
           </div>
@@ -317,11 +322,11 @@ export function InventoryClient({ initialItems, initialStats }: InventoryClientP
           <Table>
             <TableHeader className="bg-muted/50">
               <TableRow>
-                <TableHead className="w-[30%]">Item Name</TableHead>
-                <TableHead>Category</TableHead>
-                <TableHead className="text-center">Current Stock</TableHead>
-                <TableHead className="text-center">Status</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
+                <TableHead className="w-[30%]">{t('table.item')}</TableHead>
+                <TableHead>{t('table.category')}</TableHead>
+                <TableHead className="text-center">{t('table.stock')}</TableHead>
+                <TableHead className="text-center">{t('table.status')}</TableHead>
+                <TableHead className="text-right">{t('table.actions')}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -337,11 +342,11 @@ export function InventoryClient({ initialItems, initialStats }: InventoryClientP
                     <TableCell colSpan={5} className="h-64 text-center">
                       <div className="flex flex-col items-center justify-center space-y-3 opacity-50">
                         <Package size={48} className="text-muted-foreground" />
-                        <div className="text-lg font-medium">No items found</div>
+                        <div className="text-lg font-medium">{t('dialog.noItemsFound')}</div>
                         <p className="text-sm text-muted-foreground max-w-xs">
                           {showLowStockOnly 
-                            ? "Great! All items are well stocked." 
-                            : "Try adjusting your search filters or add a new item to get started."}
+                            ? t('dialog.allStocked')
+                            : t('dialog.adjustFilters')}
                         </p>
                       </div>
                     </TableCell>
@@ -363,7 +368,7 @@ export function InventoryClient({ initialItems, initialStats }: InventoryClientP
                           </div>
                           <div>
                             <div>{item.name}</div>
-                            <div className="text-xs text-muted-foreground font-normal">Min: {item.minimumStock} {item.unit}</div>
+                            <div className="text-xs text-muted-foreground font-normal">{t('table.minLevel')}: {item.minimumStock} {item.unit}</div>
                           </div>
                         </div>
                       </TableCell>
@@ -381,11 +386,11 @@ export function InventoryClient({ initialItems, initialStats }: InventoryClientP
                       <TableCell className="text-center">
                         {item.currentStock <= item.minimumStock ? (
                           <Badge variant="warning" className="bg-amber-100 text-amber-700 hover:bg-amber-100 border-amber-200">
-                             LOW STOCK
+                             {t('status.lowStock')}
                           </Badge>
                         ) : (
                           <Badge variant="success" className="bg-emerald-100 text-emerald-700 hover:bg-emerald-100 border-emerald-200">
-                             IN STOCK
+                             {t('status.ok')}
                           </Badge>
                         )}
                       </TableCell>
@@ -396,7 +401,7 @@ export function InventoryClient({ initialItems, initialStats }: InventoryClientP
                             size="icon" 
                             className="h-8 w-8 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50"
                             onClick={() => setStockModal({ open: true, item, type: 'IN' })}
-                            title="Add Stock"
+                            title={t('actions.addStock')}
                            >
                             <Plus size={16} />
                            </Button>
@@ -405,7 +410,7 @@ export function InventoryClient({ initialItems, initialStats }: InventoryClientP
                             size="icon" 
                             className="h-8 w-8 text-rose-600 hover:text-rose-700 hover:bg-rose-50"
                             onClick={() => setStockModal({ open: true, item, type: 'OUT' })}
-                            title="Deduct Stock"
+                            title={t('actions.deductStock')}
                            >
                             <Minus size={16} />
                            </Button>
@@ -417,7 +422,7 @@ export function InventoryClient({ initialItems, initialStats }: InventoryClientP
                               setStockModal({ open: true, item, type: 'HISTORY' });
                               fetchHistory(item.id);
                             }}
-                            title="View History"
+                            title={t('actions.viewHistory')}
                            >
                             <FileClock size={16} />
                            </Button>
@@ -431,7 +436,7 @@ export function InventoryClient({ initialItems, initialStats }: InventoryClientP
                             <DropdownMenuContent align="end">
                               <DropdownMenuItem onClick={() => setStockModal({ open: true, item, type: 'EDIT' })}>
                                 <Edit className="mr-2 h-4 w-4" />
-                                Edit Item
+                                {t('actions.edit')}
                               </DropdownMenuItem>
                               <DropdownMenuSeparator />
                               <DropdownMenuItem 
@@ -439,7 +444,7 @@ export function InventoryClient({ initialItems, initialStats }: InventoryClientP
                                 className="text-rose-600 focus:text-rose-600"
                               >
                                 <Trash2 className="mr-2 h-4 w-4" />
-                                Delete Item
+                                {t('actions.delete')}
                               </DropdownMenuItem>
                             </DropdownMenuContent>
                            </DropdownMenu>
@@ -463,37 +468,37 @@ export function InventoryClient({ initialItems, initialStats }: InventoryClientP
                 <div className="p-2 rounded-xl bg-primary text-primary-foreground">
                   <PlusCircle size={24} />
                 </div>
-                New Inventory Item
+                {t('dialog.addItem')}
               </DialogTitle>
             </DialogHeader>
           </div>
           <form action={handleAddItem} className="p-6 pt-2 space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="col-span-2 space-y-2">
-                <label className="text-sm font-semibold text-foreground">Item Name</label>
-                <Input name="name" placeholder="e.g. Disposable Gloves" required className="h-11" />
+                <label className="text-sm font-semibold text-foreground">{t('table.item')}</label>
+                <Input name="name" placeholder={t('form.namePlaceholder')} required className="h-11" />
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-semibold text-foreground">Category</label>
-                <Input name="category" placeholder="e.g. Consumables" required className="h-11" />
+                <label className="text-sm font-semibold text-foreground">{t('table.category')}</label>
+                <Input name="category" placeholder={t('form.categoryPlaceholder')} required className="h-11" />
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-semibold text-foreground">Unit</label>
-                <Input name="unit" placeholder="e.g. boxes, pcs" required className="h-11" />
+                <label className="text-sm font-semibold text-foreground">{t('table.unit')}</label>
+                <Input name="unit" placeholder={t('form.unitPlaceholder')} required className="h-11" />
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-semibold text-foreground">Min. Stock Level</label>
+                <label className="text-sm font-semibold text-foreground">{t('table.minLevel')}</label>
                 <Input name="minimumStock" type="number" min="0" defaultValue="10" required className="h-11" />
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-semibold text-foreground">Initial Stock (Optional)</label>
+                <label className="text-sm font-semibold text-foreground">{t('form.initialStock')}</label>
                 <Input name="initialStock" type="number" min="0" defaultValue="0" className="h-11" />
               </div>
             </div>
             <DialogFooter className="pt-4">
-              <Button type="button" variant="outline" onClick={() => setIsAddItemOpen(false)}>Cancel</Button>
+              <Button type="button" variant="outline" onClick={() => setIsAddItemOpen(false)}>{t('form.cancel')}</Button>
               <Button type="submit" disabled={loading}>
-                {loading ? "Creating..." : "Create Item"}
+                {loading ? t('form.creating') : t('addItem')}
               </Button>
             </DialogFooter>
           </form>
@@ -511,39 +516,44 @@ export function InventoryClient({ initialItems, initialStats }: InventoryClientP
               {stockModal.type === 'IN' ? (
                 <>
                   <div className="p-2 rounded-lg bg-emerald-100 text-emerald-600"><ArrowUpRight size={20} /></div>
-                  <span>Add Stock: {stockModal.item?.name}</span>
+                  <span>{t('dialog.addStock')}: {stockModal.item?.name}</span>
                 </>
               ) : (
                 <>
                   <div className="p-2 rounded-lg bg-rose-100 text-rose-600"><ArrowDownLeft size={20} /></div>
-                  <span>Deduct Stock: {stockModal.item?.name}</span>
+                  <span>{t('dialog.deductStock')}: {stockModal.item?.name}</span>
                 </>
               )}
             </DialogTitle>
           </DialogHeader>
           <form action={handleStockAction} className="space-y-4 pt-2">
             <div className="space-y-2">
-              <label className="text-sm font-semibold">Quantity ({stockModal.item?.unit})</label>
+              <label className="text-sm font-semibold">{t('form.quantity')} ({stockModal.item?.unit})</label>
               <Input name="quantity" type="number" min="1" required className="h-11" />
             </div>
             <div className="space-y-2">
-              <label className="text-sm font-semibold">Reason / Reference</label>
-              <Input name="reason" placeholder={stockModal.type === 'IN' ? "e.g. New Shipment #552" : "e.g. Weekly Consumption"} required className="h-11" />
+              <label className="text-sm font-semibold">{t('form.reason')}</label>
+              <Input 
+                name="reason" 
+                placeholder={stockModal.type === 'IN' ? t('form.reasonPlaceholderIn') : t('form.reasonPlaceholderOut')} 
+                required 
+                className="h-11" 
+              />
             </div>
             {stockModal.type === 'OUT' && (
               <p className="text-[10px] text-muted-foreground flex items-center gap-1">
                 <AlertTriangle size={10} className="text-amber-500" />
-                Available stock: {stockModal.item?.currentStock} {stockModal.item?.unit}
+                {t('form.availableStock', { stock: stockModal.item?.currentStock, unit: stockModal.item?.unit })}
               </p>
             )}
             <DialogFooter className="pt-2">
-              <Button type="button" variant="outline" onClick={() => setStockModal({ ...stockModal, open: false })}>Cancel</Button>
+              <Button type="button" variant="outline" onClick={() => setStockModal({ ...stockModal, open: false })}>{t('form.cancel')}</Button>
               <Button 
                 type="submit" 
                 disabled={loading}
                 className={stockModal.type === 'IN' ? "bg-emerald-600 hover:bg-emerald-700" : "bg-rose-600 hover:bg-rose-700"}
               >
-                {loading ? "Processing..." : stockModal.type === 'IN' ? "Add Stock" : "Deduct Stock"}
+                {loading ? t('form.processing') : stockModal.type === 'IN' ? t('actions.addStock') : t('actions.deductStock')}
               </Button>
             </DialogFooter>
           </form>
@@ -563,7 +573,7 @@ export function InventoryClient({ initialItems, initialStats }: InventoryClientP
                   <FileClock size={24} />
                 </div>
                 <div>
-                  <div className="text-xl font-bold">Audit History</div>
+                  <div className="text-xl font-bold">{t('dialog.viewHistory')}</div>
                   <div className="text-sm text-muted-foreground font-normal">{stockModal.item?.name}</div>
                 </div>
               </DialogTitle>
@@ -574,7 +584,7 @@ export function InventoryClient({ initialItems, initialStats }: InventoryClientP
             {historyLoading ? (
                <div className="p-12 text-center"><div className="h-8 w-8 animate-spin border-4 border-primary border-t-transparent rounded-full mx-auto" /></div>
             ) : history.length === 0 ? (
-              <div className="p-12 text-center text-muted-foreground">No history records found.</div>
+              <div className="p-12 text-center text-muted-foreground">{t('dialog.noHistory')}</div>
             ) : (
               <div className="divide-y">
                 {history.map((entry) => (
@@ -602,7 +612,7 @@ export function InventoryClient({ initialItems, initialStats }: InventoryClientP
             )}
           </div>
           <div className="p-4 border-t bg-muted/20 flex justify-end">
-            <Button variant="outline" onClick={() => setStockModal({ ...stockModal, open: false })}>Close</Button>
+            <Button variant="outline" onClick={() => setStockModal({ ...stockModal, open: false })}>{t('form.close')}</Button>
           </div>
         </DialogContent>
       </Dialog>
@@ -619,33 +629,33 @@ export function InventoryClient({ initialItems, initialStats }: InventoryClientP
                 <div className="p-2 rounded-xl bg-indigo-500 text-white">
                   <Edit size={24} />
                 </div>
-                Edit Item: {stockModal.item?.name}
+                {t('actions.edit')}: {stockModal.item?.name}
               </DialogTitle>
             </DialogHeader>
           </div>
           <form action={handleUpdateItem} className="p-6 pt-2 space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="col-span-2 space-y-2">
-                <label className="text-sm font-semibold text-foreground">Item Name</label>
+                <label className="text-sm font-semibold text-foreground">{t('table.item')}</label>
                 <Input name="name" defaultValue={stockModal.item?.name} required className="h-11" />
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-semibold text-foreground">Category</label>
+                <label className="text-sm font-semibold text-foreground">{t('table.category')}</label>
                 <Input name="category" defaultValue={stockModal.item?.category} required className="h-11" />
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-semibold text-foreground">Unit</label>
+                <label className="text-sm font-semibold text-foreground">{t('table.unit')}</label>
                 <Input name="unit" defaultValue={stockModal.item?.unit} required className="h-11" />
               </div>
               <div className="space-y-2 col-span-2">
-                <label className="text-sm font-semibold text-foreground">Min. Stock Level</label>
+                <label className="text-sm font-semibold text-foreground">{t('table.minLevel')}</label>
                 <Input name="minimumStock" type="number" min="0" defaultValue={stockModal.item?.minimumStock} required className="h-11" />
               </div>
             </div>
             <DialogFooter className="pt-4">
-              <Button type="button" variant="outline" onClick={() => setStockModal({ ...stockModal, open: false })}>Cancel</Button>
+              <Button type="button" variant="outline" onClick={() => setStockModal({ ...stockModal, open: false })}>{t('form.cancel')}</Button>
               <Button type="submit" disabled={loading} className="bg-indigo-600 hover:bg-indigo-700">
-                {loading ? "Updating..." : "Save Changes"}
+                {loading ? t('form.updating') : t('form.save')}
               </Button>
             </DialogFooter>
           </form>

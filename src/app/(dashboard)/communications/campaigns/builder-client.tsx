@@ -13,9 +13,11 @@ import { previewCampaignAudience, createAndSendCampaign } from '@/app/actions/ca
 import { CampaignFilters } from '@/services/smsCampaignService';
 import { Loader2, Users, Send } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 
 export function CampaignBuilder() {
   const router = useRouter();
+  const t = useTranslations('campaigns');
   const [name, setName] = useState('');
   const [message, setMessage] = useState('');
   
@@ -36,33 +38,33 @@ export function CampaignBuilder() {
         setAudienceCount(res.count);
       } else {
         setAudienceCount(null);
-        if (res.error) toast.error("Error calculating audience: " + res.error);
+        if (res.error) toast.error(t('errors.loadHistoryFailed') + ": " + res.error);
       }
       setIsLoadingAudience(false);
     }, 500);
 
     return () => clearTimeout(timer);
-  }, [filters]);
+  }, [filters, t]);
 
   const handleSend = async () => {
-    if (!name) return toast.error("Campaign name is required");
-    if (!message) return toast.error("Message is required");
-    if (audienceCount === 0) return toast.error("Audience is empty");
-    if (audienceCount && audienceCount > 1000) return toast.error("Cannot exceed 1000 patients limit");
+    if (!name) return toast.error(t('errors.nameRequired'));
+    if (!message) return toast.error(t('errors.messageRequired'));
+    if (audienceCount === 0) return toast.error(t('errors.audienceEmpty'));
+    if (audienceCount && audienceCount > 1000) return toast.error(t('errors.audienceLimitExceeded'));
 
     setIsSubmitting(true);
     const res = await createAndSendCampaign({ name, message, filters });
     setIsSubmitting(false);
 
     if (res.success) {
-      toast.success("Campaign launched successfully!");
+      toast.success(t('toasts.campaignLaunched'));
       router.refresh();
       // Reset form
       setName('');
       setMessage('');
       setFilters({ hasBalance: false });
     } else {
-      toast.error(res.error || "Failed to launch campaign");
+      toast.error(res.error || t('errors.launchFailed'));
     }
   };
 
@@ -79,7 +81,7 @@ export function CampaignBuilder() {
   };
 
   const previewMessage = () => {
-    let prev = message || 'Your message here...';
+    let prev = message || t('form.previewPlaceholder');
     prev = prev.replace(/{{patient_name}}/g, 'John Doe');
     prev = prev.replace(/{{clinic_name}}/g, 'Neoliva Dental');
     prev = prev.replace(/{{appointment_date}}/g, '12/10/2026');
@@ -91,23 +93,23 @@ export function CampaignBuilder() {
       <div className="space-y-6">
         <Card>
           <CardHeader>
-            <CardTitle>Audience Filters</CardTitle>
-            <CardDescription>Select who should receive this campaign</CardDescription>
+            <CardTitle>{t('filters.title')}</CardTitle>
+            <CardDescription>{t('filters.description')}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label>Last Visit (Months Ago)</Label>
+              <Label>{t('filters.lastVisit')}</Label>
               <Input 
                 type="number" 
-                placeholder="e.g., 6 for > 6 months" 
+                placeholder={t('filters.lastVisitPlaceholder')} 
                 onChange={(e) => handleFilterChange('lastVisitMonths', e.target.value ? parseInt(e.target.value) : undefined)}
               />
-              <p className="text-xs text-muted-foreground">Patients whose last visit was more than N months ago</p>
+              <p className="text-xs text-muted-foreground">{t('filters.lastVisitHelp')}</p>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>Min Age</Label>
+                <Label>{t('filters.minAge')}</Label>
                 <Input 
                   type="number" 
                   placeholder="e.g., 18" 
@@ -115,7 +117,7 @@ export function CampaignBuilder() {
                 />
               </div>
               <div className="space-y-2">
-                <Label>Max Age</Label>
+                <Label>{t('filters.maxAge')}</Label>
                 <Input 
                   type="number" 
                   placeholder="e.g., 65" 
@@ -125,24 +127,24 @@ export function CampaignBuilder() {
             </div>
 
             <div className="space-y-2">
-              <Label>Gender</Label>
+              <Label>{t('filters.gender')}</Label>
               <Select onValueChange={(val) => handleFilterChange('gender', val === 'ALL' ? undefined : val)}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Any Gender" />
+                  <SelectValue placeholder={t('filters.anyGender')} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="ALL">Any</SelectItem>
-                  <SelectItem value="Male">Male</SelectItem>
-                  <SelectItem value="Female">Female</SelectItem>
-                  <SelectItem value="Other">Other</SelectItem>
+                  <SelectItem value="ALL">{t('filters.genderAny')}</SelectItem>
+                  <SelectItem value="Male">{t('filters.genderMale')}</SelectItem>
+                  <SelectItem value="Female">{t('filters.genderFemale')}</SelectItem>
+                  <SelectItem value="Other">{t('filters.genderOther')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             <div className="space-y-2">
-              <Label>Procedure Type (Optional)</Label>
+              <Label>{t('filters.procedure')}</Label>
               <Input 
-                placeholder="e.g., Teeth Whitening, Implant (Comma separated)" 
+                placeholder={t('filters.procedurePlaceholder')} 
                 onChange={(e) => handleFilterChange('procedures', e.target.value ? e.target.value.split(',').map(s => s.trim()) : undefined)}
               />
             </div>
@@ -153,13 +155,13 @@ export function CampaignBuilder() {
                 checked={filters.hasBalance}
                 onCheckedChange={(val) => handleFilterChange('hasBalance', val)}
               />
-              <Label htmlFor="has-balance">Only patients with outstanding balance</Label>
+              <Label htmlFor="has-balance">{t('filters.outstandingBalance')}</Label>
             </div>
 
             <div className="mt-4 p-4 bg-muted/50 rounded-lg flex items-center justify-between">
               <div className="flex items-center gap-2 text-sm font-medium">
                 <Users className="w-4 h-4" />
-                Audience Size
+                {t('stats.audienceSize')}
               </div>
               <div className="text-xl font-bold">
                 {isLoadingAudience ? <Loader2 className="w-5 h-5 animate-spin" /> : (audienceCount !== null ? audienceCount : '-')}
@@ -172,14 +174,14 @@ export function CampaignBuilder() {
       <div className="space-y-6">
         <Card>
           <CardHeader>
-            <CardTitle>Compose Message</CardTitle>
-            <CardDescription>Write your SMS campaign content</CardDescription>
+            <CardTitle>{t('form.composeTitle')}</CardTitle>
+            <CardDescription>{t('form.composeDescription')}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label>Campaign Name (Internal)</Label>
+              <Label>{t('form.campaignNameInternal')}</Label>
               <Input 
-                placeholder="e.g., Whitening Promo Q3" 
+                placeholder={t('form.campaignNamePlaceholder')} 
                 value={name}
                 onChange={(e) => setName(e.target.value)}
               />
@@ -187,26 +189,26 @@ export function CampaignBuilder() {
 
             <div className="space-y-2">
               <div className="flex justify-between items-end">
-                <Label>Message</Label>
+                <Label>{t('form.messageLabel')}</Label>
                 <span className={`text-xs ${message.length > 160 ? 'text-destructive font-bold' : 'text-muted-foreground'}`}>
-                  {message.length} / 160 chars
+                  {message.length} / 160 {t('form.chars')}
                 </span>
               </div>
               <Textarea 
-                placeholder="Hi {{patient_name}}, we miss you at {{clinic_name}}! Book your next checkup today."
+                placeholder={t('form.messagePlaceholder')}
                 className="h-32"
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
               />
               <div className="flex gap-2 pt-2">
-                <Button variant="outline" size="sm" onClick={() => setMessage(m => m + '{{patient_name}}')}>+ Patient Name</Button>
-                <Button variant="outline" size="sm" onClick={() => setMessage(m => m + '{{clinic_name}}')}>+ Clinic Name</Button>
-                <Button variant="outline" size="sm" onClick={() => setMessage(m => m + '{{appointment_date}}')}>+ Appt Date</Button>
+                <Button variant="outline" size="sm" onClick={() => setMessage(m => m + '{{patient_name}}')}>{t('form.variablePatientName')}</Button>
+                <Button variant="outline" size="sm" onClick={() => setMessage(m => m + '{{clinic_name}}')}>{t('form.variableClinicName')}</Button>
+                <Button variant="outline" size="sm" onClick={() => setMessage(m => m + '{{appointment_date}}')}>{t('form.variableApptDate')}</Button>
               </div>
             </div>
 
             <div className="mt-4">
-              <Label className="text-xs text-muted-foreground mb-2 block">Live Preview</Label>
+              <Label className="text-xs text-muted-foreground mb-2 block">{t('form.messagePreview')}</Label>
               <div className="p-3 bg-secondary text-secondary-foreground rounded-lg rounded-bl-none max-w-[85%] text-sm whitespace-pre-wrap">
                 {previewMessage()}
               </div>
@@ -220,7 +222,7 @@ export function CampaignBuilder() {
               disabled={isSubmitting || isLoadingAudience || audienceCount === 0 || message.length > 160}
             >
               {isSubmitting ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Send className="w-4 h-4 mr-2" />}
-              Launch Campaign {audienceCount ? `(${audienceCount} patients)` : ''}
+              {audienceCount ? t('actions.launchCampaignWithCount', { count: audienceCount }) : t('actions.launchCampaign')}
             </Button>
           </CardFooter>
         </Card>

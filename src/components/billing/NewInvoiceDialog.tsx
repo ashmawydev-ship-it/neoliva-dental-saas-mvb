@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useTranslations } from "next-intl";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -21,6 +22,8 @@ type InvoiceFormValues = z.infer<typeof InvoiceFormSchema>;
 export function NewInvoiceDialog() {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const t = useTranslations("billing");
+  const tCommon = useTranslations("common");
   const [patients, setPatients] = useState<any[]>([]);
   const [services, setServices] = useState<any[]>([]);
   const [fetchingData, setFetchingData] = useState(false);
@@ -129,7 +132,7 @@ export function NewInvoiceDialog() {
     }}>
       <DialogTrigger asChild>
         <Button className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-lg shadow-blue-500/25 rounded-xl h-10 px-5 text-sm font-medium border-0 cursor-pointer text-white">
-          <PlusCircle className="mr-2 h-4 w-4" /> New Invoice
+          <PlusCircle className="mr-2 h-4 w-4" /> {t('newInvoice')}
         </Button>
       </DialogTrigger>
       
@@ -139,7 +142,7 @@ export function NewInvoiceDialog() {
             <span className="bg-blue-100 p-2 rounded-xl">
               <Receipt className="h-5 w-5 text-blue-600" />
             </span>
-            Create New Invoice
+            {t('newInvoice')}
           </DialogTitle>
         </DialogHeader>
 
@@ -149,11 +152,11 @@ export function NewInvoiceDialog() {
             {/* Patient Selection */}
             <div className="space-y-2">
               <Label htmlFor="patient" className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-                <User className="w-4 h-4 text-gray-400" /> Patient <span className="text-red-500">*</span>
+                <User className="w-4 h-4 text-gray-400" /> {t('form.patient')} <span className="text-red-500">*</span>
               </Label>
               <Select value={watchedPatientId} onValueChange={(val) => setValue("patientId", val ?? "", { shouldValidate: true })}>
                 <SelectTrigger id="patient" className="h-11 bg-white border-gray-200 focus:ring-blue-500 rounded-xl shadow-sm">
-                  <SelectValue placeholder={fetchingData ? "Loading patients..." : "Select patient"} />
+                  <SelectValue placeholder={fetchingData ? "..." : t('form.patient')} />
                 </SelectTrigger>
                 <SelectContent className="rounded-xl border-gray-100 shadow-xl bg-white">
                   {patients.map((patient) => (
@@ -174,11 +177,11 @@ export function NewInvoiceDialog() {
             {/* Service Selection (Optional shortcut) */}
             <div className="space-y-2">
               <Label htmlFor="service" className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-                <ActivityIcon className="w-4 h-4 text-gray-400" /> Quick Service Select
+                <ActivityIcon className="w-4 h-4 text-gray-400" /> {t('form.services')}
               </Label>
               <Select value={watchedServiceId || undefined} onValueChange={(val) => handleServiceChange(val)}>
                 <SelectTrigger id="service" className="h-11 bg-white border-gray-200 focus:ring-blue-500 rounded-xl shadow-sm">
-                  <SelectValue placeholder={fetchingData ? "Loading services..." : "Select a service to auto-fill"} />
+                  <SelectValue placeholder={fetchingData ? "..." : t('form.services')} />
                 </SelectTrigger>
                 <SelectContent className="rounded-xl border-gray-100 shadow-xl bg-white">
                   {services.map((service) => (
@@ -200,7 +203,7 @@ export function NewInvoiceDialog() {
               {/* Amount */}
               <div className="space-y-2">
                 <Label htmlFor="amount" className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-                  <DollarSign className="w-4 h-4 text-gray-400" /> Amount <span className="text-red-500">*</span>
+                  <DollarSign className="w-4 h-4 text-gray-400" /> {t('table.amount')} <span className="text-red-500">*</span>
                 </Label>
                 <div className="relative">
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">$</span>
@@ -221,7 +224,7 @@ export function NewInvoiceDialog() {
               {/* Due Date */}
               <div className="space-y-2">
                 <Label htmlFor="due_date" className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-                  <CalendarIcon className="w-4 h-4 text-gray-400" /> Due Date
+                  <CalendarIcon className="w-4 h-4 text-gray-400" /> {t('table.date')}
                 </Label>
                 <Input 
                   id="due_date" 
@@ -235,7 +238,7 @@ export function NewInvoiceDialog() {
 
             {/* Treatment Description */}
             <div className="space-y-2">
-              <Label htmlFor="treatment" className="text-sm font-semibold text-gray-700">Treatment / Description</Label>
+              <Label htmlFor="treatment" className="text-sm font-semibold text-gray-700">{t('form.services')}</Label>
               <Input 
                 id="treatment" 
                 {...register("treatment")}
@@ -260,7 +263,7 @@ export function NewInvoiceDialog() {
               onClick={() => setOpen(false)}
               className="px-6 rounded-xl border-gray-200 text-gray-700 hover:bg-gray-50 h-11 shadow-sm font-medium w-full sm:w-auto cursor-pointer"
             >
-              CANCEL
+              {tCommon('cancel')}
             </Button>
             <Button 
               type="submit" 
@@ -268,12 +271,9 @@ export function NewInvoiceDialog() {
               className="px-8 min-w-[160px] rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-md shadow-blue-500/25 h-11 font-semibold w-full sm:w-auto cursor-pointer border-0"
             >
               {loading ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  CREATING...
-                </>
+                tCommon('loading')
               ) : (
-                "GENERATE INVOICE"
+                t('form.createInvoice')
               )}
             </Button>
           </DialogFooter>

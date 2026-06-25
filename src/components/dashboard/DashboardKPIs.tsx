@@ -10,6 +10,7 @@ import {
   PieChart,
   Wallet
 } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 interface KPIProps {
   data: {
@@ -21,11 +22,13 @@ interface KPIProps {
 }
 
 export function DashboardKPIs({ data }: KPIProps) {
+  const t = useTranslations("dashboard");
+
   const kpis = [
     {
-      title: "Today's Appointments",
+      title: t('kpis.todayAppointments'),
       value: data.todayAppointments.toString(),
-      sub: "Appointments scheduled for today",
+      sub: t('kpis.todayAppointmentsSub'),
       icon: TrendingUp,
       gradient: "from-blue-600 to-indigo-600",
       shadow: "shadow-blue-200",
@@ -33,9 +36,9 @@ export function DashboardKPIs({ data }: KPIProps) {
       percentage: 0
     },
     {
-      title: "Total Patients",
+      title: t('kpis.totalPatients'),
       value: data.totalPatients.toLocaleString(),
-      sub: "Active registered patients",
+      sub: t('kpis.totalPatientsSub'),
       icon: Target,
       gradient: "from-indigo-600 to-purple-600",
       shadow: "shadow-indigo-200",
@@ -43,9 +46,9 @@ export function DashboardKPIs({ data }: KPIProps) {
       percentage: 0
     },
     {
-      title: "Monthly Revenue",
+      title: t('kpis.monthlyRevenue'),
       value: `$${data.monthlyRevenue.toLocaleString()}`,
-      sub: "Revenue collected this month",
+      sub: t('kpis.monthlyRevenueSub'),
       icon: PieChart,
       gradient: "from-emerald-500 to-teal-500",
       shadow: "shadow-emerald-200",
@@ -53,9 +56,9 @@ export function DashboardKPIs({ data }: KPIProps) {
       percentage: 0
     },
     {
-      title: "Pending Invoices",
+      title: t('kpis.pendingInvoices'),
       value: data.pendingInvoices.toString(),
-      sub: "Unpaid patient invoices",
+      sub: t('kpis.pendingInvoicesSub'),
       icon: Wallet,
       gradient: "from-amber-500 to-orange-500",
       shadow: "shadow-amber-200",
@@ -92,13 +95,13 @@ export function DashboardKPIs({ data }: KPIProps) {
               </div>
               
               <div>
-                <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-1">
+                <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] mb-1">
                   {kpi.title}
                 </p>
-                <h3 className="text-3xl font-black text-gray-900 tracking-tight">
+                <h3 className="text-3xl font-black text-foreground tracking-tight">
                   {kpi.value}
                 </h3>
-                <p className="text-[10px] font-medium text-gray-400 mt-2 flex items-center gap-1.5 uppercase tracking-wider">
+                <p className="text-[10px] font-medium text-muted-foreground mt-2 flex items-center gap-1.5 uppercase tracking-wider">
                   <span className="w-1 h-1 rounded-full bg-gray-200" />
                   {kpi.sub}
                 </p>

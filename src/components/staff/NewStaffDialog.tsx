@@ -17,11 +17,13 @@ import { Switch } from "@/components/ui/switch";
 import { createStaff } from "@/app/actions/staff";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 
 export function NewStaffDialog() {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const t = useTranslations("staff");
 
   const [formData, setFormData] = useState({
     name: "",
@@ -68,7 +70,7 @@ export function NewStaffDialog() {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button className="text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-lg shadow-blue-500/25 rounded-xl h-10 px-5 font-medium border-0">
-          <PlusCircle className="mr-2 h-4 w-4" /> Add Member
+          <PlusCircle className="mr-2 h-4 w-4" /> {t('inviteStaff')}
         </Button>
       </DialogTrigger>
       
@@ -78,7 +80,7 @@ export function NewStaffDialog() {
             <span className="bg-blue-100 p-2 rounded-xl">
               <UserPlus className="h-5 w-5 text-blue-600" />
             </span>
-            Add Staff Member
+            {t('inviteStaff')}
           </DialogTitle>
         </DialogHeader>
 
@@ -90,7 +92,7 @@ export function NewStaffDialog() {
             
             {/* Full Name */}
             <div className="space-y-2">
-              <Label htmlFor="name" className="text-sm font-semibold text-gray-700">Full Name</Label>
+              <Label htmlFor="name" className="text-sm font-semibold text-gray-700">{t('form.name')}</Label>
               <Input 
                 id="name"
                 value={formData.name}
@@ -105,7 +107,7 @@ export function NewStaffDialog() {
             {/* Role & Title */}
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label className="text-sm font-semibold text-gray-700">Role</Label>
+                <Label className="text-sm font-semibold text-gray-700">{t('form.role')}</Label>
                 <div className="relative">
                   <Shield className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 z-10 pointer-events-none" />
                   <Select 
@@ -115,13 +117,13 @@ export function NewStaffDialog() {
                     disabled={loading}
                   >
                     <SelectTrigger className="pl-10 bg-white border-gray-200 focus:ring-blue-500 rounded-xl shadow-sm h-11 w-full">
-                      <SelectValue placeholder="Select" />
+                      <SelectValue placeholder={t('form.selectRole')} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="admin">Admin</SelectItem>
-                      <SelectItem value="doctor">Doctor</SelectItem>
-                      <SelectItem value="assistant">Assistant</SelectItem>
-                      <SelectItem value="receptionist">Receptionist</SelectItem>
+                      <SelectItem value="admin">{t.has('roles.admin') ? t('roles.admin') : 'Admin'}</SelectItem>
+                      <SelectItem value="doctor">{t.has('roles.doctor') ? t('roles.doctor') : 'Doctor'}</SelectItem>
+                      <SelectItem value="assistant">{t.has('roles.assistant') ? t('roles.assistant') : 'Assistant'}</SelectItem>
+                      <SelectItem value="receptionist">{t.has('roles.receptionist') ? t('roles.receptionist') : 'Receptionist'}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -147,7 +149,7 @@ export function NewStaffDialog() {
             {/* Contact Info */}
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="email" className="text-sm font-semibold text-gray-700">Email Address</Label>
+                <Label htmlFor="email" className="text-sm font-semibold text-gray-700">{t('form.email')}</Label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                   <Input 
@@ -184,7 +186,7 @@ export function NewStaffDialog() {
             {/* Send Invitation */}
             <div className="flex items-center justify-between p-4 bg-white border border-gray-100 rounded-xl shadow-sm mt-2">
               <div className="space-y-0.5">
-                <Label className="text-sm font-semibold text-gray-900">Send Invitation Email</Label>
+                <Label className="text-sm font-semibold text-gray-900">{t('form.sendInvitation')}</Label>
                 <p className="text-xs text-gray-500">Member will receive instructions to set up their account</p>
               </div>
               <Switch 
@@ -206,14 +208,14 @@ export function NewStaffDialog() {
               disabled={loading}
               className="px-6 rounded-xl border-gray-200 text-gray-700 hover:bg-gray-50 h-11 shadow-sm font-medium"
             >
-              Cancel
+              {t('form.cancel')}
             </Button>
             <Button 
               type="submit" 
               disabled={loading}
               className="px-8 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-md shadow-blue-500/25 h-11 font-semibold"
             >
-              {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : 'Send Invitation'}
+              {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : t('form.sendInvitation')}
             </Button>
           </DialogFooter>
         </form>

@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -36,6 +37,7 @@ interface EditServiceDialogProps {
 }
 
 export function EditServiceDialog({ service, open, onOpenChange }: EditServiceDialogProps) {
+  const t = useTranslations('services');
   const [loading, setLoading] = useState(false);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -57,7 +59,7 @@ export function EditServiceDialog({ service, open, onOpenChange }: EditServiceDi
       };
 
       if (!data.name || !data.category || isNaN(data.price) || isNaN(data.duration)) {
-        toast.error("Please fill in all required fields correctly");
+        toast.error(t('toast.fillRequired'));
         setLoading(false);
         return;
       }
@@ -67,11 +69,11 @@ export function EditServiceDialog({ service, open, onOpenChange }: EditServiceDi
       if (result?.error) {
         toast.error(result.error);
       } else {
-        toast.success("Service updated successfully");
+        toast.success(t('toast.updateSuccess'));
         onOpenChange(false);
       }
     } catch (error) {
-      toast.error("Failed to update service");
+      toast.error(t('toast.updateError'));
       console.error(error);
     } finally {
       setLoading(false);
@@ -88,7 +90,7 @@ export function EditServiceDialog({ service, open, onOpenChange }: EditServiceDi
             <div className="bg-indigo-600 p-2 rounded-xl shadow-md shadow-indigo-200">
               <Stethoscope className="h-5 w-5 text-white" />
             </div>
-            Edit Service
+            {t('actions.edit')}
           </DialogTitle>
         </DialogHeader>
 
@@ -100,12 +102,12 @@ export function EditServiceDialog({ service, open, onOpenChange }: EditServiceDi
             
             {/* Service Name */}
             <div className="space-y-2">
-              <Label htmlFor="edit-name" className="text-xs font-black uppercase tracking-widest text-gray-400">Service Name</Label>
+              <Label htmlFor="edit-name" className="text-xs font-black uppercase tracking-widest text-gray-400">{t('form.name')}</Label>
               <Input 
                 id="edit-name"
                 name="name"
                 defaultValue={service.name}
-                placeholder="e.g. Professional Teeth Whitening" 
+                placeholder={t('form.namePlaceholder')} 
                 className="bg-gray-50 border-gray-100 focus-visible:ring-indigo-500 rounded-2xl h-12 font-medium" 
                 required
               />
@@ -113,17 +115,17 @@ export function EditServiceDialog({ service, open, onOpenChange }: EditServiceDi
 
             {/* Category */}
             <div className="space-y-2">
-              <Label className="text-xs font-black uppercase tracking-widest text-gray-400">Category</Label>
+              <Label className="text-xs font-black uppercase tracking-widest text-gray-400">{t('form.category')}</Label>
               <div className="relative">
                 <LayoutGrid className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 z-10 pointer-events-none" />
                 <Select name="category" defaultValue={service.category} required>
                   <SelectTrigger className="pl-12 bg-gray-50 border-gray-100 focus:ring-indigo-500 rounded-2xl h-12 w-full font-medium">
-                    <SelectValue placeholder="Select service category" />
+                    <SelectValue placeholder={t('form.selectCategoryPlaceholder')} />
                   </SelectTrigger>
                   <SelectContent className="rounded-2xl border-gray-100 shadow-xl">
                     {Object.values(ServiceCategory).map((cat) => (
                       <SelectItem key={cat} value={cat} className="rounded-xl focus:bg-indigo-50 focus:text-indigo-600">
-                        {cat.charAt(0) + cat.slice(1).toLowerCase()}
+                        {t.has(`categories.${cat}`) ? t(`categories.${cat}`) : (cat.charAt(0) + cat.slice(1).toLowerCase())}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -134,7 +136,7 @@ export function EditServiceDialog({ service, open, onOpenChange }: EditServiceDi
             {/* Price & Duration */}
             <div className="grid grid-cols-2 gap-6">
               <div className="space-y-2">
-                <Label htmlFor="edit-price" className="text-xs font-black uppercase tracking-widest text-gray-400">Base Price ($)</Label>
+                <Label htmlFor="edit-price" className="text-xs font-black uppercase tracking-widest text-gray-400">{t('form.price')}</Label>
                 <div className="relative">
                   <DollarSign className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
                   <Input 
@@ -152,7 +154,7 @@ export function EditServiceDialog({ service, open, onOpenChange }: EditServiceDi
               </div>
               
               <div className="space-y-2">
-                <Label htmlFor="edit-duration" className="text-xs font-black uppercase tracking-widest text-gray-400">Duration (min)</Label>
+                <Label htmlFor="edit-duration" className="text-xs font-black uppercase tracking-widest text-gray-400">{t('form.duration')}</Label>
                 <div className="relative">
                   <Clock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
                   <Input 
@@ -172,12 +174,12 @@ export function EditServiceDialog({ service, open, onOpenChange }: EditServiceDi
 
             {/* Description */}
             <div className="space-y-2">
-              <Label htmlFor="edit-description" className="text-xs font-black uppercase tracking-widest text-gray-400">Service Description</Label>
+              <Label htmlFor="edit-description" className="text-xs font-black uppercase tracking-widest text-gray-400">{t('form.description')}</Label>
               <Textarea 
                 id="edit-description"
                 name="description"
                 defaultValue={service.description || ""}
-                placeholder="Provide a detailed description for patients..." 
+                placeholder={t('form.descriptionPlaceholder')} 
                 className="bg-gray-50 border-gray-100 focus-visible:ring-indigo-500 rounded-2xl min-h-[100px] resize-none p-4 font-medium" 
               />
             </div>
@@ -185,8 +187,8 @@ export function EditServiceDialog({ service, open, onOpenChange }: EditServiceDi
             {/* Popular Switch */}
             <div className="flex items-center justify-between p-5 bg-indigo-50/50 border border-indigo-100 rounded-2xl">
               <div className="space-y-0.5">
-                <Label className="text-sm font-bold text-gray-900">Mark as Popular</Label>
-                <p className="text-[10px] text-indigo-600 font-bold uppercase tracking-wider">Highlight with badge</p>
+                <Label className="text-sm font-bold text-gray-900">{t('form.markPopular')}</Label>
+                <p className="text-[10px] text-indigo-600 font-bold uppercase tracking-wider">{t('form.highlightDescription')}</p>
               </div>
               <Switch 
                 id="edit-popular" 
@@ -206,7 +208,7 @@ export function EditServiceDialog({ service, open, onOpenChange }: EditServiceDi
               disabled={loading}
               className="px-6 rounded-2xl text-gray-500 hover:text-gray-900 hover:bg-gray-100 h-12 font-bold"
             >
-              Cancel
+              {t('form.cancel')}
             </Button>
             <Button 
               type="submit" 
@@ -216,10 +218,10 @@ export function EditServiceDialog({ service, open, onOpenChange }: EditServiceDi
               {loading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Updating...
+                  {t('form.updating')}
                 </>
               ) : (
-                "Update Service"
+                t('form.save')
               )}
             </Button>
           </DialogFooter>

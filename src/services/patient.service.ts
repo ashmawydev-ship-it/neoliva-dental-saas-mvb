@@ -664,7 +664,9 @@ export class PatientService {
               id: item.id,
               description: item.description,
               quantity: item.quantity,
-              price: Number(item.price),
+              price: Number(item.unitPrice || item.price || 0),
+              discount: Number(item.discount || 0),
+              total: Number(item.total || 0),
               createdAt: item.createdAt
             })),
             payments: (i.payments || []).map((p: any) => ({

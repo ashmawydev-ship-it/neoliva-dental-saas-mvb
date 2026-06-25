@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Download, Printer } from "lucide-react";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 
 interface Transaction {
   id: string;
@@ -15,6 +16,7 @@ interface Transaction {
 }
 
 export function ExportCSVButton({ data }: { data: Transaction[] }) {
+  const t = useTranslations("billing");
   const exportToCSV = () => {
     console.log(`[ExportCSVButton] Exporting ${data?.length || 0} transactions`);
     if (!data || data.length === 0) {
@@ -62,12 +64,13 @@ export function ExportCSVButton({ data }: { data: Transaction[] }) {
       className="text-xs text-gray-500 rounded-lg"
       onClick={exportToCSV}
     >
-      Export <Download className="ml-1.5 w-3 h-3" />
+      {t('exportCsv')} <Download className="ml-1.5 w-3 h-3" />
     </Button>
   );
 }
 
 export function InvoiceRowActions({ invoice }: { invoice: Transaction }) {
+  const t = useTranslations("billing");
   const handlePrint = () => {
     console.log(`[InvoiceRowActions] Printing invoice:`, invoice.id);
     // Open the dynamic invoice page in a new tab for printing

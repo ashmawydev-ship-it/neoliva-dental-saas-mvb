@@ -2,6 +2,7 @@
 
 import React from "react";
 import { formatDistanceToNow } from "date-fns";
+import { ar, enUS } from "date-fns/locale";
 import { 
   Calendar, 
   DollarSign, 
@@ -12,19 +13,29 @@ import {
   ExternalLink,
   Circle,
   Archive,
-  MoreVertical
+  MoreVertical,
+  Trash2
 } from "lucide-react";
 import { Notification, NotificationType, NotificationPriority } from "@/generated/client";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { markAsRead } from "@/app/actions/notifications";
+import { markAsRead, archiveNotification, deleteNotification } from "@/app/actions/notifications";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
+import { useTranslations, useLocale } from "next-intl";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface NotificationItemProps {
   notification: Notification;
   onRead?: (id: string) => void;
+  onArchive?: (id: string) => void;
+  onDelete?: (id: string) => void;
   showMarkAsRead?: boolean;
 }
 
@@ -43,11 +54,21 @@ const priorityStyles: Record<NotificationPriority, string> = {
   CRITICAL: "bg-red-50 text-red-600 border-red-100 animate-pulse-subtle",
 };
 
-export function NotificationItem({ notification, onRead, showMarkAsRead = true }: NotificationItemProps) {
+export function NotificationItem({ 
+  notification, 
+  onRead, 
+  onArchive,
+  onDelete,
+  showMarkAsRead = true 
+}: NotificationItemProps) {
+  const t = useTranslations('notifications');
+  const locale = useLocale();
+  const dateLocale = locale === 'ar' ? ar : enUS;
+
   const Icon = typeIcons[notification.type] || Bell;
   const isArchived = !!notification.archivedAt;
 
-  const handleMarkAsRead = async (e: React.MouseEvent) => {
+  const handleMarkAsRead = async (e: React.MouseEvent | React.TouchEvent) => {
     e.preventDefault();
     e.stopPropagation();
     
@@ -57,7 +78,33 @@ export function NotificationItem({ notification, onRead, showMarkAsRead = true }
     if (res.success) {
       onRead?.(notification.id);
     } else {
-      toast.error("Failed to mark as read");
+      toast.error(t('errors.loadFailed'));
+    }
+  };
+
+  const handleArchive = async (e: React.MouseEvent | React.TouchEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (isArchived) return;
+
+    const res = await archiveNotification(notification.id);
+    if (res.success) {
+      onArchive?.(notification.id);
+    } else {
+      toast.error(t('errors.loadFailed'));
+    }
+  };
+
+  const handleDelete = async (e: React.MouseEvent | React.TouchEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const res = await deleteNotification(notification.id);
+    if (res.success) {
+      onDelete?.(notification.id);
+    } else {
+      toast.error(t('errors.loadFailed'));
     }
   };
 
@@ -98,16 +145,16 @@ export function NotificationItem({ notification, onRead, showMarkAsRead = true }
               "text-[10px] font-bold uppercase tracking-widest px-2 py-0 h-4 border-2",
               priorityStyles[notification.priority]
             )}>
-              {notification.priority}
+              {t(`priority.${notification.priority}`)}
             </Badge>
             {isArchived && (
               <Badge variant="secondary" className="text-[10px] bg-slate-100 text-slate-500 h-4 px-2 font-bold uppercase border-2 border-slate-200/50">
-                Archived
+                {t('tabs.archived')}
               </Badge>
             )}
           </div>
           <span className="text-[11px] font-bold text-slate-400 whitespace-nowrap bg-slate-50 px-2 py-0.5 rounded-full border border-slate-100">
-            {formatDistanceToNow(new Date(notification.createdAt), { addSuffix: true })}
+            {formatDistanceToNow(new Date(notification.createdAt), { addSuffix: true, locale: dateLocale })}
           </span>
         </div>
         
@@ -126,7 +173,7 @@ export function NotificationItem({ notification, onRead, showMarkAsRead = true }
                 href={notification.actionUrl}
                 className="text-xs font-bold text-blue-600 hover:text-blue-700 flex items-center gap-1.5 transition-all hover:gap-2 px-3 py-1.5 bg-blue-50/50 rounded-full border border-blue-100/50"
               >
-                Action Required
+                {t('actionRequired')}
                 <ExternalLink className="w-3 h-3" />
               </Link>
             )}
@@ -137,15 +184,46 @@ export function NotificationItem({ notification, onRead, showMarkAsRead = true }
                 className="text-xs font-bold text-slate-400 hover:text-blue-600 flex items-center gap-1.5 transition-all hover:bg-white px-3 py-1.5 rounded-full border border-transparent hover:border-slate-100"
               >
                 <Check className="w-3.5 h-3.5" />
-                Done
+                {t('actions.markAsRead')}
               </button>
             )}
           </div>
 
           <div className="opacity-0 group-hover:opacity-100 transition-opacity">
-            <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full text-slate-400">
-              <MoreVertical className="w-4 h-4" />
-            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full text-slate-400 hover:bg-slate-100">
+                  <MoreVertical className="w-4 h-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="rounded-xl border border-slate-100 bg-white shadow-md p-1 min-w-[120px]">
+                {!notification.isRead && !isArchived && (
+                  <DropdownMenuItem 
+                    onClick={handleMarkAsRead}
+                    className="flex items-center gap-2 px-3 py-2 text-xs font-medium cursor-pointer text-slate-600 hover:text-blue-600 hover:bg-slate-50 rounded-lg"
+                  >
+                    <Check className="w-3.5 h-3.5" />
+                    {t('actions.markAsRead')}
+                  </DropdownMenuItem>
+                )}
+                {!isArchived && (
+                  <DropdownMenuItem 
+                    onClick={handleArchive}
+                    className="flex items-center gap-2 px-3 py-2 text-xs font-medium cursor-pointer text-slate-600 hover:text-blue-600 hover:bg-slate-50 rounded-lg"
+                  >
+                    <Archive className="w-3.5 h-3.5" />
+                    {t('actions.archive')}
+                  </DropdownMenuItem>
+                )}
+                <DropdownMenuItem 
+                  onClick={handleDelete}
+                  className="flex items-center gap-2 px-3 py-2 text-xs font-medium cursor-pointer text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg"
+                >
+                  <Trash2 className="w-3.5 h-3.5 text-red-500" />
+                  {t('actions.delete')}
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
       </div>

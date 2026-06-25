@@ -97,14 +97,17 @@ class BillingRepository extends BaseRepository {
         appointmentId: data.appointmentId,
         items: {
           create: data.items.map(item => {
-            const discountFactor = 1 - (item.discount ?? 0) / 100
+            const discount = item.discount ?? 0;
+            const discountFactor = 1 - discount / 100;
             return {
               tenantId,
               description: item.description,
               quantity:    item.quantity,
               unitPrice:   item.unitPrice,
+              discount,
+              total:       item.quantity * item.unitPrice * discountFactor,
               serviceId:   item.serviceId ?? null,
-            }
+            };
           }),
         },
       },

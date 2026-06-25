@@ -28,6 +28,7 @@ export type UpdateClinicSettingsInput = {
   taxRate?: number;
   invoiceNote?: string | null;
   notificationsConfig?: NotificationsConfig;
+  locale?: string;
 };
 
 export class SettingsService {
@@ -69,6 +70,7 @@ export class SettingsService {
       taxRate: data.taxRate !== undefined ? data.taxRate : undefined,
       invoiceNote: data.invoiceNote !== undefined ? data.invoiceNote : undefined,
       notificationsConfig: data.notificationsConfig !== undefined ? (data.notificationsConfig as unknown as Prisma.InputJsonValue) : undefined,
+      locale: data.locale !== undefined ? data.locale : undefined,
     });
 
     logger.info('[SettingsService] Clinic settings updated', {

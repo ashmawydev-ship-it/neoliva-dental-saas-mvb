@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Save, Loader2 } from "lucide-react";
 import { updateNotificationsAction } from "@/app/actions/settings";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 
 const notificationsSchema = z.object({
   emailReminders: z.boolean(),
@@ -31,6 +32,7 @@ interface NotificationSettingsData {
 }
 
 export function NotificationSettingsForm({ initialData }: { initialData: NotificationSettingsData | null }) {
+  const t = useTranslations('settings');
   const [isPending, setIsPending] = useState(false);
 
   const config = initialData?.notificationsConfig || {};
@@ -58,18 +60,18 @@ export function NotificationSettingsForm({ initialData }: { initialData: Notific
   };
 
   const notifications = [
-    { name: "emailReminders", title: "Email Reminders", desc: "Send 24h before appointments" },
-    { name: "smsReminders", title: "SMS Reminders", desc: "Include confirm/cancel link" },
-    { name: "invoiceReceipts", title: "Invoice Receipts", desc: "Auto-email PDF on payment" },
-    { name: "lowInventoryAlerts", title: "Low Inventory Alerts", desc: "Notify below min stock" },
+    { name: "emailReminders", title: t('notifications.emailReminders'), desc: t('notifications.emailRemindersDesc') },
+    { name: "smsReminders", title: t('notifications.smsReminders'), desc: t('notifications.smsRemindersDesc') },
+    { name: "invoiceReceipts", title: t('notifications.invoiceReceipts'), desc: t('notifications.invoiceReceiptsDesc') },
+    { name: "lowInventoryAlerts", title: t('notifications.lowInventoryAlerts'), desc: t('notifications.lowInventoryAlertsDesc') },
   ];
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Card className="border-0 shadow-sm">
         <CardHeader>
-          <CardTitle className="text-base font-semibold">Notifications</CardTitle>
-          <CardDescription>Configure automated communications.</CardDescription>
+          <CardTitle className="text-base font-semibold">{t('notifications.title')}</CardTitle>
+          <CardDescription>{t('notifications.description')}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-1">
           {notifications.map((item) => (
@@ -99,7 +101,7 @@ export function NotificationSettingsForm({ initialData }: { initialData: Notific
             className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl shadow-lg shadow-blue-500/20 mt-2"
           >
             {isPending ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
-            Save Settings
+            {t('notifications.saveChanges')}
           </Button>
         </CardFooter>
       </Card>

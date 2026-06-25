@@ -14,6 +14,7 @@ import { Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { createSmsTemplate, updateSmsTemplate } from '@/app/actions/smsTemplates';
 import { TemplateCategory } from '@/services/smsTemplateService';
+import { useTranslations } from 'next-intl';
 
 const ALLOWED_VARIABLES = [
   'patient_name', 
@@ -23,26 +24,6 @@ const ALLOWED_VARIABLES = [
   'doctor_name', 
   'remaining_balance'
 ];
-
-const templateSchema = z.object({
-  name: z.string().min(1, 'Name is required').max(100),
-  message: z.string().min(1, 'Message is required').refine((val) => {
-    // Extract all {{variables}} and validate
-    const matches = val.match(/\{\{(.*?)\}\}/g);
-    if (!matches) return true;
-    
-    for (const match of matches) {
-      const variable = match.replace(/[{}]/g, '').trim();
-      if (!ALLOWED_VARIABLES.includes(variable)) {
-        return false;
-      }
-    }
-    return true;
-  }, {
-    message: `Template contains invalid variables. Allowed: ${ALLOWED_VARIABLES.join(', ')}`
-  }),
-  isActive: z.boolean().default(true),
-});
 
 type TemplateFormValues = {
   name: string;
@@ -61,7 +42,28 @@ export function TemplateEditorModal({
   template?: any;
   category: TemplateCategory;
 }) {
+  const t = useTranslations('campaigns');
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const templateSchema = z.object({
+    name: z.string().min(1, t('errors.nameRequired') || 'Name is required').max(100),
+    message: z.string().min(1, t('errors.messageRequired') || 'Message is required').refine((val) => {
+      // Extract all {{variables}} and validate
+      const matches = val.match(/\{\{(.*?)\}\}/g);
+      if (!matches) return true;
+      
+      for (const match of matches) {
+        const variable = match.replace(/[{}]/g, '').trim();
+        if (!ALLOWED_VARIABLES.includes(variable)) {
+          return false;
+        }
+      }
+      return true;
+    }, {
+      message: `${t('errors.invalidVariables') || 'Template contains invalid variables. Allowed:'} ${ALLOWED_VARIABLES.join(', ')}`
+    }),
+    isActive: z.boolean().default(true),
+  });
 
   const { register, handleSubmit, control, watch, setValue, formState: { errors } } = useForm<TemplateFormValues>({
     resolver: zodResolver(templateSchema) as any,
@@ -96,10 +98,10 @@ export function TemplateEditorModal({
       }
 
       if (res.success) {
-        toast.success(`Template ${template?.id ? 'updated' : 'created'} successfully`);
+        toast.success(template?.id ? t('toasts.templateUpdated') : t('toasts.templateCreated'));
         onOpenChange(false);
       } else {
-        toast.error(res.error || 'Failed to save template');
+        toast.error(res.error || t('errors.saveTemplateFailed') || 'Failed to save template');
       }
     } catch (error: any) {
       toast.error(error.message);
@@ -131,9 +133,9 @@ export function TemplateEditorModal({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[600px]">
         <DialogHeader>
-          <DialogTitle>{template ? 'Edit Template' : 'New Template'}</DialogTitle>
+          <DialogTitle>{template ? t('smsTemplates.editTemplate') : t('smsTemplates.newTemplate')}</DialogTitle>
           <DialogDescription>
-            Configure your SMS template and insert dynamic variables.
+            {t('smsTemplates.editorHelp')}
           </DialogDescription>
         </DialogHeader>
 
@@ -142,8 +144,8 @@ export function TemplateEditorModal({
             
             <div className="flex justify-between items-center gap-4">
               <div className="space-y-2 flex-1">
-                <Label>Template Name</Label>
-                <Input {...register('name')} placeholder="e.g., Appointment Confirmation" />
+                <Label>{t('smsTemplates.templateName')}</Label>
+                <Input {...register('name')} placeholder={t('smsTemplates.templateNamePlaceholder') || 'e.g., Appointment Confirmation'} />
                 {errors.name && <p className="text-xs text-destructive">{errors.name.message}</p>}
               </div>
               <div className="space-y-2 flex flex-col items-center pt-6">
@@ -156,16 +158,16 @@ export function TemplateEditorModal({
                       <Switch checked={field.value} onCheckedChange={field.onChange} />
                     )}
                   />
-                  <span className="text-sm">Active</span>
+                  <span className="text-sm">{t('smsTemplates.active')}</span>
                 </div>
               </div>
             </div>
 
             <div className="space-y-2">
               <div className="flex justify-between items-end">
-                <Label>Message</Label>
+                <Label>{t('smsTemplates.messageBody')}</Label>
                 <span className="text-xs text-muted-foreground">
-                  {charCount} chars • {segmentCount} SMS {segmentCount > 1 ? 'segments' : 'segment'}
+                  {t('smsTemplates.charsCount', { count: charCount })} • {segmentCount > 1 ? t('smsTemplates.segmentsCount', { count: segmentCount }) : t('smsTemplates.segmentCount', { count: segmentCount })}
                 </span>
               </div>
               
@@ -177,7 +179,7 @@ export function TemplateEditorModal({
               {errors.message && <p className="text-xs text-destructive">{errors.message.message}</p>}
               
               <div className="pt-2">
-                <Label className="text-xs text-muted-foreground block mb-2">Insert Variables:</Label>
+                <Label className="text-xs text-muted-foreground block mb-2">{t('smsTemplates.insertVariables') || 'Insert Variables:'}</Label>
                 <div className="flex flex-wrap gap-2">
                   {ALLOWED_VARIABLES.map(v => (
                     <Button 
@@ -196,19 +198,19 @@ export function TemplateEditorModal({
             </div>
 
             <div className="space-y-2 pt-2 border-t">
-              <Label className="text-xs font-semibold text-muted-foreground">Live Preview</Label>
+              <Label className="text-xs font-semibold text-muted-foreground">{t('form.messagePreview')}</Label>
               <div className="p-3 bg-secondary text-secondary-foreground rounded-lg rounded-bl-none text-sm whitespace-pre-wrap min-h-[60px]">
-                {getPreview(currentMessage) || <span className="opacity-50 italic">Preview will appear here...</span>}
+                {getPreview(currentMessage) || <span className="opacity-50 italic">{t('smsTemplates.previewPlaceholder') || 'Preview will appear here...'}</span>}
               </div>
             </div>
 
           </div>
 
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
+            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>{t('actions.cancel')}</Button>
             <Button type="submit" disabled={isSubmitting}>
               {isSubmitting && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-              {template ? 'Update' : 'Create'} Template
+              {template ? t('actions.updateTemplate') : t('actions.createTemplate')}
             </Button>
           </DialogFooter>
         </form>

@@ -181,3 +181,41 @@ export async function archiveNotifications() {
     return { success: false, error: "Internal Server Error" };
   }
 }
+
+/**
+ * Archive a specific notification
+ */
+export async function archiveNotification(id: string) {
+  try {
+    const context = await getTenantContext();
+    if (!context) return { success: false, error: "Unauthorized" };
+
+    const result = await notificationService.archive(context.tenantId, id);
+
+    revalidatePath("/notifications");
+    
+    return { success: !!result };
+  } catch (error) {
+    console.error("[Actions] archiveNotification failed:", error);
+    return { success: false, error: "Internal Server Error" };
+  }
+}
+
+/**
+ * Delete a specific notification
+ */
+export async function deleteNotification(id: string) {
+  try {
+    const context = await getTenantContext();
+    if (!context) return { success: false, error: "Unauthorized" };
+
+    const result = await notificationService.delete(context.tenantId, id);
+
+    revalidatePath("/notifications");
+    
+    return { success: !!result };
+  } catch (error) {
+    console.error("[Actions] deleteNotification failed:", error);
+    return { success: false, error: "Internal Server Error" };
+  }
+}

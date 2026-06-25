@@ -10,36 +10,39 @@ import {
   Zap
 } from "lucide-react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 
 export function FinanceQuickActions() {
+  const t = useTranslations('finance');
+
   const actions = [
     {
-      title: "View P&L Report",
-      icon: <PieChart className="w-4 h-4" />,
-      href: "/dashboard/finance/reports/pnl",
+      title: t('quickActions.newInvoice'),
+      icon: <FileText className="w-4 h-4" />,
+      href: "/dashboard/billing",
       color: "text-blue-600",
       bg: "bg-blue-50"
     },
     {
-      title: "Expense Management",
+      title: t('quickActions.recordPayment'),
+      icon: <Zap className="w-4 h-4" />,
+      href: "/dashboard/billing",
+      color: "text-amber-600",
+      bg: "bg-amber-50"
+    },
+    {
+      title: t('quickActions.addExpense'),
       icon: <ArrowUpRight className="w-4 h-4" />,
       href: "/dashboard/billing/expenses",
       color: "text-rose-600",
       bg: "bg-rose-50"
     },
     {
-      title: "Treasury Settings",
-      icon: <Settings className="w-4 h-4" />,
-      href: "/dashboard/settings/finance",
+      title: t('quickActions.viewReports'),
+      icon: <PieChart className="w-4 h-4" />,
+      href: "/dashboard/reports",
       color: "text-slate-600",
       bg: "bg-slate-50"
-    },
-    {
-      title: "Financial Alerts",
-      icon: <Zap className="w-4 h-4" />,
-      href: "#",
-      color: "text-amber-600",
-      bg: "bg-amber-50"
     }
   ];
 
@@ -48,7 +51,7 @@ export function FinanceQuickActions() {
       <CardHeader className="pb-3 bg-slate-50/50">
         <CardTitle className="text-sm font-semibold flex items-center gap-2">
           <Zap className="w-4 h-4 text-blue-600 fill-blue-600" />
-          Finance Actions
+          {t('quickActions.title')}
         </CardTitle>
       </CardHeader>
       <CardContent className="p-0">

@@ -2,6 +2,7 @@
 
 import { Card, CardContent } from "@/components/ui/card";
 import { TrendingUp, CreditCard, Wallet, Users, ChevronUp } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 interface ReportsKPIsProps {
   data: {
@@ -13,6 +14,8 @@ interface ReportsKPIsProps {
 }
 
 export function ReportsKPIs({ data }: ReportsKPIsProps) {
+  const t = useTranslations('reports');
+
   const safeData = {
     totalRevenue: data?.totalRevenue || 0,
     totalExpenses: data?.totalExpenses || 0,
@@ -22,7 +25,7 @@ export function ReportsKPIs({ data }: ReportsKPIsProps) {
 
   const kpis = [
     {
-      title: "Total Revenue",
+      title: t('kpis.totalRevenue'),
       value: `$${safeData.totalRevenue.toLocaleString()}`,
       icon: TrendingUp,
       color: "text-blue-600",
@@ -30,7 +33,7 @@ export function ReportsKPIs({ data }: ReportsKPIsProps) {
       trend: "+14%"
     },
     {
-      title: "Total Expenses",
+      title: t('kpis.totalExpenses'),
       value: `$${safeData.totalExpenses.toLocaleString()}`,
       icon: CreditCard,
       color: "text-amber-600",
@@ -38,7 +41,7 @@ export function ReportsKPIs({ data }: ReportsKPIsProps) {
       trend: "+5%"
     },
     {
-      title: "Net Profit",
+      title: t('kpis.netProfit'),
       value: `$${safeData.netProfit.toLocaleString()}`,
       icon: Wallet,
       color: "text-emerald-600",
@@ -46,7 +49,7 @@ export function ReportsKPIs({ data }: ReportsKPIsProps) {
       trend: "+21%"
     },
     {
-      title: "Total Patients",
+      title: t('kpis.totalPatients'),
       value: safeData.totalPatients.toLocaleString(),
       icon: Users,
       color: "text-indigo-600",

@@ -2,16 +2,19 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import { useTranslations } from "next-intl";
 
 interface ChartProps {
   data: any[];
 }
 
 export function ReportsProfitChart({ data }: ChartProps) {
+  const t = useTranslations('reports');
+
   return (
     <Card className="border-0 shadow-sm">
       <CardHeader>
-        <CardTitle className="text-base font-semibold">Net Profit Trend</CardTitle>
+        <CardTitle className="text-base font-semibold">{t('charts.profitLoss')}</CardTitle>
         <p className="text-xs text-gray-500">Monthly profit margins</p>
       </CardHeader>
       <CardContent className="h-[300px]">

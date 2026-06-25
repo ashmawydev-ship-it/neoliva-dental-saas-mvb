@@ -5,32 +5,36 @@ import { Plus, UserPlus, FileText, CalendarPlus, ChevronRight } from "lucide-rea
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 
+import { useMemo } from "react";
+import { useTranslations } from "next-intl";
+
 export function QuickActions() {
   const router = useRouter();
+  const t = useTranslations('dashboard');
 
-  const actions = [
+  const actions = useMemo(() => [
     {
-      label: "New Patient",
+      label: t('quickActions.newPatient'),
       icon: UserPlus,
       color: "from-blue-500 to-blue-600",
       href: "/patients?action=new",
       shadow: "shadow-blue-200"
     },
     {
-      label: "New Appointment",
+      label: t('quickActions.newAppointment'),
       icon: CalendarPlus,
       color: "from-indigo-500 to-indigo-600",
       href: "/appointments?action=new",
       shadow: "shadow-indigo-200"
     },
     {
-      label: "Create Invoice",
+      label: t('quickActions.createInvoice'),
       icon: FileText,
       color: "from-emerald-500 to-emerald-600",
       href: "/billing?action=new",
       shadow: "shadow-emerald-200"
     }
-  ];
+  ], [t]);
 
   return (
     <div className="flex flex-wrap items-center gap-3">

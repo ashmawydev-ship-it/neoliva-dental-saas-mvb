@@ -409,7 +409,10 @@ model InvoiceItem {
   serviceId   String?  @map("service_id") @db.Uuid
   description String
   quantity    Int      @default(1)
-  unitPrice   Decimal  @map("price") @db.Decimal(10, 2)
+  unitPrice   Decimal  @map("unit_price") @db.Decimal(10, 2)
+  discount    Decimal  @default(0) @db.Decimal(5, 2)
+  total       Decimal  @db.Decimal(10, 2)
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
 
   tenant  Tenant   @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   invoice Invoice  @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
@@ -1212,6 +1215,7 @@ model ClinicSettings {
   taxRate             Decimal  @default(0) @db.Decimal(5, 2) @map("tax_rate")
   invoiceNote         String?  @map("invoice_note")
   notificationsConfig Json?    @map("notifications_config")
+  locale              String   @default("en")
   createdAt           DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt           DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
 

@@ -13,6 +13,7 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { formatDoctorName } from "@/lib/utils";
+import { useTranslations } from "next-intl";
 
 interface QueueItem {
   id: string;
@@ -28,14 +29,16 @@ interface OperationalPanelProps {
 }
 
 export function OperationalPanel({ queue }: OperationalPanelProps) {
+  const t = useTranslations("dashboard");
+
   const getStatusConfig = (status: string) => {
     switch (status) {
       case 'IN_PROGRESS':
-        return { color: 'bg-indigo-500', text: 'In Progress', icon: Play };
+        return { color: 'bg-indigo-500', text: t('queue.status.inProgress'), icon: Play };
       case 'WAITING':
-        return { color: 'bg-amber-500', text: 'Waiting', icon: Clock };
+        return { color: 'bg-amber-500', text: t('queue.status.waiting'), icon: Clock };
       case 'COMPLETED':
-        return { color: 'bg-emerald-500', text: 'Completed', icon: CheckCircle2 };
+        return { color: 'bg-emerald-500', text: t('queue.status.completed'), icon: CheckCircle2 };
       default:
         return { color: 'bg-gray-500', text: status, icon: AlertCircle };
     }
@@ -49,11 +52,11 @@ export function OperationalPanel({ queue }: OperationalPanelProps) {
             <Users className="w-4 h-4 text-blue-600" />
           </div>
           <CardTitle className="text-lg font-bold text-gray-800">
-            Operational Queue
+            {t('queue.title')}
           </CardTitle>
         </div>
         <Badge variant="outline" className="bg-blue-50 border-blue-100 text-blue-700 font-bold">
-          {queue.filter(q => q.status === 'WAITING').length} WAITING
+          {queue.filter(q => q.status === 'WAITING').length} {t('queue.waiting')}
         </Badge>
       </CardHeader>
       <CardContent className="p-0">
@@ -62,7 +65,7 @@ export function OperationalPanel({ queue }: OperationalPanelProps) {
             {queue.length === 0 ? (
               <div className="p-8 text-center text-gray-400">
                 <UserPlus className="w-8 h-8 mx-auto mb-2 opacity-20" />
-                <p className="text-sm">The queue is currently empty.</p>
+                <p className="text-sm">{t('queue.empty')}</p>
               </div>
             ) : (
               queue.map((item, index) => {
@@ -99,10 +102,10 @@ export function OperationalPanel({ queue }: OperationalPanelProps) {
                           {formatDoctorName(item.doctorName)}
                         </p>
                         <span className="text-[10px] text-gray-300">•</span>
-                        <div className="flex items-center gap-1">
+                        <div className="flex items-center gap-2">
                           <Clock className="w-3 h-3 text-gray-300" />
                           <span className={`text-[10px] font-bold ${item.waitTime > 30 ? 'text-rose-500' : 'text-gray-400'}`}>
-                            {item.waitTime} min
+                            {t('queue.minWait', { n: item.waitTime })}
                           </span>
                         </div>
                       </div>
@@ -122,7 +125,7 @@ export function OperationalPanel({ queue }: OperationalPanelProps) {
       </CardContent>
       <div className="p-3 bg-gray-50/50 border-t border-gray-50">
         <button className="w-full py-2 rounded-xl bg-white border border-gray-200 text-xs font-bold text-gray-600 hover:bg-white hover:shadow-sm hover:border-indigo-200 hover:text-indigo-600 transition-all flex items-center justify-center gap-2">
-          VIEW FULL CLINIC QUEUE
+          {t('queue.viewAll')}
           <ChevronRight className="w-3 h-3" />
         </button>
       </div>

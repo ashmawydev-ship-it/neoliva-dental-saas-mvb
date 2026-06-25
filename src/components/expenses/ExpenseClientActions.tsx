@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Download, Printer, MoreHorizontal, Trash2, CheckCircle, Clock } from "lucide-react";
 import { toast } from "sonner";
@@ -25,9 +26,11 @@ interface Expense {
 }
 
 export function ExportExpensesCSV({ data }: { data: Expense[] }) {
+  const t = useTranslations('expenses');
+
   const exportToCSV = () => {
     if (!data || data.length === 0) {
-      toast.error("No data to export");
+      toast.error(t('toast.noDataExport'));
       return;
     }
 
@@ -57,10 +60,10 @@ export function ExportExpensesCSV({ data }: { data: Expense[] }) {
       link.click();
       document.body.removeChild(link);
       
-      toast.success("CSV export successful");
+      toast.success(t('toast.exportSuccess'));
     } catch (error) {
       console.error("Export failed:", error);
-      toast.error("Failed to export CSV");
+      toast.error(t('toast.exportError'));
     }
   };
 
@@ -71,19 +74,21 @@ export function ExportExpensesCSV({ data }: { data: Expense[] }) {
       className="text-xs text-gray-600 rounded-xl h-9 border-gray-200"
       onClick={exportToCSV}
     >
-      <Download className="mr-2 w-3.5 h-3.5" /> Export CSV
+      <Download className="mr-2 w-3.5 h-3.5" /> {t('export')}
     </Button>
   );
 }
 
 export function ExpenseRowActions({ expense }: { expense: Expense }) {
+  const t = useTranslations('expenses');
+
   const handleDelete = async () => {
-    if (confirm("Are you sure you want to delete this expense?")) {
+    if (confirm(t('dialog.confirmDelete'))) {
       try {
         await deleteExpense(expense.id);
-        toast.success("Expense deleted successfully");
+        toast.success(t('toast.deleteSuccess'));
       } catch (error) {
-        toast.error("Failed to delete expense");
+        toast.error(t('toast.deleteError'));
       }
     }
   };
@@ -92,9 +97,9 @@ export function ExpenseRowActions({ expense }: { expense: Expense }) {
     const newStatus = expense.status === "PAID" ? "PENDING" : "PAID";
     try {
       await updateExpense(expense.id, { status: newStatus });
-      toast.success(`Status updated to ${newStatus}`);
+      toast.success(t('toast.statusUpdated', { status: t(`status.${newStatus}`) }));
     } catch (error) {
-      toast.error("Failed to update status");
+      toast.error(t('toast.statusUpdateError'));
     }
   };
 
@@ -107,7 +112,7 @@ export function ExpenseRowActions({ expense }: { expense: Expense }) {
     </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-48 p-1 rounded-xl shadow-xl border-gray-100">
         <DropdownMenuGroup>
-          <DropdownMenuLabel className="text-xs font-semibold text-gray-400 px-2 py-1.5 uppercase">Actions</DropdownMenuLabel>
+          <DropdownMenuLabel className="text-xs font-semibold text-gray-400 px-2 py-1.5 uppercase">{t('table.actions')}</DropdownMenuLabel>
           <DropdownMenuItem 
             onClick={toggleStatus}
             className="rounded-lg gap-2 cursor-pointer focus:bg-gray-50 focus:text-gray-900"
@@ -117,7 +122,7 @@ export function ExpenseRowActions({ expense }: { expense: Expense }) {
             ) : (
               <CheckCircle className="w-4 h-4 text-emerald-500" />
             )}
-            Mark as {expense.status === "PAID" ? "Pending" : "Paid"}
+            {expense.status === "PAID" ? t('actions.markPending') : t('actions.markPaid')}
           </DropdownMenuItem>
           <DropdownMenuSeparator className="bg-gray-50" />
           <DropdownMenuItem 
@@ -125,7 +130,7 @@ export function ExpenseRowActions({ expense }: { expense: Expense }) {
             className="text-red-600 rounded-lg gap-2 cursor-pointer focus:bg-red-50 focus:text-red-600"
           >
             <Trash2 className="w-4 h-4" />
-            Delete Expense
+            {t('actions.delete')}
           </DropdownMenuItem>
         </DropdownMenuGroup>
       </DropdownMenuContent>

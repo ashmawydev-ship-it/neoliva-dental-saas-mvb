@@ -10,6 +10,7 @@ import { PermissionProvider } from "@/components/providers/permission-provider";
 import { getUserPermissions } from "@/lib/rbac";
 import { settingsService } from "@/config/di";
 import { runDailyJobsIfNeeded } from "@/services/job.service";
+import { cookies } from "next/headers";
 
 export default async function DashboardLayout({
   children,
@@ -72,12 +73,15 @@ export default async function DashboardLayout({
     logoUrl: tenantSettings?.logoUrl || null,
   };
 
+  const cookieStore = await cookies();
+  const locale = cookieStore.get("locale")?.value || "en";
+
   return (
     <PermissionProvider initialPermissions={Array.from(permissions)}>
       <div className="flex h-screen overflow-hidden bg-background">
         <Sidebar user={user} settings={sidebarSettings} />
         <div className="flex flex-col flex-1 overflow-hidden">
-          <TopBanner user={user} settings={sidebarSettings} />
+          <TopBanner user={user} settings={sidebarSettings} locale={locale} />
           <main className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8">
             {children}
           </main>

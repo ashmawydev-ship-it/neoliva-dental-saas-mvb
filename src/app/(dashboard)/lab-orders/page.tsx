@@ -7,11 +7,13 @@ import { LabOrdersTable } from "@/components/lab-orders/LabOrdersTable";
 import { LabOrderService } from "@/services/lab-order.service";
 import { PatientService } from "@/services/patient.service";
 import { resolveTenantContextOrRedirect as resolveTenantContext } from "@/lib/auth/resolve-tenant-context";
+import { getTranslations } from "next-intl/server";
 
 const labOrderService = new LabOrderService();
 const patientService = new PatientService();
 
 export default async function LabOrdersPage() {
+  const t = await getTranslations('labOrders');
   const { tenantId } = await resolveTenantContext();
   
   // Fetch data in parallel
@@ -23,36 +25,36 @@ export default async function LabOrdersPage() {
 
   const statCards = [
     { 
-      label: "Active Cases", 
+      label: t('stats.activeCases'), 
       value: stats.activeCases.toString(), 
       icon: Clock, 
       color: "text-blue-600", 
       bg: "bg-blue-50",
-      description: "Sent or In Progress"
+      description: t('stats.activeCasesDesc')
     },
     { 
-      label: "Due This Week", 
+      label: t('stats.dueThisWeek'), 
       value: stats.dueThisWeek.toString(), 
       icon: AlertCircle, 
       color: "text-amber-600", 
       bg: "bg-amber-50",
-      description: "Requiring attention"
+      description: t('stats.dueThisWeekDesc')
     },
     { 
-      label: "Received", 
+      label: t('stats.received'), 
       value: stats.received.toString(), 
       icon: CheckCircle, 
       color: "text-emerald-600", 
       bg: "bg-emerald-50",
-      description: "Ready for delivery"
+      description: t('stats.receivedDesc')
     },
     { 
-      label: "Monthly Cost", 
+      label: t('stats.monthlyCost'), 
       value: `$${stats.monthlyCost.toLocaleString()}`, 
       icon: DollarSign, 
       color: "text-purple-600", 
       bg: "bg-purple-50",
-      description: "Current month spend"
+      description: t('stats.monthlyCostDesc')
     },
   ];
 
@@ -63,9 +65,9 @@ export default async function LabOrdersPage() {
         <div className="space-y-1">
           <h1 className="text-4xl font-extrabold tracking-tight text-gray-900 flex items-center gap-3">
             <Beaker className="w-10 h-10 text-purple-600" />
-            Lab Orders
+            {t('title')}
           </h1>
-          <p className="text-gray-500 font-medium">Manage and track external laboratory work for prosthetics and orthodontics.</p>
+          <p className="text-gray-500 font-medium">{t('subtitle')}</p>
         </div>
         <NewLabOrderDialog patients={patients} />
       </div>
@@ -79,7 +81,7 @@ export default async function LabOrdersPage() {
                 <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${stat.bg} ${stat.color} group-hover:scale-110 transition-transform duration-500`}>
                   <stat.icon className="w-6 h-6" />
                 </div>
-                <div className="text-[10px] font-bold text-gray-300 uppercase tracking-widest">Live Update</div>
+                <div className="text-[10px] font-bold text-gray-300 uppercase tracking-widest">{t('liveUpdate')}</div>
               </div>
               <div className="space-y-1">
                 <h2 className="text-3xl font-black text-gray-900 tracking-tight">{stat.value}</h2>
@@ -95,7 +97,7 @@ export default async function LabOrdersPage() {
       <div className="space-y-4">
         <div className="flex items-center gap-2 px-1">
           <Truck className="w-5 h-5 text-purple-500" />
-          <h2 className="text-lg font-bold text-gray-800">Order Management</h2>
+          <h2 className="text-lg font-bold text-gray-800">{t('orderManagement')}</h2>
         </div>
         <LabOrdersTable initialOrders={labOrders} />
       </div>

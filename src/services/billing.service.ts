@@ -270,13 +270,18 @@ export class BillingService {
           dueDate: data.dueDate,
           totalAmount,
           items: {
-            create: data.items.map(item => ({
-              description: item.description,
-              quantity: item.quantity,
-              unitPrice: item.price,
-              serviceId: item.serviceId || null,
-              tenantId
-            }))
+            create: data.items.map(item => {
+              const unitPrice = item.price;
+              const quantity = item.quantity || 1;
+              return {
+                description: item.description,
+                quantity,
+                unitPrice,
+                total: unitPrice * quantity,
+                serviceId: item.serviceId || null,
+                tenantId
+              };
+            })
           }
         }, tx);
 

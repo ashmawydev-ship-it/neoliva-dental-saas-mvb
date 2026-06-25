@@ -11,13 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Save, Loader2 } from "lucide-react";
 import { updateClinicAction } from "@/app/actions/settings";
 import { toast } from "sonner";
-
-const clinicSchema = z.object({
-  clinicName: z.string().min(1, "Clinic Name is required"),
-  email: z.string().email("Invalid email").optional().or(z.literal('')),
-  phone: z.string().optional().or(z.literal('')),
-  address: z.string().optional().or(z.literal('')),
-});
+import { useTranslations } from "next-intl";
 
 interface ClinicSettingsData {
   clinicName?: string | null;
@@ -28,7 +22,15 @@ interface ClinicSettingsData {
 }
 
 export function ClinicSettingsForm({ initialData }: { initialData: ClinicSettingsData | null }) {
+  const t = useTranslations('settings');
   const [isPending, setIsPending] = useState(false);
+
+  const clinicSchema = z.object({
+    clinicName: z.string().min(1, t('clinic.errors.clinicNameRequired')),
+    email: z.string().email(t('clinic.errors.invalidEmail')).optional().or(z.literal('')),
+    phone: z.string().optional().or(z.literal('')),
+    address: z.string().optional().or(z.literal('')),
+  });
 
   const { register, handleSubmit, formState: { errors, isDirty } } = useForm({
     resolver: zodResolver(clinicSchema),
@@ -56,29 +58,29 @@ export function ClinicSettingsForm({ initialData }: { initialData: ClinicSetting
     <form onSubmit={handleSubmit(onSubmit)}>
       <Card className="border-0 shadow-sm">
         <CardHeader>
-          <CardTitle className="text-base font-semibold">Clinic Information</CardTitle>
-          <CardDescription>Update details used across invoices and profiles.</CardDescription>
+          <CardTitle className="text-base font-semibold">{t('clinic.title')}</CardTitle>
+          <CardDescription>{t('clinic.description')}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-5">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label className="text-xs font-semibold text-gray-700">Clinic Name</Label>
+              <Label className="text-xs font-semibold text-gray-700">{t('clinic.clinicName')}</Label>
               <Input {...register("clinicName")} className="h-10 rounded-xl" />
               {errors.clinicName && <p className="text-xs text-red-500">{errors.clinicName.message}</p>}
             </div>
             <div className="space-y-2">
-              <Label className="text-xs font-semibold text-gray-700">Support Email</Label>
+              <Label className="text-xs font-semibold text-gray-700">{t('clinic.email')}</Label>
               <Input {...register("email")} className="h-10 rounded-xl" />
               {errors.email && <p className="text-xs text-red-500">{errors.email.message}</p>}
             </div>
           </div>
           <div className="space-y-2">
-            <Label className="text-xs font-semibold text-gray-700">Address</Label>
+            <Label className="text-xs font-semibold text-gray-700">{t('clinic.address')}</Label>
             <Input {...register("address")} className="h-10 rounded-xl" />
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label className="text-xs font-semibold text-gray-700">Phone</Label>
+              <Label className="text-xs font-semibold text-gray-700">{t('clinic.phone')}</Label>
               <Input {...register("phone")} className="h-10 rounded-xl" />
             </div>
           </div>
@@ -91,7 +93,7 @@ export function ClinicSettingsForm({ initialData }: { initialData: ClinicSetting
             className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl shadow-lg shadow-blue-500/20 mt-2"
           >
             {isPending ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
-            Save Changes
+            {t('clinic.saveChanges')}
           </Button>
         </CardFooter>
       </Card>

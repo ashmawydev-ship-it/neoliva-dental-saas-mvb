@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { EditStaffDialog } from "./EditStaffDialog";
+import { useTranslations } from "next-intl";
 
 const roleConfig: Record<string, { bg: string; text: string; icon: string }> = {
   OWNER: { bg: "bg-rose-500/10 dark:bg-rose-500/20", text: "text-rose-600 dark:text-rose-400", icon: "💎" },
@@ -25,6 +26,7 @@ const roleConfig: Record<string, { bg: string; text: string; icon: string }> = {
 export function StaffTable({ initialStaff }: { initialStaff: any[] }) {
   const [search, setSearch] = useState("");
   const [editingMember, setEditingMember] = useState<any>(null);
+  const t = useTranslations("staff");
 
   const filteredStaff = initialStaff.filter(s =>
     s.name.toLowerCase().includes(search.toLowerCase()) ||
@@ -48,11 +50,11 @@ export function StaffTable({ initialStaff }: { initialStaff: any[] }) {
         <Table>
           <TableHeader>
             <TableRow className="bg-muted/50 hover:bg-muted/50">
-              <TableHead className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Staff Member</TableHead>
-              <TableHead className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Role</TableHead>
-              <TableHead className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Contact</TableHead>
-              <TableHead className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Status</TableHead>
-              <TableHead className="w-[60px] text-muted-foreground"></TableHead>
+              <TableHead className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">{t('table.name')}</TableHead>
+              <TableHead className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">{t('table.role')}</TableHead>
+              <TableHead className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">{t('table.email')}</TableHead>
+              <TableHead className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">{t('table.status')}</TableHead>
+              <TableHead className="w-[60px] text-muted-foreground text-xs font-semibold uppercase tracking-wider">{t('table.actions')}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -78,7 +80,7 @@ export function StaffTable({ initialStaff }: { initialStaff: any[] }) {
                   </TableCell>
                   <TableCell>
                     <Badge className={`${config.bg} ${config.text} border-none text-[11px] font-semibold rounded-full px-2.5 shadow-none`}>
-                      <span className="mr-1">{config.icon}</span> {member.role}
+                      <span className="mr-1">{config.icon}</span> {t.has(`roles.${member.role.toLowerCase()}`) ? t(`roles.${member.role.toLowerCase()}`) : member.role}
                     </Badge>
                   </TableCell>
                   <TableCell>
@@ -92,12 +94,14 @@ export function StaffTable({ initialStaff }: { initialStaff: any[] }) {
                       {member.isPending ? (
                         <>
                           <div className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
-                          <span className="text-xs text-amber-600 font-medium">Invited</span>
+                          <span className="text-xs text-amber-600 font-medium">{t('status.pending')}</span>
                         </>
                       ) : (
                         <>
                           <div className={`w-2 h-2 rounded-full ${member.status === "Active" ? "bg-emerald-400" : "bg-gray-300"}`} />
-                          <span className="text-xs text-muted-foreground">{member.status}</span>
+                          <span className="text-xs text-muted-foreground">
+                            {member.status === "Active" ? t('status.active') : t('status.inactive')}
+                          </span>
                         </>
                       )}
                     </div>

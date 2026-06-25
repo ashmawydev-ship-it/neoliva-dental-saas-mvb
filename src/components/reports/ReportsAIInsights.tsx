@@ -2,12 +2,15 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Sparkles, ArrowRight } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 interface AIInsightsProps {
   insights: string[];
 }
 
 export function ReportsAIInsights({ insights }: AIInsightsProps) {
+  const t = useTranslations('reports');
+
   return (
     <Card className="border-0 shadow-sm overflow-hidden bg-gradient-to-br from-indigo-50/50 to-white">
       <CardHeader className="pb-3">
@@ -16,7 +19,7 @@ export function ReportsAIInsights({ insights }: AIInsightsProps) {
             <Sparkles className="w-4 h-4 text-indigo-600" />
           </div>
           <div>
-            <CardTitle className="text-base font-semibold text-gray-900">AI Intelligence Insights</CardTitle>
+            <CardTitle className="text-base font-semibold text-gray-900">{t('aiInsights.title')}</CardTitle>
             <p className="text-xs text-gray-500">Automated performance analysis</p>
           </div>
         </div>
@@ -38,7 +41,7 @@ export function ReportsAIInsights({ insights }: AIInsightsProps) {
             ))
           ) : (
             <div className="py-8 text-center">
-              <p className="text-sm text-gray-400">No insights available for the current data period.</p>
+              <p className="text-sm text-gray-400">{t('aiInsights.noData')}</p>
             </div>
           )}
         </div>

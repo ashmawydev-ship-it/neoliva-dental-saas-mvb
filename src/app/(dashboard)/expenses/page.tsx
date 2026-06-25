@@ -7,8 +7,10 @@ import { NewExpenseDialog } from "@/components/expenses/NewExpenseDialog";
 import { ExpensesTable } from "@/components/expenses/ExpensesTable";
 import { getExpenses, getExpenseStats } from "@/app/actions/expenses";
 import { ExportExpensesCSV } from "@/components/expenses/ExpenseClientActions";
+import { getTranslations } from "next-intl/server";
 
 export default async function ExpensesPage() {
+  const t = await getTranslations('expenses');
   const [expenses, stats] = await Promise.all([
     getExpenses(),
     getExpenseStats()
@@ -24,8 +26,8 @@ export default async function ExpensesPage() {
     <div className="p-6 md:p-8 space-y-6 animate-fade-in-up">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-gray-900">Expenses</h1>
-          <p className="text-gray-500 mt-1">Manage and track your clinic's operating costs.</p>
+          <h1 className="text-3xl font-bold tracking-tight text-gray-900">{t('title')}</h1>
+          <p className="text-gray-500 mt-1">{t('subtitle')}</p>
         </div>
         <div className="flex items-center gap-3">
           <ExportExpensesCSV data={expenses} />
@@ -40,9 +42,9 @@ export default async function ExpensesPage() {
               <div className="w-12 h-12 bg-red-100 text-red-600 rounded-xl flex items-center justify-center">
                 <TrendingDown className="w-6 h-6" />
               </div>
-              <Badge variant="outline" className="bg-white/50 text-red-700 border-red-200">This Month</Badge>
+              <Badge variant="outline" className="bg-white/50 text-red-700 border-red-200">{t('thisMonth')}</Badge>
             </div>
-            <p className="text-sm font-semibold text-red-900 mb-1">Total Expenses</p>
+            <p className="text-sm font-semibold text-red-900 mb-1">{t('kpis.totalExpenses')}</p>
             <h2 className="text-3xl font-bold text-red-700">${totalExpenses.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</h2>
           </CardContent>
         </Card>
@@ -54,7 +56,7 @@ export default async function ExpensesPage() {
                 <Wallet className="w-6 h-6" />
               </div>
             </div>
-            <p className="text-sm font-semibold text-gray-500 mb-1">Pending Payments</p>
+            <p className="text-sm font-semibold text-gray-500 mb-1">{t('kpis.pendingPayments')}</p>
             <h2 className="text-3xl font-bold text-gray-900">${pendingPayments.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</h2>
           </CardContent>
         </Card>
@@ -66,9 +68,11 @@ export default async function ExpensesPage() {
                 <ArrowUpRight className="w-6 h-6 text-gray-300" />
               </div>
             </div>
-            <p className="text-sm font-semibold text-gray-400 mb-1">Largest Category</p>
-            <h2 className="text-2xl font-bold text-white capitalize">{largestCategory}</h2>
-            <p className="text-sm text-gray-400 mt-1">{largestCategoryPercent}% of total</p>
+            <p className="text-sm font-semibold text-gray-400 mb-1">{t('kpis.largestCategory')}</p>
+            <h2 className="text-2xl font-bold text-white capitalize">
+              {t.has(`categories.${largestCategory}`) ? t(`categories.${largestCategory}`) : largestCategory}
+            </h2>
+            <p className="text-sm text-gray-400 mt-1">{largestCategoryPercent}% {t('ofTotal')}</p>
           </CardContent>
         </Card>
       </div>

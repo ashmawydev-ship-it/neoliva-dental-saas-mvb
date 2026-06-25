@@ -91,6 +91,21 @@ export class NotificationRepository {
   }
 
   /**
+   * Archive a single notification
+   */
+  async archive(tenantId: string, id: string): Promise<Notification> {
+    return prisma.notification.update({
+      where: {
+        id,
+        tenantId,
+      },
+      data: {
+        archivedAt: new Date(),
+      },
+    });
+  }
+
+  /**
    * Mark all unread notifications for a user as read
    */
   async markAllAsRead(tenantId: string, userId: string): Promise<Prisma.BatchPayload> {

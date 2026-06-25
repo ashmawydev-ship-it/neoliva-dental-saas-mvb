@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/select";
 import { exportFinanceCSVAction } from "@/app/actions/finance";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 
 interface FinanceDashboardHeaderProps {
   period: string;
@@ -25,6 +26,7 @@ interface FinanceDashboardHeaderProps {
 export function FinanceDashboardHeader({ period }: FinanceDashboardHeaderProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const t = useTranslations('finance');
 
   const handlePeriodChange = (value: string) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -54,10 +56,10 @@ export function FinanceDashboardHeader({ period }: FinanceDashboardHeaderProps) 
   return (
     <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight text-gray-900">Financial Hub</h1>
+        <h1 className="text-3xl font-bold tracking-tight text-gray-900">{t('title')}</h1>
         <p className="text-sm text-gray-500 mt-1 flex items-center gap-1.5">
           <TrendingUp className="w-4 h-4 text-emerald-500" />
-          Real-time treasury & revenue analytics
+          {t('subtitle')}
         </p>
       </div>
 
@@ -68,10 +70,10 @@ export function FinanceDashboardHeader({ period }: FinanceDashboardHeaderProps) 
             <SelectValue placeholder="Select period" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="7d">Last 7 Days</SelectItem>
-            <SelectItem value="30d">Last 30 Days</SelectItem>
-            <SelectItem value="90d">Last 90 Days</SelectItem>
-            <SelectItem value="12m">Last 12 Months</SelectItem>
+            <SelectItem value="7d">{t('period.7d')}</SelectItem>
+            <SelectItem value="30d">{t('period.30d')}</SelectItem>
+            <SelectItem value="90d">{t('period.90d')}</SelectItem>
+            <SelectItem value="12m">{t('period.year')}</SelectItem>
           </SelectContent>
         </Select>
 

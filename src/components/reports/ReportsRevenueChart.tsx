@@ -2,16 +2,19 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import { useTranslations } from "next-intl";
 
 interface ChartProps {
   data: any[];
 }
 
 export function ReportsRevenueChart({ data }: ChartProps) {
+  const t = useTranslations('reports');
+
   return (
     <Card className="border-0 shadow-sm">
       <CardHeader>
-        <CardTitle className="text-base font-semibold">Revenue Trend</CardTitle>
+        <CardTitle className="text-base font-semibold">{t('charts.revenueOverTime')}</CardTitle>
         <p className="text-xs text-gray-500">Monthly revenue for the last 12 months</p>
       </CardHeader>
       <CardContent className="h-[300px]">
