@@ -272,7 +272,7 @@ export function NewAppointmentDialog({ doctors, services }: NewAppointmentDialog
                 <Label className="text-xs md:text-sm font-bold text-gray-700 uppercase tracking-wider flex items-center gap-2">
                   <Stethoscope className="w-4 h-4 text-blue-500" /> Doctor
                 </Label>
-                <Select value={watchedDoctorId} onValueChange={(val) => setValue("doctorId", val, { shouldValidate: true })}>
+                <Select value={watchedDoctorId} onValueChange={(val) => setValue("doctorId", val ?? "", { shouldValidate: true })}>
                   <SelectTrigger className="h-10 md:h-12 border-gray-200 focus:ring-blue-500/20 rounded-xl md:rounded-2xl bg-gray-50/50">
                     <SelectValue placeholder="Select doctor" />
                   </SelectTrigger>

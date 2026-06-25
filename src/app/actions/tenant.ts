@@ -80,6 +80,7 @@ export async function createClinicRequest(formData: FormData) {
 
   // Track the Supabase user we create so we can roll back if Prisma fails
   let newSupabaseUserId: string | null = null;
+  let authUser: any = null;
 
   // ── STEP 1: Create Supabase Auth User ────────────────────────────────────
   const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
@@ -125,7 +126,7 @@ export async function createClinicRequest(formData: FormData) {
       // Fall through to complete DB setup below using their existing auth UID
       console.warn(`[Registration] Ghost account recovery for ${email}`);
       newSupabaseUserId = null; // Don't roll this one back — it pre-existed
-      signUpData!.user = signInData.user!;
+      authUser = signInData.user!;
     } else {
       console.error(`[Registration] Supabase signUp failed for ${email}:`, signUpError.message);
       return { error: signUpError.message || "Failed to create authentication account" };
@@ -135,9 +136,9 @@ export async function createClinicRequest(formData: FormData) {
     if (signUpData?.user) {
       newSupabaseUserId = signUpData.user.id;
     }
+    authUser = signUpData?.user;
   }
 
-  const authUser = signUpData?.user;
   if (!authUser) {
     return { error: "Failed to retrieve user information. Please try again." };
   }

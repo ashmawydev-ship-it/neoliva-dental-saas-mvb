@@ -36,7 +36,7 @@ export default function ResetPasswordPage() {
         router.push('/login');
       }, 3000);
     } else {
-      setError(result.error);
+      setError(result.error ?? null);
     }
     setLoading(false);
   }

@@ -51,7 +51,11 @@ export class DashboardService {
     const collectionRate = totalInvoiced > 0 ? (totalRevenue / totalInvoiced) * 100 : 0;
 
     // Insights Engine
-    const insights = [];
+    const insights: {
+      type: string;
+      message: string;
+      severity: string;
+    }[] = [];
     if (revenueChange < -20) insights.push({ type: 'revenue_drop', message: `Revenue is down ${Math.abs(revenueChange).toFixed(1)}% compared to yesterday.`, severity: 'high' });
     
     const noShows = weeklyAppointmentsRaw.filter(a => a.status === 'NO_SHOW').length;

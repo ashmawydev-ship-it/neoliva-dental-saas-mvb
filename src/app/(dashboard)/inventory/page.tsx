@@ -11,7 +11,7 @@ export const metadata = {
 export default async function InventoryPage() {
   const result = await getInventoryAction();
   
-  const initialData = result.success ? result.data : { items: [], stats: { totalItems: 0, lowStockAlerts: 0, lastAuditDate: '—' } };
+  const initialData = (result.success && result.data) ? result.data : { items: [], stats: { totalItems: 0, lowStockAlerts: 0, lastAuditDate: '—' } };
 
   return (
     <div className="flex flex-col h-full bg-background/50">

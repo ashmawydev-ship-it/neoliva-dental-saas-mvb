@@ -101,7 +101,10 @@ export class FinanceService {
     const revenueByDoctor = Array.from(doctorMap.entries()).map(([name, value]) => ({ name, value }));
 
     // 7. Alerts
-    const alerts = [];
+    const alerts: {
+      severity: string;
+      message: string;
+    }[] = [];
     if (receivables > 5000) alerts.push({ severity: 'WARNING', message: `High receivables ($${receivables.toLocaleString()}). Follow up on pending invoices.` });
     if (cashBalance < 1000) alerts.push({ severity: 'CRITICAL', message: `Low cash balance ($${cashBalance.toLocaleString()})!` });
     if (expensesMonth > revenueMonth * 0.8) alerts.push({ severity: 'WARNING', message: `Expenses are reaching 80% of monthly revenue.` });

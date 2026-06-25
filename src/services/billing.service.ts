@@ -75,7 +75,12 @@ export class BillingService {
       }
 
       // Prepare items
-      const items = [];
+      const items: {
+        description: string;
+        quantity: number;
+        price: number;
+        serviceId?: string;
+      }[] = [];
       if (apt.service) {
         items.push({
           description: apt.service.name,

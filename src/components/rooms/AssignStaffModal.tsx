@@ -157,7 +157,7 @@ export function AssignStaffModal({
               <div className="space-y-3">
                 <div className="space-y-1.5">
                   <label className="text-sm font-medium">Select Staff</label>
-                  <Select value={selectedUserId} onValueChange={setSelectedUserId}>
+                  <Select value={selectedUserId} onValueChange={(val) => setSelectedUserId(val ?? "")}>
                     <SelectTrigger>
                       <SelectValue placeholder="Search and select staff..." />
                     </SelectTrigger>
@@ -177,7 +177,7 @@ export function AssignStaffModal({
 
                 <div className="space-y-1.5">
                   <label className="text-sm font-medium">Assign Role</label>
-                  <Select value={selectedRole} onValueChange={setSelectedRole}>
+                  <Select value={selectedRole} onValueChange={(val) => setSelectedRole(val ?? "")}>
                     <SelectTrigger>
                       <SelectValue placeholder="Select role..." />
                     </SelectTrigger>

@@ -22,7 +22,7 @@ export default function ForgotPasswordPage() {
     if (result.success) {
       setSuccess(true);
     } else {
-      setError(result.error);
+      setError(result.error ?? null);
     }
     setLoading(false);
   }

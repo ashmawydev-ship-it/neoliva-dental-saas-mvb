@@ -121,7 +121,7 @@ export function NewLabOrderDialog({ patients }: NewLabOrderDialogProps) {
               </Label>
               <Select 
                 value={formData.patientId} 
-                onValueChange={(val) => setFormData({ ...formData, patientId: val })}
+                onValueChange={(val) => setFormData({ ...formData, patientId: val ?? "" })}
               >
                 <SelectTrigger className="h-12 border-gray-200 focus:ring-purple-500/20 rounded-2xl bg-gray-50/50">
                   <SelectValue placeholder="Select patient..." />

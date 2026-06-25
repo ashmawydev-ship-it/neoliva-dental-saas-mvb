@@ -30,7 +30,7 @@ export const getUserSession = cache(async (): Promise<UserSession | null> => {
     }
   );
 
-  let user = null;
+  let user: any = null;
   try {
     const { data, error } = await supabase.auth.getUser();
     if (error) {
@@ -100,7 +100,7 @@ export const getUserSession = cache(async (): Promise<UserSession | null> => {
   return {
     userId: user.id,
     dbUserId: dbUser.id,
-    tenantId,
+    tenantId: tenantId!,
     role: membership.role as Role,
     permissions: membership.permissions ?? [],
     isActive: membership.isActive,

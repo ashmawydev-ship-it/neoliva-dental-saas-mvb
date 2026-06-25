@@ -40,7 +40,7 @@ export function AcceptInvitationForm({ email, clinicName }: AcceptInvitationForm
     const result = await finalizeStaffInvitation(formData);
 
     if (result && !result.success) {
-      setError(result.error);
+      setError(result.error ?? null);
       setLoading(false);
     } else {
       setSuccess(true);

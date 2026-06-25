@@ -95,7 +95,7 @@ export function InventoryClient({ initialItems, initialStats }: InventoryClientP
   const fetchInventory = async () => {
     setLoading(true);
     const res = await getInventoryAction({ search, category });
-    if (res.success) {
+    if (res.success && res.data) {
       setItems(res.data.items);
       setStats(res.data.stats);
     }
@@ -288,7 +288,7 @@ export function InventoryClient({ initialItems, initialStats }: InventoryClientP
                 <Filter size={14} />
                 <span>Category:</span>
               </div>
-              <Select value={category} onValueChange={setCategory}>
+              <Select value={category} onValueChange={(val) => setCategory(val ?? 'all')}>
                 <SelectTrigger className="w-[180px] bg-background">
                   <SelectValue placeholder="All Categories" />
                 </SelectTrigger>
