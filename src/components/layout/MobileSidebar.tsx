@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import {
   LayoutDashboard, Calendar, Users, Stethoscope,
   FileText, Package, UserCog, BarChart3, Settings,
-  Truck, Wallet, Activity
+  Truck, Wallet, Activity, Banknote
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -27,6 +27,7 @@ const navItems: NavItem[] = [
   { name: "Lab Orders", href: "/lab-orders", icon: Truck, permission: PermissionCode.CLINICAL_LAB_ORDER_MANAGE },
   { name: "Billing", href: "/billing", icon: FileText, permission: PermissionCode.BILLING_VIEW },
   { name: "Expenses", href: "/expenses", icon: Wallet, permission: PermissionCode.BILLING_VIEW },
+  { name: "Commissions", href: "/reports/commissions", icon: Banknote, permission: PermissionCode.BILLING_VIEW },
   { name: "Inventory", href: "/inventory", icon: Package, permission: PermissionCode.INVENTORY_VIEW },
   { name: "Staff", href: "/staff", icon: UserCog, permission: PermissionCode.STAFF_MANAGE },
   { name: "Reports", href: "/reports", icon: BarChart3, permission: PermissionCode.STAFF_REPORTS_VIEW },

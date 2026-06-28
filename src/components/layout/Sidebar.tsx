@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import {
   LayoutDashboard, Calendar, Users, Stethoscope,
   FileText, Package, UserCog, BarChart3, Settings,
-  ChevronLeft, LogOut, Moon, Sun, Truck, Wallet, Loader2, DollarSign, Activity, DoorOpen, MessageSquareText
+  ChevronLeft, LogOut, Moon, Sun, Truck, Wallet, Loader2, DollarSign, Activity, DoorOpen, MessageSquareText, Banknote
 } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
@@ -49,6 +49,7 @@ function getNavGroups(tNav: any, tGroup: any): NavGroup[] {
         { name: tNav("financialDashboard"), href: "/dashboard/finance", icon: DollarSign, permission: PermissionCode.FINANCE_VIEW },
         { name: tNav("billing"), href: "/billing", icon: FileText, permission: PermissionCode.BILLING_VIEW },
         { name: tNav("expenses"), href: "/expenses", icon: Wallet, permission: PermissionCode.BILLING_VIEW },
+        { name: "Commissions", href: "/reports/commissions", icon: Banknote, permission: PermissionCode.BILLING_VIEW },
         { name: tNav("inventory"), href: "/inventory", icon: Package, permission: PermissionCode.INVENTORY_VIEW },
       ],
     },

@@ -59,13 +59,15 @@ export async function getStaff() {
       
             return {
               id: member.id,
+              staffId: member.staffId || null,
               name: member.name || 'Unknown',
               role: formatRole(member.role),
               email: member.email || '—',
               avatar: getInitials(member.name),
               color: colors[colorIndex],
               status: member.status,
-              isPending: member.isPending
+              isPending: member.isPending,
+              commissionRate: member.commissionRate || 0,
             }
           })
     });

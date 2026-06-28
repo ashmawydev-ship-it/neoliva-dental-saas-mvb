@@ -2,11 +2,12 @@
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Search, UserPen, Shield, Mail, Phone } from "lucide-react";
+import { Search, UserPen, Shield, Mail, Phone, Percent } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { EditStaffDialog } from "./EditStaffDialog";
+import { CommissionRateDialog } from "./CommissionRateDialog";
 import { useTranslations } from "next-intl";
 
 const roleConfig: Record<string, { bg: string; text: string; icon: string }> = {
@@ -26,6 +27,7 @@ const roleConfig: Record<string, { bg: string; text: string; icon: string }> = {
 export function StaffTable({ initialStaff }: { initialStaff: any[] }) {
   const [search, setSearch] = useState("");
   const [editingMember, setEditingMember] = useState<any>(null);
+  const [commissionMember, setCommissionMember] = useState<any>(null);
   const t = useTranslations("staff");
 
   const filteredStaff = initialStaff.filter(s =>
@@ -33,6 +35,8 @@ export function StaffTable({ initialStaff }: { initialStaff: any[] }) {
     s.email.toLowerCase().includes(search.toLowerCase()) ||
     s.role.toLowerCase().includes(search.toLowerCase())
   );
+
+  const isDoctor = (role: string) => role.toUpperCase() === "DOCTOR";
 
   return (
     <div className="space-y-4">
@@ -54,7 +58,7 @@ export function StaffTable({ initialStaff }: { initialStaff: any[] }) {
               <TableHead className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">{t('table.role')}</TableHead>
               <TableHead className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">{t('table.email')}</TableHead>
               <TableHead className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">{t('table.status')}</TableHead>
-              <TableHead className="w-[60px] text-muted-foreground text-xs font-semibold uppercase tracking-wider">{t('table.actions')}</TableHead>
+              <TableHead className="w-[100px] text-muted-foreground text-xs font-semibold uppercase tracking-wider">{t('table.actions')}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -79,9 +83,16 @@ export function StaffTable({ initialStaff }: { initialStaff: any[] }) {
                     </div>
                   </TableCell>
                   <TableCell>
-                    <Badge className={`${config.bg} ${config.text} border-none text-[11px] font-semibold rounded-full px-2.5 shadow-none`}>
-                      <span className="mr-1">{config.icon}</span> {t.has(`roles.${member.role.toLowerCase()}`) ? t(`roles.${member.role.toLowerCase()}`) : member.role}
-                    </Badge>
+                    <div className="flex items-center gap-2">
+                      <Badge className={`${config.bg} ${config.text} border-none text-[11px] font-semibold rounded-full px-2.5 shadow-none`}>
+                        <span className="mr-1">{config.icon}</span> {t.has(`roles.${member.role.toLowerCase()}`) ? t(`roles.${member.role.toLowerCase()}`) : member.role}
+                      </Badge>
+                      {isDoctor(member.role) && member.commissionRate > 0 && (
+                        <Badge className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-none text-[10px] font-semibold rounded-full px-2 shadow-none">
+                          {member.commissionRate}%
+                        </Badge>
+                      )}
+                    </div>
                   </TableCell>
                   <TableCell>
                     <div className="space-y-0.5">
@@ -107,14 +118,27 @@ export function StaffTable({ initialStaff }: { initialStaff: any[] }) {
                     </div>
                   </TableCell>
                   <TableCell>
-                    <Button 
-                      variant="ghost" 
-                      size="icon" 
-                      className="h-8 w-8 text-muted-foreground hover:text-blue-600 hover:bg-muted rounded-lg transition-all active:scale-90"
-                      onClick={() => setEditingMember(member)}
-                    >
-                      <UserPen className="w-4 h-4" />
-                    </Button>
+                    <div className="flex items-center gap-1">
+                      {isDoctor(member.role) && member.staffId && (
+                        <Button 
+                          variant="ghost" 
+                          size="icon" 
+                          className="h-8 w-8 text-muted-foreground hover:text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-500/10 rounded-lg transition-all active:scale-90"
+                          onClick={() => setCommissionMember(member)}
+                          title="Commission Rate"
+                        >
+                          <Percent className="w-4 h-4" />
+                        </Button>
+                      )}
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className="h-8 w-8 text-muted-foreground hover:text-blue-600 hover:bg-muted rounded-lg transition-all active:scale-90"
+                        onClick={() => setEditingMember(member)}
+                      >
+                        <UserPen className="w-4 h-4" />
+                      </Button>
+                    </div>
                   </TableCell>
                 </TableRow>
               );
@@ -135,6 +159,16 @@ export function StaffTable({ initialStaff }: { initialStaff: any[] }) {
           member={editingMember} 
           open={!!editingMember} 
           onOpenChange={(open) => !open && setEditingMember(null)} 
+        />
+      )}
+
+      {commissionMember && commissionMember.staffId && (
+        <CommissionRateDialog
+          staffId={commissionMember.staffId}
+          staffName={commissionMember.name}
+          currentRate={commissionMember.commissionRate || 0}
+          open={!!commissionMember}
+          onOpenChange={(open) => !open && setCommissionMember(null)}
         />
       )}
     </div>

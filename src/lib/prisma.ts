@@ -90,9 +90,9 @@ const getRawPrismaClient = (): PrismaClient => {
     return createPrismaClient();
   }
 
-  if (!globalForPrisma.rawPrisma || !(globalForPrisma.rawPrisma as any).ledgerAccount) {
+  if (!globalForPrisma.rawPrisma || !(globalForPrisma.rawPrisma as any).doctorCommission) {
     if (globalForPrisma.rawPrisma) {
-      console.warn("[Prisma] Stale raw client detected (missing ledgerAccount). Re-initializing...");
+      console.warn("[Prisma] Stale raw client detected (missing doctorCommission). Re-initializing...");
       if (globalForPrisma.pool) {
         console.warn("[Prisma] Closing existing connection pool to prevent TCP leakage...");
         const oldPool = globalForPrisma.pool;
@@ -100,6 +100,7 @@ const getRawPrismaClient = (): PrismaClient => {
           console.error("[Prisma] Error closing stale connection pool:", err);
         });
       }
+      globalForPrisma.prisma = undefined; // Force recreation of the extended client too
     }
     globalForPrisma.rawPrisma = createPrismaClient();
   }

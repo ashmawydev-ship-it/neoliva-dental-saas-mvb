@@ -62,6 +62,7 @@ model Tenant {
   auditLogs AuditLog[]
   clinicSettings          ClinicSettings?
   sessions                Session[]
+  doctorCommissions       DoctorCommission[]
 }
 
 model User {
@@ -155,6 +156,9 @@ model Staff {
   periodontalSessions PeriodontalSession[]
   tenant          Tenant         @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   memberships     ClinicMembership[]
+  commissionRate  Decimal?  @default(0) @map("commission_rate") @db.Decimal(5,2)
+  commissions     DoctorCommission[]
+  invoices        Invoice[] @relation("InvoiceDoctor")
 
   @@index([tenantId, id])
   @@index([tenantId, createdAt])
@@ -395,6 +399,9 @@ model Invoice {
   tenant        Tenant        @relation(fields: [tenantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   plan          TreatmentPlan? @relation(fields: [planId], references: [id], onDelete: Restrict)
   payments      Payment[]
+  doctorId      String?        @map("doctor_id") @db.Uuid
+  doctor        Staff?         @relation("InvoiceDoctor", fields: [doctorId], references: [id], onDelete: NoAction)
+  commissions   DoctorCommission[]
 
   @@index([tenantId, id])
   @@index([tenantId, patientId])
@@ -1111,7 +1118,8 @@ model JournalEntry {
   createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
 
   tenant Tenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  lines  JournalLine[]
+  lines       JournalLine[]
+  commissions DoctorCommission[]
 
   @@index([tenantId])
   @@index([createdAt])
@@ -1272,5 +1280,30 @@ model SmsTemplate {
   @@index([tenantId])
   @@index([category])
   @@map("sms_templates")
+}
+
+model DoctorCommission {
+  id               String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId         String    @map("tenant_id") @db.Uuid
+  doctorId         String    @map("doctor_id") @db.Uuid
+  invoiceId        String?   @map("invoice_id") @db.Uuid
+  paymentId        String?   @map("payment_id") @db.Uuid
+  invoiceAmount    Decimal   @map("invoice_amount") @db.Decimal(10,2)
+  commissionRate   Decimal   @map("commission_rate") @db.Decimal(5,2)
+  commissionAmount Decimal   @map("commission_amount") @db.Decimal(10,2)
+  status           String    @default("pending")
+  paidAt           DateTime? @map("paid_at") @db.Timestamptz(6)
+  paidViaExpenseId String?   @map("paid_via_expense_id") @db.Uuid
+  journalEntryId   String?   @map("journal_entry_id") @db.Uuid
+  createdAt        DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  tenant       Tenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  doctor       Staff         @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  invoice      Invoice?      @relation(fields: [invoiceId], references: [id], onDelete: SetNull)
+  journalEntry JournalEntry? @relation(fields: [journalEntryId], references: [id], onDelete: SetNull)
+
+  @@index([tenantId, doctorId])
+  @@index([tenantId, status])
+  @@map("doctor_commissions")
 }
 

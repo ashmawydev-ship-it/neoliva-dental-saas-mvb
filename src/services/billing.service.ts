@@ -6,6 +6,7 @@ import { NotificationService } from "./notification.service";
 import { TreasuryService } from "./treasury.service";
 import { SettingsService } from "./settings.service";
 import { prisma } from "@/lib/prisma";
+import type { DoctorCommissionService } from "./doctor-commission.service";
 
 export class BillingService {
   constructor(
@@ -15,6 +16,12 @@ export class BillingService {
     private readonly treasuryService = new TreasuryService(),
     private readonly settingsService = new SettingsService()
   ) {}
+
+  // Late-binding setter to avoid circular dependency (same pattern as JobService)
+  private doctorCommissionService?: DoctorCommissionService;
+  setDoctorCommissionService(service: DoctorCommissionService) {
+    this.doctorCommissionService = service;
+  }
 
   private normalizeString(val: string | null | undefined, fallback: string = "-"): string {
     if (!val || typeof val !== 'string') return fallback;
@@ -336,6 +343,13 @@ export class BillingService {
 
         return paymentResult;
       });
+
+      // Calculate doctor commission (fire-and-forget, should not block payment)
+      if (this.doctorCommissionService) {
+        await this.doctorCommissionService
+          .calculateOnPayment(tenantId, invoiceId, data.amount)
+          .catch((err) => console.error("[BillingService] Commission calculation failed:", err));
+      }
 
       return JSON.parse(JSON.stringify(result));
     } catch (error) {

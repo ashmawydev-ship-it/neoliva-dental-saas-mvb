@@ -62,13 +62,15 @@ export class StaffService {
 
       const activeStaff = members.map(m => ({
         id: m.id, // TenantMembership ID
+        staffId: m.staffProfile?.id || null, // Actual Staff table ID
         name: m.staffProfile?.name || m.user.email.split('@')[0],
         email: m.user.email,
         role: m.role,
         status: m.staffProfile?.status || 'Online',
         isPending: false,
         title: m.staffProfile?.title || 'Staff Member',
-        joinedAt: m.joinedAt
+        joinedAt: m.joinedAt,
+        commissionRate: m.staffProfile?.commissionRate ? Number(m.staffProfile.commissionRate) : 0,
       }));
 
       const pendingStaff = invitations.map(i => ({

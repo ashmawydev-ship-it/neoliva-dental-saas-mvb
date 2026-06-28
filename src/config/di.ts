@@ -18,6 +18,7 @@ import { DashboardRepository } from "@/repositories/dashboard.repository";
 import { LabOrderRepository } from "@/repositories/lab-order.repository";
 import { AuditRepository } from "@/repositories/audit.repository";
 import { ReportsRepository } from "@/repositories/reports.repository";
+import { DoctorCommissionRepository } from "@/repositories/doctor-commission.repository";
 
 import { prisma } from "@/lib/prisma";
 import { SettingsService } from "@/services/settings.service";
@@ -47,6 +48,7 @@ import { AuditService } from "@/services/audit.service";
 import { EmailService } from "@/services/email.service";
 import { AlertsService } from "@/services/alerts.service";
 import { ReportsService } from "@/services/reports.service";
+import { DoctorCommissionService } from "@/services/doctor-commission.service";
 
 // Instantiating repositories
 export const settingsRepository = new SettingsRepository();
@@ -69,6 +71,7 @@ export const dashboardRepository = new DashboardRepository();
 export const labOrderRepository = new LabOrderRepository();
 export const auditRepository = new AuditRepository();
 export const reportsRepository = new ReportsRepository();
+export const doctorCommissionRepository = new DoctorCommissionRepository();
 
 // Instantiating services with dependencies injected
 export const jobService = new JobService(prisma);
@@ -138,6 +141,14 @@ export const auditService = new AuditService(auditRepository);
 export const emailService = new EmailService();
 export const alertsService = new AlertsService(eventRepository);
 export const reportsService = new ReportsService(reportsRepository);
+export const doctorCommissionService = new DoctorCommissionService(
+  doctorCommissionRepository,
+  treasuryService,
+  expenseRepository
+);
+
+// Late-binding: wire commission calculation into billing service
+billingService.setDoctorCommissionService(doctorCommissionService);
 
 PatientService.instance = patientService;
 StaffService.instance = staffService;
@@ -158,3 +169,4 @@ AuditService.instance = auditService;
 EmailService.instance = emailService;
 AlertsService.instance = alertsService;
 ReportsService.instance = reportsService;
+DoctorCommissionService.instance = doctorCommissionService;
