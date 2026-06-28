@@ -75,13 +75,15 @@ export class StaffService {
 
       const pendingStaff = invitations.map(i => ({
         id: i.id, // Invitation ID
+        staffId: null,
         name: i.fullName,
         email: i.email,
         role: i.role,
         status: 'Pending',
         isPending: true,
         title: i.jobTitle || 'Invited',
-        joinedAt: i.createdAt
+        joinedAt: i.createdAt,
+        commissionRate: 0
       }));
 
       return [...activeStaff, ...pendingStaff];
