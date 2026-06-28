@@ -19,7 +19,8 @@ export type BusinessEntityType =
   | 'ROOM'
   | 'SYSTEM'
   | 'SMS'
-  | 'CAMPAIGN';
+  | 'CAMPAIGN'
+  | 'DOCTOR_COMMISSION';
 
 export type BusinessEventType =
   | 'PATIENT_CREATED'
