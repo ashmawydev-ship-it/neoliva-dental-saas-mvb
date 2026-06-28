@@ -138,10 +138,10 @@ export function NewInvoiceDialog({ customTrigger }: { customTrigger?: React.Reac
         )}
       </DialogTrigger>
       
-      <DialogContent className="sm:max-w-md md:max-w-lg p-0 overflow-hidden bg-gray-50 border-0 shadow-2xl rounded-2xl">
-        <DialogHeader className="bg-white px-6 py-4 flex flex-row items-center justify-between border-b shrink-0 m-0 space-y-0">
-          <DialogTitle className="text-xl font-bold text-gray-800 flex items-center gap-3">
-            <span className="bg-blue-100 p-2 rounded-xl">
+      <DialogContent className="sm:max-w-md md:max-w-lg p-0 overflow-hidden bg-gray-50 dark:bg-slate-900 border-0 shadow-2xl rounded-2xl dark:text-white">
+        <DialogHeader className="bg-white dark:bg-slate-900 dark:border-slate-800 px-6 py-4 flex flex-row items-center justify-between border-b shrink-0 m-0 space-y-0">
+          <DialogTitle className="text-xl font-bold text-gray-800 dark:text-white flex items-center gap-3">
+            <span className="bg-blue-100 dark:bg-blue-500/10 p-2 rounded-xl">
               <Receipt className="h-5 w-5 text-blue-600" />
             </span>
             {t('newInvoice')}
@@ -153,14 +153,14 @@ export function NewInvoiceDialog({ customTrigger }: { customTrigger?: React.Reac
             
             {/* Patient Selection */}
             <div className="space-y-2">
-              <Label htmlFor="patient" className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+              <Label htmlFor="patient" className="text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2">
                 <User className="w-4 h-4 text-gray-400" /> {t('form.patient')} <span className="text-red-500">*</span>
               </Label>
               <Select value={watchedPatientId} onValueChange={(val) => setValue("patientId", val ?? "", { shouldValidate: true })}>
-                <SelectTrigger id="patient" className="h-11 bg-white border-gray-200 focus:ring-blue-500 rounded-xl shadow-sm">
+                <SelectTrigger id="patient" className="h-11 bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-700 focus:ring-blue-500 rounded-xl shadow-sm text-gray-900 dark:text-white">
                   <SelectValue placeholder={fetchingData ? "..." : t('form.patient')} />
                 </SelectTrigger>
-                <SelectContent className="rounded-xl border-gray-100 shadow-xl bg-white">
+                <SelectContent className="rounded-xl border-gray-100 dark:border-slate-800 shadow-xl bg-white dark:bg-slate-800">
                   {patients.map((patient) => (
                     <SelectItem key={patient.id} value={patient.id} className="rounded-lg">
                       {patient.name}
@@ -178,14 +178,14 @@ export function NewInvoiceDialog({ customTrigger }: { customTrigger?: React.Reac
 
             {/* Service Selection (Optional shortcut) */}
             <div className="space-y-2">
-              <Label htmlFor="service" className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+              <Label htmlFor="service" className="text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2">
                 <ActivityIcon className="w-4 h-4 text-gray-400" /> {t('form.services')}
               </Label>
               <Select value={watchedServiceId || undefined} onValueChange={(val) => handleServiceChange(val)}>
-                <SelectTrigger id="service" className="h-11 bg-white border-gray-200 focus:ring-blue-500 rounded-xl shadow-sm">
+                <SelectTrigger id="service" className="h-11 bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-700 focus:ring-blue-500 rounded-xl shadow-sm text-gray-900 dark:text-white">
                   <SelectValue placeholder={fetchingData ? "..." : t('form.services')} />
                 </SelectTrigger>
-                <SelectContent className="rounded-xl border-gray-100 shadow-xl bg-white">
+                <SelectContent className="rounded-xl border-gray-100 dark:border-slate-800 shadow-xl bg-white dark:bg-slate-800">
                   {services.map((service) => (
                     <SelectItem key={service.id} value={service.id} className="rounded-lg">
                       {service.name} - ${Number(service.price)}
@@ -204,7 +204,7 @@ export function NewInvoiceDialog({ customTrigger }: { customTrigger?: React.Reac
             <div className="grid grid-cols-2 gap-4">
               {/* Amount */}
               <div className="space-y-2">
-                <Label htmlFor="amount" className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+                <Label htmlFor="amount" className="text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2">
                   <DollarSign className="w-4 h-4 text-gray-400" /> {t('table.amount')} <span className="text-red-500">*</span>
                 </Label>
                 <div className="relative">
@@ -216,7 +216,7 @@ export function NewInvoiceDialog({ customTrigger }: { customTrigger?: React.Reac
                     min="0"
                     value={watchedAmount || ""}
                     onChange={(e) => setValue("amount", e.target.value ? parseFloat(e.target.value) : 0, { shouldValidate: true })}
-                    className="pl-7 h-11 bg-white border-gray-200 focus:ring-blue-500 rounded-xl shadow-sm text-gray-900" 
+                    className="pl-7 h-11 bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-700 focus:ring-blue-500 rounded-xl shadow-sm text-gray-900 dark:text-white" 
                     placeholder="0.00" 
                   />
                 </div>
@@ -225,14 +225,14 @@ export function NewInvoiceDialog({ customTrigger }: { customTrigger?: React.Reac
 
               {/* Due Date */}
               <div className="space-y-2">
-                <Label htmlFor="due_date" className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+                <Label htmlFor="due_date" className="text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2">
                   <CalendarIcon className="w-4 h-4 text-gray-400" /> {t('table.date')}
                 </Label>
                 <Input 
                   id="due_date" 
                   type="date" 
                   {...register("dueDate")}
-                  className="h-11 bg-white border-gray-200 focus:ring-blue-500 rounded-xl shadow-sm text-gray-900" 
+                  className="h-11 bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-700 focus:ring-blue-500 rounded-xl shadow-sm text-gray-900 dark:text-white" 
                 />
                 {errors.dueDate && <p className="text-xs text-red-500 mt-0.5 font-medium">{errors.dueDate.message}</p>}
               </div>
@@ -240,30 +240,30 @@ export function NewInvoiceDialog({ customTrigger }: { customTrigger?: React.Reac
 
             {/* Treatment Description */}
             <div className="space-y-2">
-              <Label htmlFor="treatment" className="text-sm font-semibold text-gray-700">{t('form.services')}</Label>
+              <Label htmlFor="treatment" className="text-sm font-semibold text-gray-700 dark:text-gray-300">{t('form.services')}</Label>
               <Input 
                 id="treatment" 
                 {...register("treatment")}
                 placeholder="e.g. Root Canal Treatment, Consultation" 
-                className="h-11 bg-white border-gray-200 focus:ring-blue-500 rounded-xl shadow-sm text-gray-900"
+                className="h-11 bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-700 focus:ring-blue-500 rounded-xl shadow-sm text-gray-900 dark:text-white"
               />
               {errors.treatment && <p className="text-xs text-red-500 mt-0.5 font-medium">{errors.treatment.message}</p>}
             </div>
 
-            <div className="p-3 bg-blue-50 rounded-xl border border-blue-100">
-              <p className="text-[11px] text-blue-700 leading-relaxed font-medium">
+            <div className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-100 dark:border-blue-900/30">
+              <p className="text-[11px] text-blue-700 dark:text-blue-400 leading-relaxed font-medium">
                 This will generate a PENDING invoice. You can record payments later from the billing list or patient profile.
               </p>
             </div>
 
           </div>
           
-          <DialogFooter className="bg-white px-6 py-4 border-t flex gap-3 shrink-0 w-full sm:justify-between items-center sm:flex-row flex-col-reverse">
+          <DialogFooter className="bg-white dark:bg-slate-900 dark:border-slate-800 px-6 py-4 border-t flex gap-3 shrink-0 w-full sm:justify-between items-center sm:flex-row flex-col-reverse">
             <Button 
               type="button" 
               variant="outline" 
               onClick={() => setOpen(false)}
-              className="px-6 rounded-xl border-gray-200 text-gray-700 hover:bg-gray-50 h-11 shadow-sm font-medium w-full sm:w-auto cursor-pointer"
+              className="px-6 rounded-xl border-gray-200 dark:border-slate-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-slate-800 h-11 shadow-sm font-medium w-full sm:w-auto cursor-pointer"
             >
               {tCommon('cancel')}
             </Button>

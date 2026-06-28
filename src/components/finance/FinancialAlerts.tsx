@@ -17,22 +17,22 @@ export function FinancialAlerts({ alerts }: AlertsProps) {
     return (
       <Card className="border-slate-200/60 dark:border-slate-800/60 bg-emerald-50/10 dark:bg-emerald-500/5">
         <CardContent className="flex flex-col items-center justify-center p-6 text-center">
-          <div className="p-3 bg-emerald-500/10 rounded-full mb-3">
-            <ShieldCheck className="w-6 h-6 text-emerald-500" />
+          <div className="p-3 bg-emerald-500/10 dark:bg-emerald-500/20 rounded-full mb-3">
+            <ShieldCheck className="w-6 h-6 text-emerald-500 dark:text-emerald-400" />
           </div>
           <h4 className="text-sm font-semibold text-emerald-600 dark:text-emerald-400">Financial Health Good</h4>
-          <p className="text-xs text-slate-500 mt-1">No critical alerts detected in your dashboard.</p>
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">No critical alerts detected in your dashboard.</p>
         </CardContent>
       </Card>
     );
   }
 
   return (
-    <Card className="border-slate-200/60 dark:border-slate-800/60">
+    <Card className="border-slate-200/60 dark:border-slate-800/60 bg-white dark:bg-slate-900">
       <CardHeader>
-        <CardTitle className="text-sm font-semibold flex items-center gap-2">
+        <CardTitle className="text-sm font-semibold flex items-center gap-2 text-slate-900 dark:text-white">
           Financial Alerts
-          <span className="flex h-2 w-2 rounded-full bg-rose-500 animate-pulse" />
+          <span className="flex h-2 w-2 rounded-full bg-rose-500 dark:bg-rose-400 animate-pulse" />
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-3">

@@ -75,9 +75,9 @@ export function NewStaffDialog() {
       </DialogTrigger>
       
       <DialogContent className="sm:max-w-md md:max-w-lg p-0 overflow-hidden bg-gray-50 dark:bg-slate-900 border-0 shadow-2xl rounded-2xl dark:text-white">
-        <DialogHeader className="bg-white px-6 py-4 flex flex-row items-center justify-between border-b shrink-0 m-0 space-y-0">
-          <DialogTitle className="text-xl font-bold text-gray-800 flex items-center gap-3">
-            <span className="bg-blue-100 p-2 rounded-xl">
+        <DialogHeader className="bg-white dark:bg-slate-900 dark:border-slate-800 px-6 py-4 flex flex-row items-center justify-between border-b shrink-0 m-0 space-y-0">
+          <DialogTitle className="text-xl font-bold text-gray-800 dark:text-white flex items-center gap-3">
+            <span className="bg-blue-100 dark:bg-blue-500/10 p-2 rounded-xl">
               <UserPlus className="h-5 w-5 text-blue-600" />
             </span>
             {t('inviteStaff')}
@@ -92,13 +92,13 @@ export function NewStaffDialog() {
             
             {/* Full Name */}
             <div className="space-y-2">
-              <Label htmlFor="name" className="text-sm font-semibold text-gray-700">{t('form.name')}</Label>
+              <Label htmlFor="name" className="text-sm font-semibold text-gray-700 dark:text-gray-300">{t('form.name')}</Label>
               <Input 
                 id="name"
                 value={formData.name}
                 onChange={(e) => handleChange('name', e.target.value)}
                 placeholder="e.g. Dr. Sarah Smith" 
-                className="bg-white border-gray-200 focus-visible:ring-blue-500 rounded-xl shadow-sm h-11" 
+                className="bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-700 focus-visible:ring-blue-500 rounded-xl shadow-sm h-11" 
                 required
                 disabled={loading}
               />
@@ -107,7 +107,7 @@ export function NewStaffDialog() {
             {/* Role & Title */}
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label className="text-sm font-semibold text-gray-700">{t('form.role')}</Label>
+                <Label className="text-sm font-semibold text-gray-700 dark:text-gray-300">{t('form.role')}</Label>
                 <div className="relative">
                   <Shield className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 z-10 pointer-events-none" />
                   <Select 
@@ -116,7 +116,7 @@ export function NewStaffDialog() {
                     onValueChange={(val) => handleChange('role', val)}
                     disabled={loading}
                   >
-                    <SelectTrigger className="pl-10 bg-white border-gray-200 focus:ring-blue-500 rounded-xl shadow-sm h-11 w-full">
+                    <SelectTrigger className="pl-10 bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-700 focus:ring-blue-500 rounded-xl shadow-sm h-11 w-full">
                       <SelectValue placeholder={t('form.selectRole')} />
                     </SelectTrigger>
                     <SelectContent>
@@ -130,7 +130,7 @@ export function NewStaffDialog() {
               </div>
               
               <div className="space-y-2">
-                <Label htmlFor="title" className="text-sm font-semibold text-gray-700">Job Title</Label>
+                <Label htmlFor="title" className="text-sm font-semibold text-gray-700 dark:text-gray-300">Job Title</Label>
                 <div className="relative">
                   <Briefcase className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 z-10 pointer-events-none" />
                   <Input 
@@ -138,7 +138,7 @@ export function NewStaffDialog() {
                     value={formData.title}
                     onChange={(e) => handleChange('title', e.target.value)}
                     placeholder="e.g. Lead Dentist" 
-                    className="pl-10 bg-white border-gray-200 focus-visible:ring-blue-500 rounded-xl shadow-sm h-11" 
+                    className="pl-10 bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-700 focus-visible:ring-blue-500 rounded-xl shadow-sm h-11" 
                     required
                     disabled={loading}
                   />
@@ -149,7 +149,7 @@ export function NewStaffDialog() {
             {/* Contact Info */}
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="email" className="text-sm font-semibold text-gray-700">{t('form.email')}</Label>
+                <Label htmlFor="email" className="text-sm font-semibold text-gray-700 dark:text-gray-300">{t('form.email')}</Label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                   <Input 
@@ -158,7 +158,7 @@ export function NewStaffDialog() {
                     value={formData.email}
                     onChange={(e) => handleChange('email', e.target.value)}
                     placeholder="sarah@smilecare.com" 
-                    className="pl-10 bg-white border-gray-200 focus-visible:ring-blue-500 rounded-xl shadow-sm h-11" 
+                    className="pl-10 bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-700 focus-visible:ring-blue-500 rounded-xl shadow-sm h-11" 
                     required
                     disabled={loading}
                   />
@@ -166,7 +166,7 @@ export function NewStaffDialog() {
               </div>
               
               <div className="space-y-2">
-                <Label htmlFor="phone" className="text-sm font-semibold text-gray-700">Phone Number</Label>
+                <Label htmlFor="phone" className="text-sm font-semibold text-gray-700 dark:text-gray-300">Phone Number</Label>
                 <div className="relative">
                   <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                   <Input 
@@ -175,7 +175,7 @@ export function NewStaffDialog() {
                     value={formData.phone}
                     onChange={(e) => handleChange('phone', e.target.value)}
                     placeholder="+1 234-567-8900" 
-                    className="pl-10 bg-white border-gray-200 focus-visible:ring-blue-500 rounded-xl shadow-sm h-11" 
+                    className="pl-10 bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-700 focus-visible:ring-blue-500 rounded-xl shadow-sm h-11" 
                     required
                     disabled={loading}
                   />
@@ -184,10 +184,10 @@ export function NewStaffDialog() {
             </div>
 
             {/* Send Invitation */}
-            <div className="flex items-center justify-between p-4 bg-white border border-gray-100 rounded-xl shadow-sm mt-2">
+            <div className="flex items-center justify-between p-4 bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700 rounded-xl shadow-sm mt-2">
               <div className="space-y-0.5">
-                <Label className="text-sm font-semibold text-gray-900">{t('form.sendInvitation')}</Label>
-                <p className="text-xs text-gray-500">Member will receive instructions to set up their account</p>
+                <Label className="text-sm font-semibold text-gray-900 dark:text-white">{t('form.sendInvitation')}</Label>
+                <p className="text-xs text-gray-500 dark:text-gray-400">Member will receive instructions to set up their account</p>
               </div>
               <Switch 
                 id="invite" 
@@ -200,13 +200,13 @@ export function NewStaffDialog() {
 
           </div>
           
-          <DialogFooter className="bg-white px-6 py-4 border-t flex gap-3 shrink-0 w-full justify-end items-center">
+          <DialogFooter className="bg-white dark:bg-slate-900 dark:border-slate-800 px-6 py-4 border-t flex gap-3 shrink-0 w-full justify-end items-center">
             <Button 
               type="button" 
               variant="outline" 
               onClick={() => setOpen(false)}
               disabled={loading}
-              className="px-6 rounded-xl border-gray-200 text-gray-700 hover:bg-gray-50 h-11 shadow-sm font-medium"
+              className="px-6 rounded-xl border-gray-200 dark:border-slate-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-slate-800 h-11 shadow-sm font-medium"
             >
               {t('form.cancel')}
             </Button>

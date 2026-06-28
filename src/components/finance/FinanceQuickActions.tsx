@@ -43,7 +43,7 @@ export function FinanceQuickActions() {
             }
           />
 
-          <Link href="/dashboard/billing" className="flex items-center justify-between p-4 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group">
+          <Link href="/billing" className="flex items-center justify-between p-4 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group">
             <div className="flex items-center gap-3">
               <div className={`p-2 rounded-lg bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400`}>
                 <Zap className="w-4 h-4" />
@@ -71,7 +71,7 @@ export function FinanceQuickActions() {
             }
           />
 
-          <Link href="/dashboard/reports" className="flex items-center justify-between p-4 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group">
+          <Link href="/reports" className="flex items-center justify-between p-4 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group">
             <div className="flex items-center gap-3">
               <div className={`p-2 rounded-lg bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-400`}>
                 <PieChart className="w-4 h-4" />

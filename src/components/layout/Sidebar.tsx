@@ -126,13 +126,13 @@ export function Sidebar({ user, settings }: SidebarProps) {
     <aside
       className={cn(
         "hidden md:flex flex-col h-full transition-all duration-300 ease-in-out relative z-20",
-        "bg-sidebar text-white",
+        "bg-white dark:bg-sidebar border-r border-slate-200 dark:border-transparent",
         collapsed ? "w-[72px]" : "w-[260px]"
       )}
     >
       {/* Logo */}
       <div className={cn(
-        "flex items-center gap-3 px-5 h-16 border-b border-white/[0.06]",
+        "flex items-center gap-3 px-5 h-16 border-b border-slate-200 dark:border-white/[0.06]",
         collapsed && "justify-center px-0"
       )}>
         <div className="relative flex-shrink-0">
@@ -143,12 +143,12 @@ export function Sidebar({ user, settings }: SidebarProps) {
               <Stethoscope className="w-5 h-5 text-white" />
             )}
           </div>
-          <div className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-400 rounded-full border-2 border-sidebar animate-pulse-soft" />
+          <div className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-400 rounded-full border-2 border-white dark:border-sidebar animate-pulse-soft" />
         </div>
         {!collapsed && (
           <div className="animate-slide-in overflow-hidden">
-            <h2 className="text-[15px] font-bold tracking-tight whitespace-nowrap">{settings?.clinicName || "SmileCare"}</h2>
-            <p className="text-[10px] text-blue-300/70 font-medium tracking-widest uppercase">Pro Dashboard</p>
+            <h2 className="text-[15px] font-bold tracking-tight whitespace-nowrap text-slate-900 dark:text-white">{settings?.clinicName || "SmileCare"}</h2>
+            <p className="text-[10px] text-blue-500 dark:text-blue-300/70 font-medium tracking-widest uppercase">Pro Dashboard</p>
           </div>
         )}
       </div>
@@ -166,7 +166,7 @@ export function Sidebar({ user, settings }: SidebarProps) {
         {filteredGroups.map((group) => (
           <div key={group.label}>
             {!collapsed && (
-              <p className="text-[10px] font-semibold tracking-[0.15em] uppercase text-blue-300/40 mb-2 px-3">
+              <p className="text-[10px] font-semibold tracking-[0.15em] uppercase text-slate-400 dark:text-blue-300/40 mb-2 px-3">
                 {group.label}
               </p>
             )}
@@ -182,8 +182,8 @@ export function Sidebar({ user, settings }: SidebarProps) {
                       "group relative flex items-center gap-3 rounded-xl transition-all duration-200",
                       collapsed ? "justify-center px-0 py-2.5 mx-auto w-11 h-11" : "px-3 py-2.5",
                       isActive
-                        ? "bg-white/10 text-white shadow-sm"
-                        : "text-white/50 hover:text-white/90 hover:bg-white/[0.05]"
+                        ? "bg-slate-100 dark:bg-white/10 text-blue-600 dark:text-white shadow-sm"
+                        : "text-slate-500 dark:text-white/50 hover:text-slate-900 dark:hover:text-white/90 hover:bg-slate-50 dark:hover:bg-white/[0.05]"
                     )}
                   >
                     {isActive && (
@@ -192,12 +192,12 @@ export function Sidebar({ user, settings }: SidebarProps) {
                     <item.icon className={cn(
                       "flex-shrink-0 transition-colors duration-200",
                       collapsed ? "w-5 h-5" : "w-[18px] h-[18px]",
-                      isActive ? "text-blue-400" : "text-white/40 group-hover:text-white/70"
+                      isActive ? "text-blue-600 dark:text-blue-400" : "text-slate-400 dark:text-white/40 group-hover:text-slate-600 dark:group-hover:text-white/70"
                     )} />
                     {!collapsed && (
                       <span className={cn(
                         "text-[13px] font-medium whitespace-nowrap",
-                        isActive ? "text-white" : ""
+                        isActive ? "text-blue-700 dark:text-white" : ""
                       )}>
                         {item.name}
                       </span>
@@ -215,14 +215,14 @@ export function Sidebar({ user, settings }: SidebarProps) {
 
       {/* Bottom section */}
       <div className={cn(
-        "border-t border-white/[0.06] p-3",
+        "border-t border-slate-200 dark:border-white/[0.06] p-3",
         collapsed && "flex flex-col items-center"
       )}>
         {!collapsed ? (
           <div 
             onClick={handleLogout}
             className={cn(
-              "flex items-center gap-3 p-2 rounded-xl bg-white/[0.04] hover:bg-white/[0.07] transition-all cursor-pointer group active:scale-95",
+              "flex items-center gap-3 p-2 rounded-xl bg-slate-50 dark:bg-white/[0.04] hover:bg-slate-100 dark:hover:bg-white/[0.07] transition-all cursor-pointer group active:scale-95",
               isLoggingOut && "opacity-50 pointer-events-none"
             )}
           >
@@ -230,16 +230,16 @@ export function Sidebar({ user, settings }: SidebarProps) {
               <div className="w-9 h-9 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-xs shadow-lg">
                 {initials}
               </div>
-              <div className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-400 rounded-full border-2 border-sidebar" />
+              <div className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-400 rounded-full border-2 border-white dark:border-sidebar" />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-[13px] font-semibold text-white/90 truncate">{userName}</p>
-              <p className="text-[11px] text-white/40 truncate">{userRole}</p>
+              <p className="text-[13px] font-semibold text-slate-700 dark:text-white/90 truncate">{userName}</p>
+              <p className="text-[11px] text-slate-500 dark:text-white/40 truncate">{userRole}</p>
             </div>
             {isLoggingOut ? (
-              <Loader2 className="w-4 h-4 text-white/40 animate-spin" />
+              <Loader2 className="w-4 h-4 text-slate-400 dark:text-white/40 animate-spin" />
             ) : (
-              <LogOut className="w-4 h-4 text-white/25 group-hover:text-white/60 transition-colors flex-shrink-0" />
+              <LogOut className="w-4 h-4 text-slate-400 dark:text-white/25 group-hover:text-slate-600 dark:group-hover:text-white/60 transition-colors flex-shrink-0" />
             )}
           </div>
         ) : (

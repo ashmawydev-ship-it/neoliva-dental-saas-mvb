@@ -79,9 +79,9 @@ export function DoctorPerformanceChart({ data, trend }: Props) {
 
       {/* Worst performer callout */}
       {worstId && (
-        <div className="mt-3 flex items-center gap-2 rounded-xl bg-orange-50 border border-orange-100 px-4 py-2.5">
+        <div className="mt-3 flex items-center gap-2 rounded-xl bg-orange-50 dark:bg-orange-900/10 border border-orange-100 dark:border-orange-900/30 px-4 py-2.5">
           <span className="h-2 w-2 rounded-full bg-orange-400 shrink-0" />
-          <p className="text-xs text-orange-700">
+          <p className="text-xs text-orange-700 dark:text-orange-400">
             <span className="font-semibold">Lowest performer:</span>{' '}
             {data.find(d => d.doctorId === worstId)?.doctorName} —{' '}
             {data.find(d => d.doctorId === worstId)?.completionRate}% completion rate
@@ -108,12 +108,12 @@ function ChartWrapper({
   children: React.ReactNode;
 }) {
   return (
-    <div className="rounded-2xl border border-gray-100 bg-white shadow-sm overflow-hidden">
-      <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+    <div className="rounded-2xl border border-gray-100 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm overflow-hidden">
+      <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100 dark:border-slate-800">
         <div className="flex items-center gap-2">
           <div>
-            <h3 className="text-sm font-bold text-gray-900">{title}</h3>
-            <p className="text-xs text-gray-400 mt-0.5">{subtitle}</p>
+            <h3 className="text-sm font-bold text-gray-900 dark:text-white">{title}</h3>
+            <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">{subtitle}</p>
           </div>
           {trend && (
             <TrendBadge
@@ -126,7 +126,7 @@ function ChartWrapper({
         </div>
         <Link
           href={drilldownUrl}
-          className="text-xs text-blue-600 hover:text-blue-800 hover:underline font-medium"
+          className="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 hover:underline font-medium"
         >
           View Events →
         </Link>
@@ -138,7 +138,7 @@ function ChartWrapper({
 
 function EmptyState({ message }: { message: string }) {
   return (
-    <div className="flex items-center justify-center h-40 text-gray-400 text-sm">
+    <div className="flex items-center justify-center h-40 text-gray-400 dark:text-gray-500 text-sm">
       {message}
     </div>
   );

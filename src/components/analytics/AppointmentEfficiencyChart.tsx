@@ -53,12 +53,12 @@ export function AppointmentEfficiencyChart({ data, trend }: Props) {
   const isEmpty = data.scheduled === 0;
 
   return (
-    <div className="rounded-2xl border border-gray-100 bg-white shadow-sm overflow-hidden">
-      <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+    <div className="rounded-2xl border border-gray-100 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm overflow-hidden">
+      <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100 dark:border-slate-800">
         <div className="flex items-center gap-2">
           <div>
-            <h3 className="text-sm font-bold text-gray-900">Appointment Efficiency</h3>
-            <p className="text-xs text-gray-400 mt-0.5">Why are appointments failing?</p>
+            <h3 className="text-sm font-bold text-gray-900 dark:text-white">Appointment Efficiency</h3>
+            <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">Why are appointments failing?</p>
           </div>
           {trend && (
             <TrendBadge
@@ -71,7 +71,7 @@ export function AppointmentEfficiencyChart({ data, trend }: Props) {
         </div>
         <Link
           href="/dashboard/events-debug"
-          className="text-xs text-blue-600 hover:text-blue-800 hover:underline font-medium"
+          className="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 hover:underline font-medium"
         >
           View Events →
         </Link>
@@ -79,7 +79,7 @@ export function AppointmentEfficiencyChart({ data, trend }: Props) {
 
       <div className="p-5">
         {isEmpty ? (
-          <div className="flex items-center justify-center h-40 text-gray-400 text-sm">
+          <div className="flex items-center justify-center h-40 text-gray-400 dark:text-gray-500 text-sm">
             No appointment data yet.
           </div>
         ) : (
@@ -110,13 +110,13 @@ export function AppointmentEfficiencyChart({ data, trend }: Props) {
             {/* Rate summary row */}
             <div className="grid grid-cols-3 gap-3 mt-4">
               {[
-                { label: 'Completion',   value: data.completionRate,   color: 'text-green-600',  bg: 'bg-green-50' },
-                { label: 'Cancellation', value: data.cancellationRate, color: 'text-orange-600', bg: 'bg-orange-50' },
-                { label: 'No-Show',      value: data.noShowRate,       color: 'text-red-600',    bg: 'bg-red-50' },
+                { label: 'Completion',   value: data.completionRate,   color: 'text-green-600 dark:text-green-400',  bg: 'bg-green-50 dark:bg-green-500/10' },
+                { label: 'Cancellation', value: data.cancellationRate, color: 'text-orange-600 dark:text-orange-400', bg: 'bg-orange-50 dark:bg-orange-900/10' },
+                { label: 'No-Show',      value: data.noShowRate,       color: 'text-red-600 dark:text-red-400',    bg: 'bg-red-50 dark:bg-red-900/10' },
               ].map(({ label, value, color, bg }) => (
                 <div key={label} className={`rounded-xl ${bg} px-3 py-2.5 text-center`}>
                   <p className={`text-lg font-bold ${color}`}>{value}%</p>
-                  <p className="text-xs text-gray-500 mt-0.5">{label}</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{label}</p>
                 </div>
               ))}
             </div>

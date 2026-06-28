@@ -54,30 +54,30 @@ export function BillingSettingsForm({ initialData }: { initialData: BillingSetti
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <Card className="border-0 shadow-sm">
+      <Card className="border-0 shadow-sm dark:bg-slate-900">
         <CardHeader>
-          <CardTitle className="text-base font-semibold">{t('billingSettings.title')}</CardTitle>
-          <CardDescription>{t('billingSettings.description')}</CardDescription>
+          <CardTitle className="text-base font-semibold dark:text-white">{t('billingSettings.title')}</CardTitle>
+          <CardDescription className="dark:text-gray-400">{t('billingSettings.description')}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-5">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label className="text-xs font-semibold text-gray-700">{t('billingSettings.currency')}</Label>
-              <Input {...register("currency")} className="h-10 rounded-xl" />
+              <Label className="text-xs font-semibold text-gray-700 dark:text-gray-300">{t('billingSettings.currency')}</Label>
+              <Input {...register("currency")} className="h-10 rounded-xl dark:bg-slate-800 dark:border-slate-700 dark:text-white" />
               {errors.currency && <p className="text-xs text-red-500">{errors.currency.message}</p>}
             </div>
             <div className="space-y-2">
-              <Label className="text-xs font-semibold text-gray-700">{t('billingSettings.taxRate')}</Label>
-              <Input type="number" step="0.01" {...register("taxRate")} className="h-10 rounded-xl" />
+              <Label className="text-xs font-semibold text-gray-700 dark:text-gray-300">{t('billingSettings.taxRate')}</Label>
+              <Input type="number" step="0.01" {...register("taxRate")} className="h-10 rounded-xl dark:bg-slate-800 dark:border-slate-700 dark:text-white" />
               {errors.taxRate && <p className="text-xs text-red-500">{errors.taxRate.message}</p>}
             </div>
           </div>
           <div className="space-y-2">
-            <Label className="text-xs font-semibold text-gray-700">{t('billingSettings.invoiceNote')}</Label>
-            <Textarea {...register("invoiceNote")} className="rounded-xl resize-none" rows={3} />
+            <Label className="text-xs font-semibold text-gray-700 dark:text-gray-300">{t('billingSettings.invoiceNote')}</Label>
+            <Textarea {...register("invoiceNote")} className="rounded-xl resize-none dark:bg-slate-800 dark:border-slate-700 dark:text-white" rows={3} />
           </div>
         </CardContent>
-        <CardFooter className="border-t bg-gray-50/50 rounded-b-xl flex justify-between items-center">
+        <CardFooter className="border-t dark:border-slate-800 bg-gray-50/50 dark:bg-slate-800/50 rounded-b-xl flex justify-between items-center">
           {isDirty ? <p className="text-xs text-amber-600 font-medium">Unsaved changes</p> : <div />}
           <Button 
             disabled={isPending || !isDirty} 

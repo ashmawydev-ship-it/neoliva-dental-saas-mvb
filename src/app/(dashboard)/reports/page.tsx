@@ -26,11 +26,11 @@ import {
 
 function ErrorState({ message, t }: { message?: string; t: any }) {
   return (
-    <Card className="border-red-100 bg-red-50/50">
+    <Card className="border-red-100 dark:border-red-500/20 bg-red-50/50 dark:bg-red-500/5">
       <CardContent className="p-6 flex flex-col items-center text-center">
         <AlertCircle className="w-8 h-8 text-red-500 mb-2" />
-        <p className="text-sm font-medium text-red-900">{t('errors.loadFailed')}</p>
-        <p className="text-xs text-red-600 mt-1">{message || t('errors.tryAgain')}</p>
+        <p className="text-sm font-medium text-red-900 dark:text-red-300">{t('errors.loadFailed')}</p>
+        <p className="text-xs text-red-600 dark:text-red-400 mt-1">{message || t('errors.tryAgain')}</p>
       </CardContent>
     </Card>
   );
@@ -38,7 +38,7 @@ function ErrorState({ message, t }: { message?: string; t: any }) {
 
 function AISkeleton() {
   return (
-    <Card className="border-0 shadow-lg bg-white overflow-hidden">
+    <Card className="border-0 shadow-lg bg-white dark:bg-slate-900 overflow-hidden">
       <CardContent className="p-6">
         <div className="flex items-center gap-3 mb-4">
           <Skeleton className="w-8 h-8 rounded-lg" />
@@ -81,8 +81,8 @@ export default async function ReportsPage() {
     <div className="space-y-6 pb-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
       {/* Page Header */}
       <div className="flex flex-col gap-1">
-        <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-gray-900">{t('title')} 📊</h1>
-        <p className="text-sm text-gray-500">{t('subtitle')}</p>
+        <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-gray-900 dark:text-white">{t('title')} 📊</h1>
+        <p className="text-sm text-gray-500 dark:text-gray-400">{t('subtitle')}</p>
       </div>
 
       {/* Section 1: KPI Cards */}

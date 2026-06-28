@@ -56,36 +56,36 @@ export function ClinicSettingsForm({ initialData }: { initialData: ClinicSetting
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <Card className="border-0 shadow-sm">
+      <Card className="border-0 shadow-sm dark:bg-slate-900">
         <CardHeader>
-          <CardTitle className="text-base font-semibold">{t('clinic.title')}</CardTitle>
-          <CardDescription>{t('clinic.description')}</CardDescription>
+          <CardTitle className="text-base font-semibold dark:text-white">{t('clinic.title')}</CardTitle>
+          <CardDescription className="dark:text-gray-400">{t('clinic.description')}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-5">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label className="text-xs font-semibold text-gray-700">{t('clinic.clinicName')}</Label>
-              <Input {...register("clinicName")} className="h-10 rounded-xl" />
+              <Label className="text-xs font-semibold text-gray-700 dark:text-gray-300">{t('clinic.clinicName')}</Label>
+              <Input {...register("clinicName")} className="h-10 rounded-xl dark:bg-slate-800 dark:border-slate-700 dark:text-white" />
               {errors.clinicName && <p className="text-xs text-red-500">{errors.clinicName.message}</p>}
             </div>
             <div className="space-y-2">
-              <Label className="text-xs font-semibold text-gray-700">{t('clinic.email')}</Label>
-              <Input {...register("email")} className="h-10 rounded-xl" />
+              <Label className="text-xs font-semibold text-gray-700 dark:text-gray-300">{t('clinic.email')}</Label>
+              <Input {...register("email")} className="h-10 rounded-xl dark:bg-slate-800 dark:border-slate-700 dark:text-white" />
               {errors.email && <p className="text-xs text-red-500">{errors.email.message}</p>}
             </div>
           </div>
           <div className="space-y-2">
-            <Label className="text-xs font-semibold text-gray-700">{t('clinic.address')}</Label>
-            <Input {...register("address")} className="h-10 rounded-xl" />
+            <Label className="text-xs font-semibold text-gray-700 dark:text-gray-300">{t('clinic.address')}</Label>
+            <Input {...register("address")} className="h-10 rounded-xl dark:bg-slate-800 dark:border-slate-700 dark:text-white" />
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label className="text-xs font-semibold text-gray-700">{t('clinic.phone')}</Label>
-              <Input {...register("phone")} className="h-10 rounded-xl" />
+              <Label className="text-xs font-semibold text-gray-700 dark:text-gray-300">{t('clinic.phone')}</Label>
+              <Input {...register("phone")} className="h-10 rounded-xl dark:bg-slate-800 dark:border-slate-700 dark:text-white" />
             </div>
           </div>
         </CardContent>
-        <CardFooter className="border-t bg-gray-50/50 rounded-b-xl flex justify-between items-center">
+        <CardFooter className="border-t dark:border-slate-800 bg-gray-50/50 dark:bg-slate-800/50 rounded-b-xl flex justify-between items-center">
           {isDirty ? <p className="text-xs text-amber-600 font-medium">Unsaved changes</p> : <div />}
           <Button 
             disabled={isPending || !isDirty} 

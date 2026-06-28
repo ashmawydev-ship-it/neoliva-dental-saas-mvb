@@ -31,9 +31,9 @@ export function RecentFinancialActivity({ activity }: ActivityProps) {
     new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(val);
 
   return (
-    <Card className="col-span-1 border-slate-200/60 dark:border-slate-800/60">
+    <Card className="col-span-1 border-slate-200/60 dark:border-slate-800/60 bg-white dark:bg-slate-900">
       <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle className="text-sm font-semibold">Recent Activity</CardTitle>
+        <CardTitle className="text-sm font-semibold text-slate-900 dark:text-white">Recent Activity</CardTitle>
         <button className="p-1 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-md">
           <MoreVertical className="w-4 h-4 text-slate-400" />
         </button>
@@ -55,7 +55,7 @@ export function RecentFinancialActivity({ activity }: ActivityProps) {
                    <ShoppingBag className="w-4 h-4 text-rose-500" />}
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-sm font-semibold truncate max-w-[150px]">
+                  <span className="text-sm font-semibold truncate max-w-[150px] text-slate-900 dark:text-slate-100">
                     {item.title}
                   </span>
                   <span className="text-[10px] text-slate-400 font-medium uppercase tracking-wider">

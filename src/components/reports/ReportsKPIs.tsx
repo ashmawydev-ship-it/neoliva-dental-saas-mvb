@@ -61,7 +61,7 @@ export function ReportsKPIs({ data }: ReportsKPIsProps) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
       {kpis.map((kpi, i) => (
-        <Card key={i} className="border-0 shadow-sm overflow-hidden group hover:ring-1 hover:ring-blue-200 transition-all">
+        <Card key={i} className="border-0 shadow-sm overflow-hidden group hover:ring-1 hover:ring-blue-200 dark:hover:ring-blue-500/50 transition-all bg-white dark:bg-slate-900">
           <CardContent className="p-5">
             <div className="flex justify-between items-start">
               <div className={`p-2.5 rounded-xl ${kpi.bg} ${kpi.color}`}>
@@ -73,8 +73,8 @@ export function ReportsKPIs({ data }: ReportsKPIsProps) {
               </div>
             </div>
             <div className="mt-4">
-              <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">{kpi.title}</p>
-              <h3 className="text-2xl font-bold text-gray-900 mt-1">{kpi.value}</h3>
+              <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">{kpi.title}</p>
+              <h3 className="text-2xl font-bold text-gray-900 dark:text-white mt-1">{kpi.value}</h3>
             </div>
           </CardContent>
         </Card>

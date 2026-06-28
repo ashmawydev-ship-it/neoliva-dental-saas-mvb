@@ -23,19 +23,19 @@ export default async function SettingsPage() {
   return (
     <div className="space-y-6 max-w-4xl mx-auto animate-fade-in-up">
       <div>
-        <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-gray-900">{t('title')}</h1>
-        <p className="text-sm text-gray-500 mt-1">{t('subtitle')}</p>
+        <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-gray-900 dark:text-white">{t('title')}</h1>
+        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{t('subtitle')}</p>
       </div>
 
       <Tabs defaultValue="general" className="w-full">
-        <TabsList className="bg-gray-100/80 p-1 rounded-xl h-auto grid w-full grid-cols-3 gap-1">
-          <TabsTrigger value="general" className="rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm text-sm py-2.5">
+        <TabsList className="bg-gray-100/80 dark:bg-slate-800/80 p-1 rounded-xl !h-auto grid w-full grid-cols-3 gap-1">
+          <TabsTrigger value="general" className="w-full !h-auto rounded-lg data-active:bg-white dark:data-active:bg-slate-700 data-active:shadow-sm data-active:text-gray-900 dark:data-active:text-white text-gray-500 dark:text-gray-400 text-sm py-2.5">
             <Building2 className="w-4 h-4 mr-2" /> {t('tabs.clinic')}
           </TabsTrigger>
-          <TabsTrigger value="notifications" className="rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm text-sm py-2.5">
+          <TabsTrigger value="notifications" className="w-full !h-auto rounded-lg data-active:bg-white dark:data-active:bg-slate-700 data-active:shadow-sm data-active:text-gray-900 dark:data-active:text-white text-gray-500 dark:text-gray-400 text-sm py-2.5">
             <Bell className="w-4 h-4 mr-2" /> {t('tabs.notifications')}
           </TabsTrigger>
-          <TabsTrigger value="billing" className="rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm text-sm py-2.5">
+          <TabsTrigger value="billing" className="w-full !h-auto rounded-lg data-active:bg-white dark:data-active:bg-slate-700 data-active:shadow-sm data-active:text-gray-900 dark:data-active:text-white text-gray-500 dark:text-gray-400 text-sm py-2.5">
             <CreditCard className="w-4 h-4 mr-2" /> {t('tabs.billing')}
           </TabsTrigger>
         </TabsList>

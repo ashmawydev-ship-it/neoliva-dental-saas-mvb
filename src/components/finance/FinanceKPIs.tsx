@@ -88,7 +88,7 @@ export function FinanceKPIs({ data }: KPIProps) {
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
       {kpis.map((kpi, i) => (
-        <Card key={i} className="p-4 flex flex-col gap-3 hover:shadow-md transition-shadow border-slate-200/60 dark:border-slate-800/60">
+        <Card key={i} className="p-4 flex flex-col gap-3 hover:shadow-md transition-shadow border-slate-200/60 dark:border-slate-800/60 bg-white dark:bg-slate-900">
           <div className="flex items-center justify-between">
             <div className={`p-2 rounded-lg ${kpi.bg}`}>
               <kpi.icon className={`w-5 h-5 ${kpi.color}`} />
@@ -102,7 +102,7 @@ export function FinanceKPIs({ data }: KPIProps) {
           </div>
           <div>
             <p className="text-sm font-medium text-slate-500 dark:text-slate-400">{kpi.title}</p>
-            <h3 className="text-2xl font-bold tracking-tight mt-1">{kpi.value}</h3>
+            <h3 className="text-2xl font-bold tracking-tight mt-1 text-slate-900 dark:text-white">{kpi.value}</h3>
             <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">{kpi.description}</p>
           </div>
         </Card>

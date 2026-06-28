@@ -27,7 +27,7 @@ export function RevenueByDoctorChart({ data }: DoctorRevenueProps) {
   return (
     <Card className="border-slate-200/60 dark:border-slate-800/60 dark:bg-slate-900">
       <CardHeader>
-        <CardTitle className="text-sm font-semibold dark:text-white">Revenue by Doctor</CardTitle>
+        <CardTitle className="text-sm font-semibold text-slate-900 dark:text-white">Revenue by Doctor</CardTitle>
       </CardHeader>
       <CardContent className="h-[280px]">
         <ResponsiveContainer width="100%" height="100%">

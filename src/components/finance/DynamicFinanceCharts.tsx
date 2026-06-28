@@ -10,10 +10,10 @@ export const RevenueChart = dynamic(
     loading: () => (
       <div className="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm h-[350px] flex flex-col gap-4">
         <div className="flex justify-between items-center">
-          <Skeleton className="h-6 w-1/3" />
-          <Skeleton className="h-8 w-24" />
+          <Skeleton className="h-6 w-1/3 bg-slate-200 dark:bg-slate-700" />
+          <Skeleton className="h-8 w-24 bg-slate-200 dark:bg-slate-700" />
         </div>
-        <Skeleton className="flex-1 w-full" />
+        <Skeleton className="flex-1 w-full bg-slate-200 dark:bg-slate-700" />
       </div>
     )
   }
@@ -25,8 +25,8 @@ export const TopServicesChart = dynamic(
     ssr: false,
     loading: () => (
       <div className="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm h-[300px] flex flex-col gap-4">
-        <Skeleton className="h-6 w-1/2" />
-        <Skeleton className="flex-1 w-full" />
+        <Skeleton className="h-6 w-1/2 bg-slate-200 dark:bg-slate-700" />
+        <Skeleton className="flex-1 w-full bg-slate-200 dark:bg-slate-700" />
       </div>
     )
   }
@@ -38,8 +38,8 @@ export const RevenueByDoctorChart = dynamic(
     ssr: false,
     loading: () => (
       <div className="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm h-[300px] flex flex-col gap-4">
-        <Skeleton className="h-6 w-1/2" />
-        <Skeleton className="flex-1 w-full" />
+        <Skeleton className="h-6 w-1/2 bg-slate-200 dark:bg-slate-700" />
+        <Skeleton className="flex-1 w-full bg-slate-200 dark:bg-slate-700" />
       </div>
     )
   }

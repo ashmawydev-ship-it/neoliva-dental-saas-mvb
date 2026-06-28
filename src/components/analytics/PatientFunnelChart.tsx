@@ -42,15 +42,15 @@ export function PatientFunnelChart({ data }: Props) {
   }));
 
   return (
-    <div className="rounded-2xl border border-gray-100 bg-white shadow-sm overflow-hidden">
-      <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+    <div className="rounded-2xl border border-gray-100 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm overflow-hidden">
+      <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100 dark:border-slate-800">
         <div>
-          <h3 className="text-sm font-bold text-gray-900">Patient Lifecycle Funnel</h3>
-          <p className="text-xs text-gray-400 mt-0.5">Where are patients dropping off?</p>
+          <h3 className="text-sm font-bold text-gray-900 dark:text-white">Patient Lifecycle Funnel</h3>
+          <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">Where are patients dropping off?</p>
         </div>
         <Link
           href="/dashboard/events-debug?filter=TREATMENT_COMPLETED"
-          className="text-xs text-blue-600 hover:text-blue-800 hover:underline font-medium"
+          className="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 hover:underline font-medium"
         >
           View Events →
         </Link>
@@ -58,7 +58,7 @@ export function PatientFunnelChart({ data }: Props) {
 
       <div className="p-5">
         {isEmpty ? (
-          <div className="flex items-center justify-center h-40 text-gray-400 text-sm">
+          <div className="flex items-center justify-center h-40 text-gray-400 dark:text-gray-500 text-sm">
             No patient lifecycle data yet.
           </div>
         ) : (
@@ -124,12 +124,12 @@ export function PatientFunnelChart({ data }: Props) {
                 return (
                   <div
                     key={stage.stage}
-                    className="flex items-center justify-between rounded-xl bg-gray-50 px-3 py-2"
+                    className="flex items-center justify-between rounded-xl bg-gray-50 dark:bg-slate-800 px-3 py-2"
                   >
-                    <span className="text-xs text-gray-500">
+                    <span className="text-xs text-gray-500 dark:text-gray-400">
                       {STAGE_LABELS[prev.stage]} → {STAGE_LABELS[stage.stage]}
                     </span>
-                    <span className="flex items-center gap-1 text-xs font-semibold text-red-600">
+                    <span className="flex items-center gap-1 text-xs font-semibold text-red-600 dark:text-red-400">
                       <TrendingDown className="h-3.5 w-3.5" />
                       -{stage.dropOffRate}% ({lost} patients)
                     </span>
@@ -140,9 +140,9 @@ export function PatientFunnelChart({ data }: Props) {
 
             {/* Biggest drop-off callout */}
             {biggestDropOff && (
-              <div className="mt-3 flex items-center gap-2 rounded-xl bg-red-50 border border-red-100 px-4 py-2.5">
+              <div className="mt-3 flex items-center gap-2 rounded-xl bg-red-50 dark:bg-red-900/10 border border-red-100 dark:border-red-900/30 px-4 py-2.5">
                 <TrendingDown className="h-4 w-4 text-red-500 shrink-0" />
-                <p className="text-xs text-red-700">
+                <p className="text-xs text-red-700 dark:text-red-400">
                   <span className="font-semibold">Biggest drop-off:</span>{' '}
                   {STAGE_LABELS[biggestDropOff.stage]} stage — {biggestDropOff.dropOffRate}% of patients lost
                 </p>

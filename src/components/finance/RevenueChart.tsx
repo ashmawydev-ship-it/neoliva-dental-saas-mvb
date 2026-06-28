@@ -40,7 +40,7 @@ export function RevenueChart({ data, periodLabel = "Last 30 Days" }: ChartProps)
           <Button 
             variant={view === 'area' ? 'secondary' : 'ghost'} 
             size="sm" 
-            className="h-7 px-2 text-xs"
+            className="h-7 px-2 text-xs dark:text-slate-300 dark:hover:text-white dark:hover:bg-slate-700"
             onClick={() => setView('area')}
           >
             <TrendingUp className="w-3 h-3 mr-1" />
@@ -49,7 +49,7 @@ export function RevenueChart({ data, periodLabel = "Last 30 Days" }: ChartProps)
           <Button 
             variant={view === 'bar' ? 'secondary' : 'ghost'} 
             size="sm" 
-            className="h-7 px-2 text-xs"
+            className="h-7 px-2 text-xs dark:text-slate-300 dark:hover:text-white dark:hover:bg-slate-700"
             onClick={() => setView('bar')}
           >
             <LayoutGrid className="w-3 h-3 mr-1" />

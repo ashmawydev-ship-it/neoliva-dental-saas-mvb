@@ -56,30 +56,30 @@ export function FinanceDashboardHeader({ period }: FinanceDashboardHeaderProps) 
   return (
     <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight text-gray-900">{t('title')}</h1>
-        <p className="text-sm text-gray-500 mt-1 flex items-center gap-1.5">
-          <TrendingUp className="w-4 h-4 text-emerald-500" />
+        <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white">{t('title')}</h1>
+        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1 flex items-center gap-1.5">
+          <TrendingUp className="w-4 h-4 text-emerald-500 dark:text-emerald-400" />
           {t('subtitle')}
         </p>
       </div>
 
       <div className="flex flex-wrap items-center gap-3">
         <Select value={period} onValueChange={(val) => handlePeriodChange(val ?? "")}>
-          <SelectTrigger className="w-[160px] bg-white border-gray-200">
+          <SelectTrigger className="w-[160px] bg-white dark:bg-slate-900 border-gray-200 dark:border-slate-800">
             <Calendar className="w-4 h-4 mr-2 text-gray-400" />
             <SelectValue placeholder="Select period" />
           </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="7d">{t('period.7d')}</SelectItem>
-            <SelectItem value="30d">{t('period.30d')}</SelectItem>
-            <SelectItem value="90d">{t('period.90d')}</SelectItem>
-            <SelectItem value="12m">{t('period.year')}</SelectItem>
+          <SelectContent className="bg-white dark:bg-slate-900 border-gray-200 dark:border-slate-800">
+            <SelectItem value="7d" className="focus:bg-gray-100 dark:focus:bg-slate-800 focus:text-gray-900 dark:focus:text-white">{t('period.7d')}</SelectItem>
+            <SelectItem value="30d" className="focus:bg-gray-100 dark:focus:bg-slate-800 focus:text-gray-900 dark:focus:text-white">{t('period.30d')}</SelectItem>
+            <SelectItem value="90d" className="focus:bg-gray-100 dark:focus:bg-slate-800 focus:text-gray-900 dark:focus:text-white">{t('period.90d')}</SelectItem>
+            <SelectItem value="12m" className="focus:bg-gray-100 dark:focus:bg-slate-800 focus:text-gray-900 dark:focus:text-white">{t('period.year')}</SelectItem>
           </SelectContent>
         </Select>
 
         <Button 
           variant="outline" 
-          className="gap-2 bg-white"
+          className="gap-2 bg-white dark:bg-slate-900 dark:border-slate-800 dark:hover:bg-slate-800"
           onClick={handleExport}
         >
           <Download className="w-4 h-4" />

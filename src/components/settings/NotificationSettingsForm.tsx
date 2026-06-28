@@ -68,17 +68,17 @@ export function NotificationSettingsForm({ initialData }: { initialData: Notific
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <Card className="border-0 shadow-sm">
+      <Card className="border-0 shadow-sm dark:bg-slate-900">
         <CardHeader>
-          <CardTitle className="text-base font-semibold">{t('notifications.title')}</CardTitle>
-          <CardDescription>{t('notifications.description')}</CardDescription>
+          <CardTitle className="text-base font-semibold dark:text-white">{t('notifications.title')}</CardTitle>
+          <CardDescription className="dark:text-gray-400">{t('notifications.description')}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-1">
           {notifications.map((item) => (
-            <div key={item.name} className="flex items-center justify-between p-4 rounded-xl hover:bg-gray-50 transition-colors">
+            <div key={item.name} className="flex items-center justify-between p-4 rounded-xl hover:bg-gray-50 dark:hover:bg-slate-800/50 transition-colors">
               <div className="pr-4">
-                <Label className="text-sm font-medium text-gray-900">{item.title}</Label>
-                <p className="text-xs text-gray-500">{item.desc}</p>
+                <Label className="text-sm font-medium text-gray-900 dark:text-white">{item.title}</Label>
+                <p className="text-xs text-gray-500 dark:text-gray-400">{item.desc}</p>
               </div>
               <Controller
                 name={item.name as "emailReminders" | "smsReminders" | "invoiceReceipts" | "lowInventoryAlerts"}
@@ -93,7 +93,7 @@ export function NotificationSettingsForm({ initialData }: { initialData: Notific
             </div>
           ))}
         </CardContent>
-        <CardFooter className="border-t bg-gray-50/50 rounded-b-xl flex justify-between items-center">
+        <CardFooter className="border-t dark:border-slate-800 bg-gray-50/50 dark:bg-slate-800/50 rounded-b-xl flex justify-between items-center">
           {isDirty ? <p className="text-xs text-amber-600 font-medium">Unsaved changes</p> : <div />}
           <Button 
             disabled={isPending || !isDirty} 
