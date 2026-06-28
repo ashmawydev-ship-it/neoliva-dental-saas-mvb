@@ -17,76 +17,105 @@ export function DentalGrid({
   onQuadrantClick,
 }: DentalGridProps) {
   return (
-    <div className={cn("flex flex-col items-center gap-6 sm:gap-10 w-full max-w-5xl mx-auto bg-gray-50/50 dark:bg-slate-900/50 rounded-2xl sm:rounded-[2rem] p-4 sm:p-10 border border-gray-100 dark:border-slate-800 shadow-inner relative", className)}>
-      {/* Quadrant Selectors Overlay */}
-      {showQuadrants && onQuadrantClick && (
-        <div className="absolute inset-0 pointer-events-none z-10 p-2 sm:p-10">
-          {/* Q1 */}
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            className="pointer-events-auto absolute left-1 sm:left-2 top-[20%] h-7 w-7 sm:h-8 sm:w-8 rounded-full hover:bg-primary/10 hover:text-primary text-[9px] sm:text-[10px] font-bold border border-dashed border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-800 dark:text-slate-300 shadow-sm"
+    <div className={cn(
+      "relative flex flex-col items-center w-full max-w-5xl mx-auto",
+      "bg-gradient-to-b from-gray-50/80 to-gray-100/50 dark:from-slate-900/80 dark:to-slate-800/30",
+      "rounded-2xl sm:rounded-[2rem] p-4 sm:p-8 lg:p-10",
+      "border border-gray-200/60 dark:border-slate-700/50",
+      "shadow-inner",
+      className
+    )}>
+      {/* ── Top Teeth Row ── */}
+      <div className={cn(
+        "flex items-center w-full",
+        showQuadrants && onQuadrantClick && "gap-2 sm:gap-4"
+      )}>
+        {/* Q1 Button */}
+        {showQuadrants && onQuadrantClick && (
+          <Button
+            variant="ghost"
+            size="icon"
+            className="shrink-0 h-8 w-8 sm:h-9 sm:w-9 rounded-full border border-dashed border-gray-300 dark:border-slate-600 bg-white/80 dark:bg-slate-800/80 dark:text-slate-300 text-[10px] sm:text-[11px] font-bold shadow-sm hover:bg-primary/10 hover:text-primary hover:border-primary/40 transition-all"
             onClick={() => onQuadrantClick('Q1')}
             title="Select Upper Right Quadrant (Q1)"
           >
             Q1
           </Button>
-          {/* Q2 */}
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            className="pointer-events-auto absolute right-1 sm:right-2 top-[20%] h-7 w-7 sm:h-8 sm:w-8 rounded-full hover:bg-primary/10 hover:text-primary text-[9px] sm:text-[10px] font-bold border border-dashed border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-800 dark:text-slate-300 shadow-sm"
+        )}
+
+        {/* Top teeth */}
+        <div className="flex-1 flex justify-center gap-2 sm:gap-6 relative">
+          <div className="grid grid-cols-8 gap-0.5 sm:gap-1.5 w-full justify-items-center">
+            {QUADRANTS.Q1.map(t => renderTooth(t, true))}
+          </div>
+          {/* Vertical center divider */}
+          <div className="w-px bg-primary/20 dark:bg-primary/30 shrink-0 self-stretch" />
+          <div className="grid grid-cols-8 gap-0.5 sm:gap-1.5 w-full justify-items-center">
+            {QUADRANTS.Q2.map(t => renderTooth(t, true))}
+          </div>
+        </div>
+
+        {/* Q2 Button */}
+        {showQuadrants && onQuadrantClick && (
+          <Button
+            variant="ghost"
+            size="icon"
+            className="shrink-0 h-8 w-8 sm:h-9 sm:w-9 rounded-full border border-dashed border-gray-300 dark:border-slate-600 bg-white/80 dark:bg-slate-800/80 dark:text-slate-300 text-[10px] sm:text-[11px] font-bold shadow-sm hover:bg-primary/10 hover:text-primary hover:border-primary/40 transition-all"
             onClick={() => onQuadrantClick('Q2')}
             title="Select Upper Left Quadrant (Q2)"
           >
             Q2
           </Button>
-          {/* Q4 */}
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            className="pointer-events-auto absolute left-1 sm:left-2 bottom-[20%] h-7 w-7 sm:h-8 sm:w-8 rounded-full hover:bg-primary/10 hover:text-primary text-[9px] sm:text-[10px] font-bold border border-dashed border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-800 dark:text-slate-300 shadow-sm"
+        )}
+      </div>
+
+      {/* ── Horizontal Divider (dashed, crossing the vertical) ── */}
+      <div className="w-full my-4 sm:my-6 relative">
+        <div className="w-full border-t border-dashed border-primary/20 dark:border-primary/30" />
+      </div>
+
+      {/* ── Bottom Teeth Row ── */}
+      <div className={cn(
+        "flex items-center w-full",
+        showQuadrants && onQuadrantClick && "gap-2 sm:gap-4"
+      )}>
+        {/* Q4 Button */}
+        {showQuadrants && onQuadrantClick && (
+          <Button
+            variant="ghost"
+            size="icon"
+            className="shrink-0 h-8 w-8 sm:h-9 sm:w-9 rounded-full border border-dashed border-gray-300 dark:border-slate-600 bg-white/80 dark:bg-slate-800/80 dark:text-slate-300 text-[10px] sm:text-[11px] font-bold shadow-sm hover:bg-primary/10 hover:text-primary hover:border-primary/40 transition-all"
             onClick={() => onQuadrantClick('Q4')}
             title="Select Lower Right Quadrant (Q4)"
           >
             Q4
           </Button>
-          {/* Q3 */}
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            className="pointer-events-auto absolute right-1 sm:right-2 bottom-[20%] h-7 w-7 sm:h-8 sm:w-8 rounded-full hover:bg-primary/10 hover:text-primary text-[9px] sm:text-[10px] font-bold border border-dashed border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-800 dark:text-slate-300 shadow-sm"
+        )}
+
+        {/* Bottom teeth */}
+        <div className="flex-1 flex justify-center gap-2 sm:gap-6 relative">
+          <div className="grid grid-cols-8 gap-0.5 sm:gap-1.5 w-full justify-items-center">
+            {QUADRANTS.Q4.map(t => renderTooth(t, false))}
+          </div>
+          {/* Vertical center divider */}
+          <div className="w-px bg-primary/20 dark:bg-primary/30 shrink-0 self-stretch" />
+          <div className="grid grid-cols-8 gap-0.5 sm:gap-1.5 w-full justify-items-center">
+            {QUADRANTS.Q3.map(t => renderTooth(t, false))}
+          </div>
+        </div>
+
+        {/* Q3 Button */}
+        {showQuadrants && onQuadrantClick && (
+          <Button
+            variant="ghost"
+            size="icon"
+            className="shrink-0 h-8 w-8 sm:h-9 sm:w-9 rounded-full border border-dashed border-gray-300 dark:border-slate-600 bg-white/80 dark:bg-slate-800/80 dark:text-slate-300 text-[10px] sm:text-[11px] font-bold shadow-sm hover:bg-primary/10 hover:text-primary hover:border-primary/40 transition-all"
             onClick={() => onQuadrantClick('Q3')}
             title="Select Lower Left Quadrant (Q3)"
           >
             Q3
           </Button>
-        </div>
-      )}
-
-      {/* Top Teeth Row */}
-      <div className={cn("flex justify-center gap-2 sm:gap-8 w-full relative", showQuadrants && onQuadrantClick && "px-8 sm:px-12")}>
-        <div className="grid grid-cols-8 gap-0.5 sm:gap-1 w-full justify-items-center">
-          {QUADRANTS.Q1.map(t => renderTooth(t, true))}
-        </div>
-        <div className="w-px bg-gray-300 dark:bg-slate-700 rounded-full shrink-0" />
-        <div className="grid grid-cols-8 gap-0.5 sm:gap-1 w-full justify-items-center">
-          {QUADRANTS.Q2.map(t => renderTooth(t, true))}
-        </div>
-      </div>
-      
-      {/* Horizontal Maxillary/Mandibular Divider */}
-      <div className="w-full h-px bg-gradient-to-r from-transparent via-gray-200 dark:via-slate-700 to-transparent my-1 sm:my-2" />
-
-      {/* Bottom Teeth Row */}
-      <div className={cn("flex justify-center gap-2 sm:gap-8 w-full relative", showQuadrants && onQuadrantClick && "px-8 sm:px-12")}>
-        <div className="grid grid-cols-8 gap-0.5 sm:gap-1 w-full justify-items-center">
-          {QUADRANTS.Q4.map(t => renderTooth(t, false))}
-        </div>
-        <div className="w-px bg-gray-300 dark:bg-slate-700 rounded-full shrink-0" />
-        <div className="grid grid-cols-8 gap-0.5 sm:gap-1 w-full justify-items-center">
-          {QUADRANTS.Q3.map(t => renderTooth(t, false))}
-        </div>
+        )}
       </div>
     </div>
   );

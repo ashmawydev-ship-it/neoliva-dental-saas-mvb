@@ -669,29 +669,29 @@ export function TreatmentPlans({
                       className="w-full h-9"
                     />
                   </div>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <Button variant="outline" size="sm" className="h-9 rounded-lg border-blue-200 bg-white text-blue-600 hover:bg-blue-50 dark:bg-slate-800 dark:border-blue-900/50 dark:hover:bg-blue-900/30 dark:text-blue-400">
-                        {inlinePhase.toothList.length > 0 ? (
-                          <Badge className="bg-blue-600 text-white hover:bg-blue-600 px-1.5 py-0 h-5">
-                            {t('dialog.nTeeth', { n: inlinePhase.toothList.length })}
-                          </Badge>
-                        ) : (
-                          t('dialog.selectTeeth')
-                        )}
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-[500px] p-4 rounded-2xl shadow-xl dark:bg-slate-900 dark:border-slate-800" align="end">
-                      <div className="space-y-3">
-                        <p className="text-xs font-bold text-gray-500 uppercase tracking-wider px-2">{t('dialog.selectAffectedTeeth')}</p>
-                        <ToothSelector 
-                          className="border-0 bg-transparent shadow-none p-0"
-                          selectedTeeth={inlinePhase.toothList}
-                          onChange={(teeth) => setInlinePhase(p => ({ ...p, toothList: teeth }))}
-                        />
-                      </div>
-                    </PopoverContent>
-                  </Popover>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button variant="outline" size="sm" className="h-9 rounded-lg border-blue-200 bg-white text-blue-600 hover:bg-blue-50 dark:bg-slate-800 dark:border-blue-900/50 dark:hover:bg-blue-900/30 dark:text-blue-400">
+                          {inlinePhase.toothList.length > 0 ? (
+                            <Badge className="bg-blue-600 text-white hover:bg-blue-600 px-1.5 py-0 h-5">
+                              {t('dialog.nTeeth', { n: inlinePhase.toothList.length })}
+                            </Badge>
+                          ) : (
+                            t('dialog.selectTeeth')
+                          )}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-[700px] p-4 rounded-2xl shadow-xl dark:bg-slate-900 dark:border-slate-800" align="center">
+                        <div className="space-y-3">
+                          <p className="text-xs font-bold text-gray-500 uppercase tracking-wider px-2">{t('dialog.selectAffectedTeeth')}</p>
+                          <ToothSelector 
+                            className="border-0 bg-transparent shadow-none p-0"
+                            selectedTeeth={inlinePhase.toothList}
+                            onChange={(teeth) => setInlinePhase(p => ({ ...p, toothList: teeth }))}
+                          />
+                        </div>
+                      </PopoverContent>
+                    </Popover>
                 </div>
 
                 <div className="grid grid-cols-4 gap-2">
@@ -745,7 +745,7 @@ export function TreatmentPlans({
 
       {/* Add Phase Dialog */}
       <Dialog open={addPhaseDialog !== null} onOpenChange={(o) => !o && setAddPhaseDialog(null)}>
-        <DialogContent className="sm:max-w-md p-0 overflow-hidden bg-white dark:bg-slate-900 border-0 shadow-2xl rounded-2xl dark:text-white">
+        <DialogContent className="sm:max-w-[750px] p-0 overflow-hidden bg-white dark:bg-slate-900 border-0 shadow-2xl rounded-2xl dark:text-white">
           <DialogHeader className="px-6 py-4 border-b border-emerald-100 dark:border-emerald-900/50 bg-emerald-50 dark:bg-emerald-900/20 m-0">
             <DialogTitle className="text-lg font-bold text-emerald-800 dark:text-emerald-400 flex items-center gap-2">
               <Plus className="w-5 h-5 text-emerald-600" /> {t('dialog.addPhase')}

@@ -252,7 +252,7 @@ export function AppointmentsView({ initialAppointments }: { initialAppointments:
 
       {/* Generate Invoice Dialog */}
       <Dialog open={!!generatingInvoiceApt} onOpenChange={(open) => !open && setGeneratingInvoiceApt(null)}>
-        <DialogContent className="sm:max-w-md p-0 overflow-hidden bg-white border-0 shadow-2xl rounded-2xl">
+        <DialogContent className="sm:max-w-md p-0 overflow-hidden bg-white border-0 shadow-2xl rounded-2xl dark:bg-slate-900 dark:text-white">
           <DialogHeader className="px-6 py-4 border-b border-gray-100 bg-gray-50 flex flex-row items-center justify-between m-0">
             <DialogTitle className="text-lg font-bold text-gray-800 flex items-center gap-2">
               <Receipt className="w-5 h-5 text-emerald-600" />

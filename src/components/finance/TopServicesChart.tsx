@@ -23,9 +23,9 @@ const COLORS = ['#6366f1', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'];
 
 export function TopServicesChart({ data }: TopServicesProps) {
   return (
-    <Card className="border-slate-200/60 dark:border-slate-800/60">
+    <Card className="border-slate-200/60 dark:border-slate-800/60 dark:bg-slate-900">
       <CardHeader>
-        <CardTitle className="text-sm font-semibold">Revenue by Service</CardTitle>
+        <CardTitle className="text-sm font-semibold dark:text-white">Revenue by Service</CardTitle>
       </CardHeader>
       <CardContent className="h-[280px]">
         <ResponsiveContainer width="100%" height="100%">

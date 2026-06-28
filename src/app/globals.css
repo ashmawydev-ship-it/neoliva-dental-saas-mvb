@@ -83,6 +83,8 @@
   --sidebar-ring: oklch(0.488 0.180 255);
   --glass-bg: oklch(1 0 0 / 60%);
   --glass-border: oklch(0.915 0.008 250 / 60%);
+  --tooth-fill: oklch(0.97 0.002 247);
+  --tooth-stroke: oklch(0.55 0.015 250);
 }
 
 .dark {
@@ -119,6 +121,8 @@
   --sidebar-ring: oklch(0.588 0.200 255);
   --glass-bg: oklch(0.17 0.018 255 / 60%);
   --glass-border: oklch(1 0 0 / 15%);
+  --tooth-fill: oklch(0.78 0.012 250);
+  --tooth-stroke: oklch(0.50 0.015 250);
 }
 
 @layer base {

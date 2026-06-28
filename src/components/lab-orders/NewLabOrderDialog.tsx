@@ -93,9 +93,9 @@ export function NewLabOrderDialog({ patients }: NewLabOrderDialogProps) {
         </Button>
       </DialogTrigger>
       
-      <DialogContent className="sm:max-w-md md:max-w-xl p-0 overflow-hidden bg-white border-0 shadow-2xl rounded-3xl">
-        <DialogHeader className="bg-gray-50 px-8 py-6 flex flex-row items-center justify-between border-b shrink-0 m-0 space-y-0">
-          <DialogTitle className="text-2xl font-bold text-gray-800 flex items-center gap-4">
+      <DialogContent className="sm:max-w-md md:max-w-xl p-0 overflow-hidden bg-white dark:bg-slate-900 border-0 shadow-2xl rounded-3xl">
+        <DialogHeader className="bg-gray-50 dark:bg-slate-800/50 px-8 py-6 flex flex-row items-center justify-between border-b dark:border-slate-800 shrink-0 m-0 space-y-0">
+          <DialogTitle className="text-2xl font-bold text-gray-800 dark:text-white flex items-center gap-4">
             <div className="bg-purple-600 p-3 rounded-2xl text-white shadow-lg shadow-purple-500/30">
               <Beaker className="h-6 w-6" />
             </div>
@@ -107,31 +107,31 @@ export function NewLabOrderDialog({ patients }: NewLabOrderDialogProps) {
           <div className="p-8 space-y-6 max-h-[70vh] overflow-y-auto custom-scrollbar">
             
             {/* Info Box */}
-            <div className="bg-blue-50/50 border border-blue-100 p-4 rounded-2xl flex items-start gap-3">
-              <div className="p-2 bg-blue-100 text-blue-600 rounded-xl">
+            <div className="bg-blue-50/50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800/30 p-4 rounded-2xl flex items-start gap-3">
+              <div className="p-2 bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 rounded-xl">
                 <FileText className="w-4 h-4" />
               </div>
-              <p className="text-sm text-blue-800 font-medium leading-relaxed">
+              <p className="text-sm text-blue-800 dark:text-blue-300 font-medium leading-relaxed">
                 {t('form.infoBox')}
               </p>
             </div>
 
             {/* Patient Selection */}
             <div className="space-y-2">
-              <Label className="text-xs font-bold text-gray-400 uppercase tracking-widest flex items-center gap-2">
+              <Label className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest flex items-center gap-2">
                 <User className="w-4 h-4" /> {t('form.patientSelection')}
               </Label>
               <Select 
                 value={formData.patientId} 
                 onValueChange={(val) => setFormData({ ...formData, patientId: val ?? "" })}
               >
-                <SelectTrigger className="h-12 border-gray-200 focus:ring-purple-500/20 rounded-2xl bg-gray-50/50">
+                <SelectTrigger className="h-12 border-gray-200 dark:border-slate-700 focus:ring-purple-500/20 rounded-2xl bg-gray-50/50 dark:bg-slate-800/50 dark:text-white">
                   <SelectValue placeholder={t('form.selectPatientPlaceholder')} />
                 </SelectTrigger>
-                <SelectContent className="rounded-2xl border-gray-100 shadow-2xl p-1">
+                <SelectContent className="rounded-2xl border-gray-100 dark:border-slate-700 shadow-2xl p-1 bg-white dark:bg-slate-900">
                   {patients.map(p => (
-                    <SelectItem key={p.id} value={p.id} className="rounded-xl my-0.5">
-                      {p.name} <span className="text-[10px] text-gray-400 ml-2">#{p.displayId}</span>
+                    <SelectItem key={p.id} value={p.id} className="rounded-xl my-0.5 focus:bg-purple-50 dark:focus:bg-slate-800">
+                      <span className="dark:text-gray-200">{p.name}</span> <span className="text-[10px] text-gray-400 dark:text-gray-500 ml-2">#{p.displayId}</span>
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -141,46 +141,46 @@ export function NewLabOrderDialog({ patients }: NewLabOrderDialogProps) {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Lab Name */}
               <div className="space-y-2">
-                <Label className="text-xs font-bold text-gray-400 uppercase tracking-widest flex items-center gap-2">
+                <Label className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest flex items-center gap-2">
                   <Truck className="w-4 h-4" /> {t('form.labName')}
                 </Label>
                 <Input 
                   placeholder={t('form.labNamePlaceholder')} 
                   value={formData.labName}
                   onChange={(e) => setFormData({ ...formData, labName: e.target.value })}
-                  className="h-12 border-gray-200 focus:ring-purple-500/20 rounded-2xl bg-gray-50/50" 
+                  className="h-12 border-gray-200 dark:border-slate-700 focus:ring-purple-500/20 rounded-2xl bg-gray-50/50 dark:bg-slate-800/50 dark:text-white" 
                 />
               </div>
 
               {/* Item Type */}
               <div className="space-y-2">
-                <Label className="text-xs font-bold text-gray-400 uppercase tracking-widest flex items-center gap-2">
+                <Label className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest flex items-center gap-2">
                   <Tag className="w-4 h-4" /> {t('form.itemType')}
                 </Label>
                 <Input 
                   placeholder={t('form.itemTypePlaceholder')} 
                   value={formData.itemType}
                   onChange={(e) => setFormData({ ...formData, itemType: e.target.value })}
-                  className="h-12 border-gray-200 focus:ring-purple-500/20 rounded-2xl bg-gray-50/50" 
+                  className="h-12 border-gray-200 dark:border-slate-700 focus:ring-purple-500/20 rounded-2xl bg-gray-50/50 dark:bg-slate-800/50 dark:text-white" 
                 />
               </div>
 
               {/* Tooth Number */}
               <div className="space-y-2">
-                <Label className="text-xs font-bold text-gray-400 uppercase tracking-widest flex items-center gap-2">
+                <Label className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest flex items-center gap-2">
                   <Stethoscope className="w-4 h-4" /> {t('form.toothNumber')}
                 </Label>
                 <Input 
                   placeholder={t('form.toothNumberPlaceholder')} 
                   value={formData.toothNumber}
                   onChange={(e) => setFormData({ ...formData, toothNumber: e.target.value })}
-                  className="h-12 border-gray-200 focus:ring-purple-500/20 rounded-2xl bg-gray-50/50" 
+                  className="h-12 border-gray-200 dark:border-slate-700 focus:ring-purple-500/20 rounded-2xl bg-gray-50/50 dark:bg-slate-800/50 dark:text-white" 
                 />
               </div>
 
               {/* Cost */}
               <div className="space-y-2">
-                <Label className="text-xs font-bold text-gray-400 uppercase tracking-widest flex items-center gap-2">
+                <Label className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest flex items-center gap-2">
                   <DollarSign className="w-4 h-4" /> {t('form.cost')}
                 </Label>
                 <div className="relative">
@@ -189,45 +189,45 @@ export function NewLabOrderDialog({ patients }: NewLabOrderDialogProps) {
                     placeholder="0.00" 
                     value={formData.cost}
                     onChange={(e) => setFormData({ ...formData, cost: e.target.value })}
-                    className="h-12 pl-10 border-gray-200 focus:ring-purple-500/20 rounded-2xl bg-gray-50/50 font-bold" 
+                    className="h-12 pl-10 border-gray-200 dark:border-slate-700 focus:ring-purple-500/20 rounded-2xl bg-gray-50/50 dark:bg-slate-800/50 font-bold dark:text-white" 
                   />
-                  <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold">$</div>
+                  <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 font-bold">$</div>
                 </div>
               </div>
             </div>
 
             {/* Due Date */}
             <div className="space-y-2">
-              <Label className="text-xs font-bold text-gray-400 uppercase tracking-widest flex items-center gap-2">
+              <Label className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest flex items-center gap-2">
                 <CalendarIcon className="w-4 h-4" /> {t('form.expectedDate')}
               </Label>
               <Input 
                 type="date"
                 value={formData.dueDate}
                 onChange={(e) => setFormData({ ...formData, dueDate: e.target.value })}
-                className="h-12 border-gray-200 focus:ring-purple-500/20 rounded-2xl bg-amber-50/30 font-bold text-amber-900" 
+                className="h-12 border-gray-200 dark:border-slate-700 focus:ring-purple-500/20 rounded-2xl bg-amber-50/30 dark:bg-amber-900/10 font-bold text-amber-900 dark:text-amber-100" 
               />
             </div>
 
             {/* Notes */}
             <div className="space-y-2">
-              <Label className="text-xs font-bold text-gray-400 uppercase tracking-widest">{t('form.notes')}</Label>
+              <Label className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest">{t('form.notes')}</Label>
               <Textarea 
                 placeholder={t('form.notesPlaceholder')} 
                 value={formData.notes}
                 onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                className="min-h-[100px] border-gray-200 focus:ring-purple-500/20 rounded-2xl bg-gray-50/50 resize-none p-4" 
+                className="min-h-[100px] border-gray-200 dark:border-slate-700 focus:ring-purple-500/20 rounded-2xl bg-gray-50/50 dark:bg-slate-800/50 dark:text-white resize-none p-4" 
               />
             </div>
 
           </div>
           
-          <DialogFooter className="bg-gray-50 px-8 py-6 border-t flex gap-4 sm:justify-end">
+          <DialogFooter className="bg-gray-50 dark:bg-slate-800/50 px-8 py-6 border-t dark:border-slate-800 flex gap-4 sm:justify-end">
             <Button 
               type="button" 
               variant="outline" 
               onClick={() => setOpen(false)}
-              className="h-12 px-6 rounded-2xl border-gray-200 font-semibold hover:bg-white cursor-pointer"
+              className="h-12 px-6 rounded-2xl border-gray-200 dark:border-slate-700 font-semibold hover:bg-white dark:hover:bg-slate-800 dark:text-white cursor-pointer"
               disabled={isSubmitting}
             >
               {t('form.discard')}

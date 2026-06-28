@@ -437,7 +437,7 @@ export function VisitHistory({ visits: initialVisits, patientId }: { visits: Vis
 
       {/* Add Visit Dialog */}
       <Dialog open={addDialog} onOpenChange={setAddDialog}>
-        <DialogContent className="sm:max-w-lg p-0 overflow-hidden bg-white border-0 shadow-2xl rounded-2xl">
+        <DialogContent className="sm:max-w-lg p-0 overflow-hidden bg-white dark:bg-slate-900 border-0 shadow-2xl rounded-2xl dark:text-white">
           <DialogHeader className="px-6 py-4 border-b border-gray-100 bg-gradient-to-r from-blue-50 to-indigo-50 m-0">
             <DialogTitle className="text-lg font-bold text-gray-800 flex items-center gap-2">
               <Stethoscope className="w-5 h-5 text-blue-600" /> {t('dialog.title')}
@@ -560,7 +560,7 @@ export function VisitHistory({ visits: initialVisits, patientId }: { visits: Vis
 
       {/* View Visit Detail Dialog */}
       <Dialog open={viewDialog !== null} onOpenChange={(o) => !o && setViewDialog(null)}>
-        <DialogContent className="sm:max-w-lg p-0 overflow-hidden bg-white border-0 shadow-2xl rounded-2xl">
+        <DialogContent className="sm:max-w-lg p-0 overflow-hidden bg-white dark:bg-slate-900 border-0 shadow-2xl rounded-2xl dark:text-white">
           {viewingVisit && (
             <>
               <DialogHeader className={`px-6 py-5 border-b m-0 ${CATEGORY_COLORS[viewingVisit.category].bg}`}>

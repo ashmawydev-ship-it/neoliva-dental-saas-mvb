@@ -30,9 +30,9 @@ export function RevenueChart({ data, periodLabel = "Last 30 Days" }: ChartProps)
   const [view, setView] = useState<'area' | 'bar'>('area');
 
   return (
-    <Card className="col-span-4 border-slate-200/60 dark:border-slate-800/60">
+    <Card className="col-span-4 border-slate-200/60 dark:border-slate-800/60 dark:bg-slate-900">
       <CardHeader className="flex flex-row items-center justify-between space-y-0">
-        <CardTitle className="text-lg font-semibold flex items-center gap-2">
+        <CardTitle className="text-lg font-semibold flex items-center gap-2 dark:text-white">
           Revenue vs Expenses
           <span className="text-xs font-normal text-slate-400 dark:text-slate-500">({periodLabel})</span>
         </CardTitle>
@@ -71,18 +71,20 @@ export function RevenueChart({ data, periodLabel = "Last 30 Days" }: ChartProps)
                   <stop offset="95%" stopColor="#f43f5e" stopOpacity={0}/>
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
+              <CartesianGrid strokeDasharray="3 3" vertical={false} className="stroke-slate-200 dark:stroke-slate-800" />
               <XAxis 
                 dataKey="date" 
                 axisLine={false} 
                 tickLine={false} 
-                tick={{ fontSize: 10, fill: '#94a3b8' }} 
+                tick={{ fontSize: 10, fill: 'currentColor' }} 
+                className="text-slate-400 dark:text-slate-500"
                 dy={10}
               />
               <YAxis 
                 axisLine={false} 
                 tickLine={false} 
-                tick={{ fontSize: 10, fill: '#94a3b8' }}
+                tick={{ fontSize: 10, fill: 'currentColor' }}
+                className="text-slate-400 dark:text-slate-500"
                 tickFormatter={(value) => `$${value}`}
               />
               <Tooltip 
@@ -111,18 +113,20 @@ export function RevenueChart({ data, periodLabel = "Last 30 Days" }: ChartProps)
             </AreaChart>
           ) : (
             <BarChart data={data}>
-              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
+              <CartesianGrid strokeDasharray="3 3" vertical={false} className="stroke-slate-200 dark:stroke-slate-800" />
               <XAxis 
                 dataKey="date" 
                 axisLine={false} 
                 tickLine={false} 
-                tick={{ fontSize: 10, fill: '#94a3b8' }} 
+                tick={{ fontSize: 10, fill: 'currentColor' }} 
+                className="text-slate-400 dark:text-slate-500"
                 dy={10}
               />
               <YAxis 
                 axisLine={false} 
                 tickLine={false} 
-                tick={{ fontSize: 10, fill: '#94a3b8' }}
+                tick={{ fontSize: 10, fill: 'currentColor' }}
+                className="text-slate-400 dark:text-slate-500"
                 tickFormatter={(value) => `$${value}`}
               />
               <Tooltip 

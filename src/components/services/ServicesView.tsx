@@ -39,10 +39,10 @@ interface ServicesViewProps {
 }
 
 const categoryColors: Record<ServiceCategory, string> = {
-  PREVENTIVE: "bg-emerald-50 text-emerald-700 border-emerald-100",
-  RESTORATIVE: "bg-blue-50 text-blue-700 border-blue-100",
-  SURGICAL: "bg-red-50 text-red-700 border-red-100",
-  ORTHODONTICS: "bg-amber-50 text-amber-700 border-amber-100",
+  PREVENTIVE: "bg-emerald-50 text-emerald-700 border-emerald-100 dark:bg-emerald-900/20 dark:text-emerald-400 dark:border-emerald-800/30",
+  RESTORATIVE: "bg-blue-50 text-blue-700 border-blue-100 dark:bg-blue-900/20 dark:text-blue-400 dark:border-blue-800/30",
+  SURGICAL: "bg-red-50 text-red-700 border-red-100 dark:bg-red-900/20 dark:text-red-400 dark:border-red-800/30",
+  ORTHODONTICS: "bg-amber-50 text-amber-700 border-amber-100 dark:bg-amber-900/20 dark:text-amber-400 dark:border-amber-800/30",
 };
 
 const categoryIcons: Record<ServiceCategory, string> = {
@@ -89,12 +89,12 @@ export function ServicesView({ initialServices }: ServicesViewProps) {
   return (
     <div className="space-y-6">
       {/* Filters & Search */}
-      <div className="flex flex-col md:flex-row gap-4 items-center justify-between bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
+      <div className="flex flex-col md:flex-row gap-4 items-center justify-between bg-white dark:bg-slate-900 p-4 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800">
         <div className="relative w-full md:w-96">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
           <Input 
             placeholder={t('searchPlaceholder')} 
-            className="pl-10 bg-gray-50 border-0 focus-visible:ring-indigo-500 rounded-xl h-11"
+            className="pl-10 bg-gray-50 dark:bg-slate-800 dark:text-white border-0 focus-visible:ring-indigo-500 rounded-xl h-11"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -106,7 +106,7 @@ export function ServicesView({ initialServices }: ServicesViewProps) {
             size="sm"
             onClick={() => setCategoryFilter("ALL")}
             className={`rounded-xl px-4 h-9 text-xs font-medium ${
-              categoryFilter === "ALL" ? "bg-indigo-600 text-white" : "text-gray-600 border-gray-200"
+              categoryFilter === "ALL" ? "bg-indigo-600 text-white" : "text-gray-600 border-gray-200 dark:text-gray-300 dark:border-slate-700 dark:hover:bg-slate-800"
             }`}
           >
             {t('filterAll')}
@@ -118,7 +118,7 @@ export function ServicesView({ initialServices }: ServicesViewProps) {
               size="sm"
               onClick={() => setCategoryFilter(cat)}
               className={`rounded-xl px-4 h-9 text-xs font-medium ${
-                categoryFilter === cat ? "bg-indigo-600 text-white" : "text-gray-600 border-gray-200"
+                categoryFilter === cat ? "bg-indigo-600 text-white" : "text-gray-600 border-gray-200 dark:text-gray-300 dark:border-slate-700 dark:hover:bg-slate-800"
               }`}
             >
               {t.has(`categories.${cat}`) ? t(`categories.${cat}`) : (cat.charAt(0) + cat.slice(1).toLowerCase())}
@@ -129,14 +129,14 @@ export function ServicesView({ initialServices }: ServicesViewProps) {
 
       {/* Services Grid */}
       {filteredServices.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-20 bg-white rounded-3xl border border-dashed border-gray-200">
-          <div className="w-16 h-16 bg-gray-50 rounded-2xl flex items-center justify-center mb-4">
-            <SearchX className="w-8 h-8 text-gray-300" />
+        <div className="flex flex-col items-center justify-center py-20 bg-white dark:bg-slate-900 rounded-3xl border border-dashed border-gray-200 dark:border-slate-800">
+          <div className="w-16 h-16 bg-gray-50 dark:bg-slate-800 rounded-2xl flex items-center justify-center mb-4">
+            <SearchX className="w-8 h-8 text-gray-300 dark:text-gray-600" />
           </div>
-          <p className="text-gray-500 font-medium">{t('dialog.noServicesFound')}</p>
+          <p className="text-gray-500 dark:text-gray-400 font-medium">{t('dialog.noServicesFound')}</p>
           <Button 
             variant="link" 
-            className="text-indigo-600"
+            className="text-indigo-600 dark:text-indigo-400"
             onClick={() => { setSearch(""); setCategoryFilter("ALL"); }}
           >
             {t('actions.clearFilters')}
@@ -145,7 +145,7 @@ export function ServicesView({ initialServices }: ServicesViewProps) {
       ) : (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 stagger-children">
           {filteredServices.map((service) => (
-            <Card key={service.id} className="border-0 shadow-sm card-hover overflow-hidden group relative bg-white">
+            <Card key={service.id} className="border-0 shadow-sm card-hover overflow-hidden group relative bg-white dark:bg-slate-900">
               {service.popular && (
                 <div className="absolute top-4 right-12 z-10">
                   <Badge className="bg-gradient-to-r from-amber-400 to-orange-500 text-white border-none text-[10px] font-bold rounded-full px-2 shadow-sm">
@@ -157,19 +157,19 @@ export function ServicesView({ initialServices }: ServicesViewProps) {
               <div className="absolute top-3 right-3 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg hover:bg-gray-100">
-                      <MoreVertical className="w-4 h-4 text-gray-500" />
+                    <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-800">
+                      <MoreVertical className="w-4 h-4 text-gray-500 dark:text-gray-400" />
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="rounded-xl border-gray-100 shadow-xl">
+                  <DropdownMenuContent align="end" className="rounded-xl border-gray-100 dark:border-slate-800 dark:bg-slate-900 shadow-xl">
                     <DropdownMenuItem 
-                      className="text-gray-600 focus:text-indigo-600 cursor-pointer rounded-lg"
+                      className="text-gray-600 dark:text-gray-300 focus:text-indigo-600 dark:focus:text-indigo-400 cursor-pointer rounded-lg"
                       onClick={() => handleEditClick(service)}
                     >
                       <Edit2 className="w-4 h-4 mr-2" /> {t('actions.edit')}
                     </DropdownMenuItem>
                     <DropdownMenuItem 
-                      className="text-red-600 focus:text-red-700 cursor-pointer rounded-lg"
+                      className="text-red-600 dark:text-red-500 focus:text-red-700 dark:focus:text-red-400 cursor-pointer rounded-lg"
                       onClick={() => handleDelete(service.id)}
                     >
                       <Trash2 className="w-4 h-4 mr-2" /> {t('actions.delete')}
@@ -180,30 +180,30 @@ export function ServicesView({ initialServices }: ServicesViewProps) {
 
               <CardContent className="p-6">
                 <div className="flex items-start gap-4">
-                  <div className="w-14 h-14 rounded-2xl bg-gray-50 flex items-center justify-center text-3xl flex-shrink-0 group-hover:scale-110 transition-transform shadow-inner">
+                  <div className="w-14 h-14 rounded-2xl bg-gray-50 dark:bg-slate-800 flex items-center justify-center text-3xl flex-shrink-0 group-hover:scale-110 transition-transform shadow-inner">
                     {categoryIcons[service.category] || "🦷"}
                   </div>
                   <div className="flex-1 min-w-0 pr-6">
-                    <h3 className="text-base font-bold text-gray-900 mb-1 group-hover:text-indigo-600 transition-colors">
+                    <h3 className="text-base font-bold text-gray-900 dark:text-white mb-1 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
                       {service.name}
                     </h3>
-                    <p className="text-xs text-gray-500 leading-relaxed line-clamp-2">
+                    <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed line-clamp-2">
                       {service.description || t('form.noDescription')}
                     </p>
                   </div>
                 </div>
 
-                <div className="mt-6 pt-5 border-t border-gray-50 flex items-center justify-between">
+                <div className="mt-6 pt-5 border-t border-gray-50 dark:border-slate-800 flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <div className="flex items-center gap-1.5 text-xs font-medium text-gray-600 bg-gray-50 px-2.5 py-1 rounded-lg">
-                      <Clock className="w-3.5 h-3.5 text-indigo-500" /> {service.duration} {t('form.minute')}
+                    <div className="flex items-center gap-1.5 text-xs font-medium text-gray-600 dark:text-gray-300 bg-gray-50 dark:bg-slate-800 px-2.5 py-1 rounded-lg">
+                      <Clock className="w-3.5 h-3.5 text-indigo-500 dark:text-indigo-400" /> {service.duration} {t('form.minute')}
                     </div>
-                    <Badge variant="outline" className={`text-[10px] uppercase tracking-wider font-bold rounded-full border px-2.5 py-0.5 ${categoryColors[service.category] || 'bg-gray-50 text-gray-700'}`}>
+                    <Badge variant="outline" className={`text-[10px] uppercase tracking-wider font-bold rounded-full border px-2.5 py-0.5 ${categoryColors[service.category] || 'bg-gray-50 text-gray-700 dark:bg-slate-800 dark:text-gray-300'}`}>
                       {t.has(`categories.${service.category}`) ? t(`categories.${service.category}`) : service.category.replace('_', ' ')}
                     </Badge>
                   </div>
                   <div className="text-right">
-                    <p className="text-xl font-black text-gray-900">${service.price}</p>
+                    <p className="text-xl font-black text-gray-900 dark:text-white">${service.price}</p>
                   </div>
                 </div>
               </CardContent>

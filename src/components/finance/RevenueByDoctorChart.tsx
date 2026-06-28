@@ -25,21 +25,22 @@ const COLORS = ['#6366f1', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'];
 
 export function RevenueByDoctorChart({ data }: DoctorRevenueProps) {
   return (
-    <Card className="border-slate-200/60 dark:border-slate-800/60">
+    <Card className="border-slate-200/60 dark:border-slate-800/60 dark:bg-slate-900">
       <CardHeader>
-        <CardTitle className="text-sm font-semibold">Revenue by Doctor</CardTitle>
+        <CardTitle className="text-sm font-semibold dark:text-white">Revenue by Doctor</CardTitle>
       </CardHeader>
       <CardContent className="h-[280px]">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={data} layout="vertical" margin={{ left: 20 }}>
-            <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} stroke="#e2e8f0" />
+            <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} className="stroke-slate-200 dark:stroke-slate-800" />
             <XAxis type="number" hide />
             <YAxis 
               dataKey="name" 
               type="category" 
               axisLine={false} 
               tickLine={false} 
-              tick={{ fontSize: 11, fill: '#64748b' }}
+              tick={{ fontSize: 11, fill: 'currentColor' }}
+              className="text-slate-500 dark:text-slate-400"
               width={100}
             />
             <Tooltip 

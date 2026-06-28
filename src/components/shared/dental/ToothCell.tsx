@@ -45,7 +45,7 @@ export function ToothCell({
       onClick={onClick}
       disabled={!onClick}
       className={cn(
-        "focus:outline-none transition-all p-1 rounded-xl flex items-center justify-center w-full",
+        "focus:outline-none transition-all p-1 rounded-xl flex items-center justify-center w-full min-w-[36px]",
         onClick && "hover:bg-gray-100 dark:hover:bg-slate-800 cursor-pointer",
         isSelected && "bg-primary/5",
         buttonClassName

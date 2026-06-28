@@ -73,12 +73,12 @@ export default async function BillingPage() {
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">{t('kpis.paidInvoices')}</CardTitle>
             <div className="w-8 h-8 rounded-lg bg-red-50/50 dark:bg-red-950/30 flex items-center justify-center">
-              <DollarSign className="h-4 w-4 text-red-500" />
+              <DollarSign className="h-4 w-4 text-red-500 dark:text-red-400" />
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-red-600">${stats.overdueAmount.toLocaleString()}</div>
-            <p className="text-xs text-red-600 font-semibold mt-2 flex items-center gap-1">
+            <div className="text-3xl font-bold text-red-600 dark:text-red-400">${stats.overdueAmount.toLocaleString()}</div>
+            <p className="text-xs text-red-600 dark:text-red-400 font-semibold mt-2 flex items-center gap-1">
               <ArrowDownRight className="w-3 h-3" /> Requires attention
             </p>
           </CardContent>

@@ -19,7 +19,7 @@ import { z } from "zod";
 
 type InvoiceFormValues = z.infer<typeof InvoiceFormSchema>;
 
-export function NewInvoiceDialog() {
+export function NewInvoiceDialog({ customTrigger }: { customTrigger?: React.ReactNode }) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const t = useTranslations("billing");
@@ -131,9 +131,11 @@ export function NewInvoiceDialog() {
       if (!val) reset();
     }}>
       <DialogTrigger asChild>
-        <Button className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-lg shadow-blue-500/25 rounded-xl h-10 px-5 text-sm font-medium border-0 cursor-pointer text-white">
-          <PlusCircle className="mr-2 h-4 w-4" /> {t('newInvoice')}
-        </Button>
+        {customTrigger || (
+          <Button className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-lg shadow-blue-500/25 rounded-xl h-10 px-5 text-sm font-medium border-0 cursor-pointer text-white">
+            <PlusCircle className="mr-2 h-4 w-4" /> {t('newInvoice')}
+          </Button>
+        )}
       </DialogTrigger>
       
       <DialogContent className="sm:max-w-md md:max-w-lg p-0 overflow-hidden bg-gray-50 border-0 shadow-2xl rounded-2xl">

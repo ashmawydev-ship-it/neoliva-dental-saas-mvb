@@ -83,7 +83,7 @@ export function PrescriptionForm({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-3xl p-0 overflow-hidden bg-white rounded-2xl border-0 shadow-2xl">
+      <DialogContent className="sm:max-w-3xl p-0 overflow-hidden bg-white dark:bg-slate-900 dark:text-white rounded-2xl border-0 shadow-2xl">
         <DialogHeader className="px-6 py-4 border-b border-gray-100 bg-gradient-to-r from-blue-50 to-indigo-50">
           <DialogTitle className="text-xl font-bold text-gray-800 flex items-center gap-2">
             <Pill className="w-5 h-5 text-blue-600" />

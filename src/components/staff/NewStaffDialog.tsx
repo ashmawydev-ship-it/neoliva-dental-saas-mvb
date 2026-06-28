@@ -74,7 +74,7 @@ export function NewStaffDialog() {
         </Button>
       </DialogTrigger>
       
-      <DialogContent className="sm:max-w-md md:max-w-lg p-0 overflow-hidden bg-gray-50 border-0 shadow-2xl rounded-2xl">
+      <DialogContent className="sm:max-w-md md:max-w-lg p-0 overflow-hidden bg-gray-50 dark:bg-slate-900 border-0 shadow-2xl rounded-2xl dark:text-white">
         <DialogHeader className="bg-white px-6 py-4 flex flex-row items-center justify-between border-b shrink-0 m-0 space-y-0">
           <DialogTitle className="text-xl font-bold text-gray-800 flex items-center gap-3">
             <span className="bg-blue-100 p-2 rounded-xl">
