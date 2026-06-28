@@ -88,7 +88,8 @@ export type BusinessEventType =
   | 'SECURITY_DENIED'
   | 'SMS_SENT'
   | 'SMS_FAILED'
-  | 'CAMPAIGN_COMPLETED';
+  | 'CAMPAIGN_COMPLETED'
+  | 'COMMISSION_PAID';
 
 interface TrackEventOptions {
   tenantId: string;
