@@ -22,7 +22,7 @@ export default async function LandingPage({ searchParams }: Props) {
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white dark:bg-slate-950">
       <Navbar />
       <main>
         <Hero />

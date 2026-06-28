@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { createInvoice } from "@/app/actions/billing";
+import { useTranslations } from "next-intl";
 
 interface InvoiceFormProps {
   isOpen: boolean;
@@ -31,6 +32,7 @@ interface InvoiceFormProps {
 }
 
 export function InvoiceForm({ isOpen, onClose, patientId, onRefresh }: InvoiceFormProps) {
+  const t = useTranslations('patientBilling');
   const [dueDate, setDueDate] = useState("");
   const [items, setItems] = useState([{ description: "", quantity: 1, price: "" }]);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -95,8 +97,8 @@ export function InvoiceForm({ isOpen, onClose, patientId, onRefresh }: InvoiceFo
               <Receipt className="w-6 h-6" />
             </div>
             <DialogHeader>
-              <DialogTitle className="text-2xl font-black">New Invoice</DialogTitle>
-              <p className="text-indigo-100 text-sm font-medium mt-1">Generate a new billing record for this patient.</p>
+              <DialogTitle className="text-2xl font-black">{t('form.title')}</DialogTitle>
+              <p className="text-indigo-100 text-sm font-medium mt-1">{t('form.subtitle')}</p>
             </DialogHeader>
           </div>
           <div className="absolute top-0 right-0 p-8 opacity-10">
@@ -107,7 +109,7 @@ export function InvoiceForm({ isOpen, onClose, patientId, onRefresh }: InvoiceFo
         <div className="p-8 space-y-6 max-h-[60vh] overflow-y-auto">
           <div className="grid grid-cols-1 gap-6">
             <div className="grid gap-2">
-              <Label htmlFor="dueDate" className="text-xs font-black text-gray-400 uppercase tracking-widest ml-1">Due Date (Optional)</Label>
+              <Label htmlFor="dueDate" className="text-xs font-black text-gray-400 uppercase tracking-widest ml-1">{t('form.dueDate')}</Label>
               <div className="relative">
                 <Calendar className="absolute left-3.5 top-3 w-4 h-4 text-gray-400" />
                 <Input
@@ -123,7 +125,7 @@ export function InvoiceForm({ isOpen, onClose, patientId, onRefresh }: InvoiceFo
 
           <div className="space-y-4 pt-4 border-t border-gray-100">
             <div className="flex items-center justify-between mb-2">
-              <Label className="text-xs font-black text-gray-400 uppercase tracking-widest ml-1">Invoice Items</Label>
+              <Label className="text-xs font-black text-gray-400 uppercase tracking-widest ml-1">{t('form.invoiceItems')}</Label>
               <Button 
                 type="button" 
                 variant="outline" 
@@ -140,7 +142,7 @@ export function InvoiceForm({ isOpen, onClose, patientId, onRefresh }: InvoiceFo
                 <div key={index} className="flex gap-2 group animate-in fade-in slide-in-from-top-1 duration-200">
                   <div className="flex-[2]">
                     <Input
-                      placeholder="Item description"
+                      placeholder={t('form.itemDescription')}
                       value={item.description}
                       onChange={(e) => updateItem(index, "description", e.target.value)}
                       className="h-11 rounded-xl border-gray-200"
@@ -149,7 +151,7 @@ export function InvoiceForm({ isOpen, onClose, patientId, onRefresh }: InvoiceFo
                   <div className="w-20">
                     <Input
                       type="number"
-                      placeholder="Qty"
+                      placeholder={t('form.qty')}
                       min="1"
                       value={item.quantity}
                       onChange={(e) => updateItem(index, "quantity", parseInt(e.target.value) || 1)}
@@ -160,7 +162,7 @@ export function InvoiceForm({ isOpen, onClose, patientId, onRefresh }: InvoiceFo
                     <DollarSign className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
                     <Input
                       type="number"
-                      placeholder="Price"
+                      placeholder={t('form.price')}
                       value={item.price}
                       onChange={(e) => updateItem(index, "price", e.target.value)}
                       className="h-11 pl-8 rounded-xl border-gray-200 font-bold"
@@ -184,17 +186,17 @@ export function InvoiceForm({ isOpen, onClose, patientId, onRefresh }: InvoiceFo
 
         <div className="p-8 bg-gray-50 flex items-center justify-between border-t border-gray-100">
           <div className="text-left">
-            <p className="text-xs text-gray-400 font-black uppercase tracking-tighter">Total Invoice Amount</p>
+            <p className="text-xs text-gray-400 font-black uppercase tracking-tighter">{t('form.totalAmount')}</p>
             <p className="text-2xl font-black text-indigo-600">${totalAmount.toFixed(2)}</p>
           </div>
           <div className="flex gap-3">
-            <Button variant="ghost" onClick={onClose} className="rounded-xl font-bold text-gray-500 px-6 h-12">Cancel</Button>
+            <Button variant="ghost" onClick={onClose} className="rounded-xl font-bold text-gray-500 px-6 h-12">{t('form.cancel')}</Button>
             <Button 
               onClick={handleSubmit} 
               disabled={isSubmitting}
               className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl h-12 px-8 font-black shadow-lg shadow-indigo-100 transition-all active:scale-95"
             >
-              Create Invoice
+              {t('form.create')}
             </Button>
           </div>
         </div>

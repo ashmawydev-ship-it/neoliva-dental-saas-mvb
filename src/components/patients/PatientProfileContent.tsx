@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useTranslations } from 'next-intl';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
@@ -22,6 +23,7 @@ import { VisitHistory } from "@/components/patients/VisitHistory";
 import { BillingList } from "@/components/patients/billing/BillingList";
 
 export function PatientProfileContent({ patient: initialPatient }: { patient: any }) {
+  const t = useTranslations('patientProfile');
   const router = useRouter();
   const [patient, setPatient] = useState(initialPatient);
 
@@ -42,7 +44,7 @@ export function PatientProfileContent({ patient: initialPatient }: { patient: an
       {/* Back + Header */}
       <div className="flex items-center gap-4">
         <Link href="/patients">
-          <Button variant="ghost" size="icon" className="rounded-xl h-10 w-10 text-gray-500 hover:bg-gray-100">
+          <Button variant="ghost" size="icon" className="rounded-xl h-10 w-10 text-muted-foreground hover:bg-gray-100">
             <ArrowLeft className="h-4 w-4" />
           </Button>
         </Link>
@@ -53,16 +55,16 @@ export function PatientProfileContent({ patient: initialPatient }: { patient: an
                 {patient.avatar}
               </div>
               <div>
-                <h1 className="text-2xl font-bold tracking-tight text-gray-900">{patient.name}</h1>
-                <p className="text-sm text-gray-500">Patient ID: {patient.id} · Registered since {patient.registeredSince}</p>
+                <h1 className="text-2xl font-bold tracking-tight text-foreground">{patient.name}</h1>
+                <p className="text-sm text-muted-foreground">{t('patientId', { id: patient.id, date: patient.registeredSince })}</p>
               </div>
             </div>
             <Badge className={`sm:ml-auto rounded-full px-3 py-1 text-xs font-semibold w-fit ${
               patient.status === "Active" 
                 ? "bg-emerald-50 text-emerald-700 border-emerald-200" 
-                : "bg-gray-50 text-gray-500 border-gray-200"
+                : "bg-gray-50 text-muted-foreground border-gray-200"
             }`}>
-              ● {patient.status} Patient
+              ● {t('statusBadge', { status: t(`status.${patient.status.toLowerCase()}`) })}
             </Badge>
           </div>
         </div>
@@ -71,18 +73,18 @@ export function PatientProfileContent({ patient: initialPatient }: { patient: an
       <div className="grid gap-6 lg:grid-cols-3">
         {/* Sidebar Info */}
         <div className="space-y-4">
-          <Card className="border-0 shadow-sm">
+          <Card className="border-0 shadow-sm dark:bg-slate-900">
             <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-semibold text-gray-900 flex items-center gap-2">
-                <Heart className="w-4 h-4 text-red-400" /> Personal Information
+              <CardTitle className="text-sm font-semibold text-foreground flex items-center gap-2">
+                <Heart className="w-4 h-4 text-red-400" /> {t('info.title')}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               {[
-                { icon: Phone, label: "Phone", value: patient.phone },
-                { icon: Mail, label: "Email", value: patient.email },
-                { icon: CalendarIcon, label: "Date of Birth", value: patient.dob },
-                { icon: MapPin, label: "Address", value: patient.address },
+                { icon: Phone, label: t('info.phone'), value: patient.phone },
+                { icon: Mail, label: t('info.email'), value: patient.email },
+                { icon: CalendarIcon, label: t('info.dob'), value: patient.dob },
+                { icon: MapPin, label: t('info.address'), value: patient.address },
               ].map((item: any) => (
                 <div key={item.label} className="flex items-start gap-3">
                   <div className="w-8 h-8 rounded-lg bg-gray-50 flex items-center justify-center flex-shrink-0">
@@ -90,7 +92,7 @@ export function PatientProfileContent({ patient: initialPatient }: { patient: an
                   </div>
                   <div>
                     <p className="text-[11px] text-gray-400 uppercase tracking-wider font-semibold">{item.label}</p>
-                    <p className="text-sm text-gray-800 whitespace-pre-line">{item.value}</p>
+                    <p className="text-sm text-gray-800 dark:text-gray-200 whitespace-pre-line">{item.value}</p>
                   </div>
                 </div>
               ))}
@@ -98,10 +100,10 @@ export function PatientProfileContent({ patient: initialPatient }: { patient: an
           </Card>
 
           {(patient.allergies ?? []).length > 0 && (
-          <Card className="border-0 shadow-sm border-l-4 border-l-red-400">
+          <Card className="border-0 shadow-sm border-l-4 border-l-red-400 dark:bg-slate-900">
             <CardContent className="pt-5 pb-4">
               <h4 className="text-xs font-bold text-red-600 uppercase tracking-wider flex items-center gap-1.5 mb-3">
-                <ActivityIcon className="w-3.5 h-3.5" /> Allergies & Alerts
+                <ActivityIcon className="w-3.5 h-3.5" /> {t('allergies.title')}
               </h4>
               <div className="flex gap-1.5 flex-wrap">
                 {patient.allergies.map((allergy: any) => (
@@ -120,19 +122,19 @@ export function PatientProfileContent({ patient: initialPatient }: { patient: an
           </Card>
           )}
 
-          <Card className="border-0 shadow-sm">
+          <Card className="border-0 shadow-sm dark:bg-slate-900">
             <CardContent className="pt-5 pb-4">
-              <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Quick Stats</h4>
+              <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-3">{t('quickStats.title')}</h4>
               <div className="grid grid-cols-2 gap-3">
                 {[
-                  { label: "Total Visits", value: String(patient.visits || patient.visitHistory?.length || 0) },
-                  { label: "Outstanding", value: `$${Number(patient.outstanding ?? 0).toFixed(2)}` },
-                  { label: "Last X-Ray", value: patient.lastXRay || 'None' },
-                  { label: "Insurance", value: patient.insurance || 'None' },
+                  { label: t('quickStats.totalVisits'), value: String(patient.visits || patient.visitHistory?.length || 0) },
+                  { label: t('quickStats.outstanding'), value: `$${Number(patient.outstanding ?? 0).toFixed(2)}` },
+                  { label: t('quickStats.lastXray'), value: patient.lastXRay || 'None' },
+                  { label: t('quickStats.insurance'), value: patient.insurance || 'None' },
                 ].map((stat: any) => (
-                  <div key={stat.label} className="p-3 rounded-xl bg-gray-50 text-center">
-                    <p className="text-lg font-bold text-gray-900">{stat.value}</p>
-                    <p className="text-[10px] text-gray-500 mt-0.5">{stat.label}</p>
+                  <div key={stat.label} className="p-3 rounded-xl bg-gray-50 text-center dark:bg-slate-800">
+                    <p className="text-lg font-bold text-foreground">{stat.value}</p>
+                    <p className="text-[10px] text-muted-foreground mt-0.5">{stat.label}</p>
                   </div>
                 ))}
               </div>
@@ -143,22 +145,22 @@ export function PatientProfileContent({ patient: initialPatient }: { patient: an
         {/* Main Tabs */}
         <div className="lg:col-span-2">
           <Tabs defaultValue="history" className="w-full max-w-full min-w-0">
-            <TabsList className="bg-gray-100/80 p-1 rounded-xl h-auto flex overflow-x-auto w-full justify-start gap-1 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+            <TabsList className="bg-gray-100/80 dark:bg-slate-800/80 p-1 rounded-xl h-auto flex overflow-x-auto w-full justify-start gap-1 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
               {[
-                { value: "history", label: "History", icon: Stethoscope },
-                { value: "medicalHistory", label: "Medical History", icon: ClipboardList },
-                { value: "oralExamination", label: "Oral Exam", icon: Smile },
-                { value: "odontogram", label: "Tooth Chart", icon: LayoutDashboard },
-                { value: "periodontogram", label: "Periodonto", icon: ActivityIcon },
-                { value: "plan", label: "Plans", icon: FileText },
-                { value: "prescriptions", label: "Rx", icon: Pill },
-                { value: "documents", label: "Documents", icon: ImageIcon },
-                { value: "billing", label: "Billing", icon: FileText },
+                { value: "history", label: t('tabs.history'), icon: Stethoscope },
+                { value: "medicalHistory", label: t('tabs.medicalHistory'), icon: ClipboardList },
+                { value: "oralExamination", label: t('tabs.oralExam'), icon: Smile },
+                { value: "odontogram", label: t('tabs.toothChart'), icon: LayoutDashboard },
+                { value: "periodontogram", label: t('tabs.periodonto'), icon: ActivityIcon },
+                { value: "plan", label: t('tabs.plans'), icon: FileText },
+                { value: "prescriptions", label: t('tabs.rx'), icon: Pill },
+                { value: "documents", label: t('tabs.documents'), icon: ImageIcon },
+                { value: "billing", label: t('tabs.billing'), icon: FileText },
               ].map((tab: any) => (
                 <TabsTrigger
                   key={tab.value}
                   value={tab.value}
-                  className="rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm text-xs font-medium py-2 flex-shrink-0 whitespace-nowrap min-w-max px-4"
+                  className="rounded-lg data-[state=active]:bg-white dark:data-[state=active]:bg-slate-700 data-[state=active]:shadow-sm text-xs font-medium py-2 flex-shrink-0 whitespace-nowrap min-w-max px-4"
                 >
                   <tab.icon className="w-3.5 h-3.5 mr-1.5" />
                   <span className="hidden sm:inline">{tab.label}</span>

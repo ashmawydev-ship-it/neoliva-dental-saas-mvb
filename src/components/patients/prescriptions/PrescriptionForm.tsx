@@ -9,6 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '
 import { createPrescription } from '@/app/actions/prescriptions'
 import { toast } from 'sonner'
 import { Badge } from '@/components/ui/badge'
+import { useTranslations } from 'next-intl'
 
 interface PrescriptionItem {
   medicationName: string
@@ -28,7 +29,7 @@ export function PrescriptionForm({
   onOpenChange: (open: boolean) => void
   onSuccess?: () => void
 }) {
-
+  const t = useTranslations('prescriptions')
   const [loading, setLoading] = useState(false)
   const [notes, setNotes] = useState('')
   const [items, setItems] = useState<PrescriptionItem[]>([
@@ -86,7 +87,7 @@ export function PrescriptionForm({
         <DialogHeader className="px-6 py-4 border-b border-gray-100 bg-gradient-to-r from-blue-50 to-indigo-50">
           <DialogTitle className="text-xl font-bold text-gray-800 flex items-center gap-2">
             <Pill className="w-5 h-5 text-blue-600" />
-            New Prescription
+            {t('newPrescription')}
           </DialogTitle>
         </DialogHeader>
 
@@ -117,10 +118,10 @@ export function PrescriptionForm({
                   <div className="col-span-4 space-y-1.5">
                     <div className="flex items-center gap-1.5 mb-1">
                       <Hash className="w-3 h-3 text-blue-500" />
-                      <span className="text-[10px] font-bold text-gray-400 uppercase">Medication</span>
+                      <span className="text-[10px] font-bold text-gray-400 uppercase">{t('form.medication')}</span>
                     </div>
                     <Input
-                      placeholder="e.g., Amoxicillin 500mg"
+                      placeholder={t('form.phMedication')}
                       value={item.medicationName}
                       onChange={(e) => updateItem(index, 'medicationName', e.target.value)}
                       className="h-9 bg-white border-gray-200 focus:ring-blue-500/20"
@@ -129,10 +130,10 @@ export function PrescriptionForm({
                   <div className="col-span-2 space-y-1.5">
                     <div className="flex items-center gap-1.5 mb-1">
                       <Activity className="w-3 h-3 text-emerald-500" />
-                      <span className="text-[10px] font-bold text-gray-400 uppercase">Dosage</span>
+                      <span className="text-[10px] font-bold text-gray-400 uppercase">{t('form.dosage')}</span>
                     </div>
                     <Input
-                      placeholder="1 tab"
+                      placeholder={t('form.phDosage')}
                       value={item.dosage}
                       onChange={(e) => updateItem(index, 'dosage', e.target.value)}
                       className="h-9 bg-white border-gray-200"
@@ -141,10 +142,10 @@ export function PrescriptionForm({
                   <div className="col-span-3 space-y-1.5">
                     <div className="flex items-center gap-1.5 mb-1">
                       <Clock className="w-3 h-3 text-amber-500" />
-                      <span className="text-[10px] font-bold text-gray-400 uppercase">Frequency</span>
+                      <span className="text-[10px] font-bold text-gray-400 uppercase">{t('form.frequency')}</span>
                     </div>
                     <Input
-                      placeholder="3 times / day"
+                      placeholder={t('form.phFrequency')}
                       value={item.frequency}
                       onChange={(e) => updateItem(index, 'frequency', e.target.value)}
                       className="h-9 bg-white border-gray-200"
@@ -153,10 +154,10 @@ export function PrescriptionForm({
                   <div className="col-span-2 space-y-1.5">
                     <div className="flex items-center gap-1.5 mb-1">
                       <Hash className="w-3 h-3 text-purple-500" />
-                      <span className="text-[10px] font-bold text-gray-400 uppercase">Duration</span>
+                      <span className="text-[10px] font-bold text-gray-400 uppercase">{t('form.duration')}</span>
                     </div>
                     <Input
-                      placeholder="7 days"
+                      placeholder={t('form.phDuration')}
                       value={item.duration}
                       onChange={(e) => updateItem(index, 'duration', e.target.value)}
                       className="h-9 bg-white border-gray-200"
@@ -181,9 +182,9 @@ export function PrescriptionForm({
 
           {/* Notes */}
           <div className="space-y-1.5">
-            <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Instructions / Notes</label>
+            <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">{t('form.instructions')}</label>
             <Textarea
-              placeholder="Special instructions for the patient..."
+              placeholder={t('form.phInstructions')}
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               className="min-h-[100px] rounded-xl border-gray-200 bg-gray-50/50 resize-none focus:ring-blue-500/20"
@@ -197,7 +198,7 @@ export function PrescriptionForm({
             onClick={() => onOpenChange(false)} 
             className="flex-1 rounded-xl h-11 text-gray-500 font-semibold"
           >
-            Cancel
+            {t('form.cancel')}
           </Button>
           <Button 
             onClick={handleSubmit} 
@@ -209,7 +210,7 @@ export function PrescriptionForm({
             ) : (
               <Save className="w-4 h-4 mr-2" />
             )}
-            Save Prescription
+            {t('form.save')}
           </Button>
         </DialogFooter>
       </DialogContent>

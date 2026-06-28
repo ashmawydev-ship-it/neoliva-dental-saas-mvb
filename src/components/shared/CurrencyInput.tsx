@@ -66,7 +66,7 @@ export function CurrencyInput({
     )}>
       <div className={cn(
         "absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground transition-colors duration-200 pointer-events-none flex items-center justify-center",
-        isFocused ? "text-primary" : "text-gray-400 group-hover:text-gray-600"
+        isFocused ? "text-primary" : "text-gray-400 dark:text-slate-500 group-hover:text-gray-600 dark:group-hover:text-slate-300"
       )}>
         {prefix}
       </div>
@@ -81,7 +81,7 @@ export function CurrencyInput({
         className={cn(
           "pl-8 h-11 border-gray-200 rounded-xl transition-all duration-200",
           "focus-visible:ring-primary/20 focus-visible:border-primary",
-          "placeholder:text-gray-300 font-medium text-gray-900",
+          "placeholder:text-gray-300 dark:placeholder:text-slate-500 font-medium text-gray-900 dark:text-white dark:bg-slate-800 dark:border-slate-700",
           className
         )}
       />

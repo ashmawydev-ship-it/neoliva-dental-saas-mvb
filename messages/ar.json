@@ -863,6 +863,224 @@
       "templateUpdated": "تم تحديث القالب بنجاح"
     }
   },
+  "patientProfile": {
+    "patientId": "رقم المريض: {id} · مسجل منذ {date}",
+    "statusBadge": "{status} مريض",
+    "status": {
+      "active": "نشط",
+      "inactive": "غير نشط",
+      "archived": "مؤرشف"
+    },
+    "info": {
+      "title": "المعلومات الشخصية",
+      "phone": "الهاتف",
+      "email": "البريد الإلكتروني",
+      "dob": "تاريخ الميلاد",
+      "address": "العنوان"
+    },
+    "allergies": { "title": "الحساسية والتنبيهات" },
+    "quickStats": {
+      "title": "إحصائيات سريعة",
+      "totalVisits": "إجمالي الزيارات",
+      "outstanding": "المستحقات",
+      "lastXray": "آخر أشعة",
+      "insurance": "التأمين"
+    },
+    "tabs": {
+      "history": "السجل",
+      "medicalHistory": "التاريخ الطبي",
+      "oralExam": "فحص الفم",
+      "toothChart": "خريطة الأسنان",
+      "periodonto": "دواعم السن",
+      "plans": "خطط العلاج",
+      "rx": "الوصفات",
+      "documents": "الوثائق",
+      "billing": "الفواتير"
+    }
+  },
+  "visitHistory": {
+    "newVisit": "زيارة جديدة",
+    "byCategory": "حسب التصنيف",
+    "save": "حفظ",
+    "cancel": "إلغاء",
+    "print": "طباعة",
+    "delete": "حذف",
+    "filters": "فلترة",
+    "newest": "الأحدث",
+    "oldest": "الأقدم",
+    "searchPlaceholder": "ابحث في الزيارات...",
+    "timeline": "الجدول الزمني للزيارات",
+    "emptyHistory": "لا يوجد سجل زيارات بعد.",
+    "noResults": "لا توجد زيارات مطابقة.",
+    "totalVisits": "إجمالي الزيارات",
+    "lastVisit": "آخر زيارة",
+    "all": "الكل",
+    "clearFilters": "مسح الفلاتر",
+    "viewDetails": "عرض التفاصيل",
+    "clinicalNotes": "ملاحظات سريرية",
+    "noNotes": "لم يتم تسجيل ملاحظات",
+    "quickSelect": "اختيار سريع للعلاج",
+    "treatmentProcedure": "العلاج / الإجراء *",
+    "category": "التصنيف",
+    "results": "نتائج",
+    "dialog": {
+      "title": "سجل زيارة جديدة",
+      "treatment": "العلاج",
+      "date": "التاريخ",
+      "doctor": "الطبيب",
+      "toothNumber": "رقم السن",
+      "notes": "ملاحظات"
+    },
+    "visit": {
+      "tooth": "السن",
+      "duration": "المدة",
+      "cost": "التكلفة",
+      "doctor": "الطبيب",
+      "notes": "ملاحظات"
+    },
+    "categories": {
+      "Examination": "فحص",
+      "Restorative": "ترميمي",
+      "Endodontic": "علاج عصب",
+      "Surgical": "جراحي",
+      "Preventive": "وقائي",
+      "Orthodontic": "تقويم",
+      "Cosmetic": "تجميلي",
+      "Other": "أخرى"
+    },
+    "presets": {
+      "routineCleaning": "تنظيف وتلميع دوري",
+      "dentalExam": "فحص أسنان",
+      "panoramicXray": "أشعة بانورامية وفحص",
+      "compositeFilling": "حشو كومبوزيت",
+      "rootCanal": "علاج عصب",
+      "crownPrep": "تحضير تاج",
+      "extraction": "خلع سن",
+      "wisdomExtraction": "خلع ضرس عقل",
+      "whitening": "تبييض أسنان",
+      "orthodonticAdj": "تعديل تقويم",
+      "implant": "زراعة سن",
+      "veneer": "تركيب فينير",
+      "gumTreatment": "علاج اللثة",
+      "bridge": "تركيب جسر"
+    }
+  },
+  "medicalHistory": {
+    "sections": {
+      "conditions": "الأمراض والحالات الطبية",
+      "allergies": "الحساسية",
+      "medications": "الأدوية الحالية",
+      "surgicalHistory": "التاريخ الجراحي",
+      "familyHistory": "التاريخ العائلي",
+      "lifestyle": "نمط الحياة والعلامات الحيوية",
+      "generalNotes": "ملاحظات طبية عامة"
+    },
+    "conditions": {
+      "empty": "لا توجد أمراض مسجلة",
+      "addLink": "+ إضافة حالة",
+      "diagnosed": "تشخيص: {date}",
+      "status": {
+        "Active": "نشط",
+        "Controlled": "مسيطر عليه",
+        "Managed": "مُدار",
+        "Monitoring": "تحت المراقبة",
+        "Resolved": "تم الشفاء"
+      }
+    },
+    "allergies": {
+      "empty": "لا توجد حساسية معروفة",
+      "nkda": "NKDA ✓",
+      "noDetails": "لا تفاصيل",
+      "severity": {
+        "Severe": "حادة",
+        "Moderate": "متوسطة",
+        "Mild": "خفيفة"
+      }
+    },
+    "medications": {
+      "empty": "لا توجد أدوية حالية",
+      "addLink": "+ إضافة دواء"
+    },
+    "surgical": {
+      "empty": "لا يوجد تاريخ جراحي",
+      "addLink": "+ إضافة عملية"
+    },
+    "family": {
+      "empty": "لا يوجد تاريخ عائلي مسجل",
+      "addLink": "+ إضافة تاريخ عائلي",
+      "relation": "القرابة: {value}",
+      "relations": {
+        "Father": "الأب",
+        "Mother": "الأم",
+        "Brother": "الأخ",
+        "Sister": "الأخت",
+        "Grandfather": "الجد",
+        "Grandmother": "الجدة"
+      }
+    },
+    "lifestyle": {
+      "bloodType": "فصيلة الدم",
+      "smokingStatus": "حالة التدخين",
+      "alcoholUse": "استخدام الكحول",
+      "smoking": { "Never": "لا يدخن", "Former": "سابقاً", "Current": "حالياً" },
+      "alcohol": { "None": "لا يتناول", "Social": "اجتماعي", "Regular": "منتظم" }
+    },
+    "notes": {
+      "placeholder": "أضف أي ملاحظات طبية إضافية...",
+      "clickToAdd": "انقر لإضافة ملاحظات طبية..."
+    },
+    "dialogs": {
+      "addCondition": {
+        "title": "إضافة حالة طبية",
+        "conditionName": "اسم الحالة *",
+        "yearDiagnosed": "سنة التشخيص",
+        "status": "الحالة",
+        "notes": "ملاحظات",
+        "phCondition": "مثال: ارتفاع ضغط الدم",
+        "phYear": "مثال: 2020",
+        "phNotes": "تفاصيل إضافية...",
+        "save": "حفظ الحالة"
+      },
+      "addAllergy": {
+        "title": "إضافة حساسية",
+        "allergen": "المادة المسببة *",
+        "severity": "درجة الخطورة",
+        "reactionType": "نوع رد الفعل",
+        "phAllergen": "مثال: بنسلين",
+        "phReaction": "مثال: صدمة تحسسية، طفح جلدي",
+        "save": "حفظ الحساسية"
+      },
+      "addMedication": {
+        "title": "إضافة دواء",
+        "medicationName": "اسم الدواء *",
+        "dosage": "الجرعة",
+        "frequency": "التكرار",
+        "prescribedFor": "موصوف لـ",
+        "phMed": "مثال: ليزينوبريل 10 ملغ",
+        "phDosage": "مثال: قرص واحد",
+        "phFrequency": "مثال: مرتين يومياً",
+        "phFor": "مثال: ضغط الدم",
+        "save": "حفظ الدواء"
+      },
+      "addSurgery": {
+        "title": "إضافة تاريخ جراحي",
+        "procedure": "العملية / الإجراء *",
+        "date": "التاريخ",
+        "notes": "ملاحظات",
+        "phProcedure": "مثال: خلع ضرس عقل",
+        "phDate": "مثال: مارس 2024",
+        "phNotes": "مضاعفات، ملاحظات التعافي...",
+        "save": "حفظ العملية"
+      },
+      "addFamily": {
+        "title": "إضافة تاريخ عائلي",
+        "condition": "الحالة *",
+        "relation": "القرابة",
+        "phCondition": "مثال: سكري، أمراض قلب",
+        "save": "حفظ التاريخ العائلي"
+      }
+    }
+  },
   "errors": {
     "notFound": "عذراً، الصفحة التي تبحث عنها غير موجودة.",
     "unauthorized": "ليس لديك الصلاحيات الكافية للوصول إلى هذه الصفحة.",
@@ -873,5 +1091,558 @@
   },
   "dateFormats": {
     "today": "اليوم هو {date}"
+  },
+  "oralExam": {
+    "softTissue": {
+      "title": "فحص الأنسجة الرخوة"
+    },
+    "status": {
+      "normal": "طبيعي",
+      "abnormal": "غير طبيعي",
+      "pathological": "مرضي",
+      "needsAttention": "يحتاج متابعة"
+    },
+    "tissues": {
+      "Lips": "الشفاه",
+      "Buccal Mucosa": "الغشاء المخاطي للخد",
+      "Tongue": "اللسان",
+      "Floor of Mouth": "قاع الفم",
+      "Palate": "الحنك",
+      "Gingiva": "اللثة",
+      "Salivary Glands": "الغدد اللعابية",
+      "Occlusion": "الإطباق",
+      "Pharynx": "البلعوم"
+    },
+    "diseases": {
+      "title": "أمراض وحالات الفم",
+      "manageList": "إدارة قائمة الحالات الفموية",
+      "addCustom": "إضافة حالة مخصصة...",
+      "noActive": "لا توجد حالات نشطة",
+      "library": "مكتبة الحالات",
+      "activeConditions": "الحالات النشطة"
+    },
+    "otherNotes": {
+      "title": "حالات صحية أخرى:",
+      "placeholder": "لاحظ أي معلومات مهمة عن صحة فم المريض...",
+      "saved": "✓ تم الحفظ",
+      "noNotes": "لا توجد ملاحظات"
+    },
+    "diagPrescCount": "({diagnoses} تشخيص · {prescriptions} وصفة)",
+    "diagPrescTitle": "التشخيصات والوصفات",
+    "tabs": {
+      "prescriptions": "الوصفات",
+      "diagnosis": "التشخيص والشكوى الرئيسية"
+    },
+    "prescriptions": {
+      "add": "إضافة وصفة",
+      "empty": "لا توجد وصفات بعد",
+      "fields": {
+        "medication": "الدواء",
+        "dosage": "الجرعة",
+        "frequency": "التكرار",
+        "duration": "المدة",
+        "notes": "ملاحظات"
+      },
+      "dialog": {
+        "title": "إضافة وصفة",
+        "medicationName": "اسم الدواء",
+        "dosage": "الجرعة",
+        "frequency": "التكرار",
+        "duration": "المدة",
+        "instructions": "تعليمات خاصة",
+        "phMed": "مثال: أموكسيسيلين 500 ملغ",
+        "phDosage": "مثال: قرص واحد",
+        "phFrequency": "مثال: 3 مرات يومياً",
+        "phDuration": "مثال: 7 أيام",
+        "phInstructions": "تعليمات خاصة...",
+        "save": "حفظ الوصفة"
+      }
+    },
+    "diagnosis": {
+      "add": "إضافة تشخيص",
+      "empty": "لا توجد تشخيصات مسجلة",
+      "fields": {
+        "chiefComplaint": "الشكوى الرئيسية:",
+        "severity": "درجة الخطورة:",
+        "notes": "ملاحظات:"
+      },
+      "dialog": {
+        "title": "إضافة تشخيص وشكوى رئيسية",
+        "chiefComplaint": "الشكوى الرئيسية",
+        "diagnosis": "التشخيص",
+        "severity": "درجة الخطورة",
+        "clinicalNotes": "الملاحظات السريرية",
+        "phComplaint": "ما هو السبب الرئيسي لزيارة المريض؟",
+        "phDiagnosis": "أدخل التشخيص...",
+        "phNotes": "ملاحظات إضافية...",
+        "save": "حفظ التشخيص"
+      }
+    },
+    "diagnosisSeverity": {
+      "mild": "خفيف",
+      "moderate": "متوسط",
+      "severe": "شديد"
+    },
+    "conditions": {
+      "Erosion": "تآكل الأسنان",
+      "Gingivitis": "التهاب اللثة",
+      "Herpes": "الهربس الفموي",
+      "Xerostomia": "جفاف الفم",
+      "Periodontitis": "التهاب دواعم السن",
+      "Bruxism": "صرير الأسنان",
+      "Oral Candidiasis": "داء المبيضات الفموي",
+      "Leukoplakia": "الطلاوة البيضاء",
+      "Aphthous Ulcer": "قرحة أفثية",
+      "Oral Lichen Planus": "الحزاز المسطح الفموي",
+      "TMJ Disorder": "اضطراب المفصل الفكي",
+      "Halitosis": "رائحة الفم",
+      "Dental Fluorosis": "التفلور السني",
+      "Oral Cancer": "سرطان الفم",
+      "Burning Mouth Syndrome": "متلازمة حرقة الفم"
+    }
+  },
+  "toothChart": {
+    "title": "مخطط الأسنان (FDI)",
+    "subtitle": "مخطط تفاعلي لـ 32 سناً لتسجيل الحالات",
+    "primaryDeciduous": "الأسنان اللبنية",
+    "conditionKey": "دليل الحالات",
+    "legend": {
+      "crown": "تاج",
+      "extracted": "مخلوع",
+      "filled": "محشو",
+      "caries": "تسوس",
+      "healthy": "سليم"
+    },
+    "chartNote": {
+      "title": "ملاحظة الطبيب",
+      "empty": "لا توجد ملاحظات. انقر تعديل لإضافة ملاحظة.",
+      "edit": "تعديل",
+      "save": "حفظ",
+      "cancel": "إلغاء",
+      "updating": "جارٍ تحديث المخطط..."
+    },
+    "conditions": {
+      "healthy": "سليم",
+      "caries": "تسوس",
+      "filled": "محشو",
+      "crown": "تاج",
+      "extracted": "مخلوع"
+    },
+    "tooltips": {
+      "healthy": "سن سليم",
+      "caries": "تسوس الأسنان",
+      "filled": "ترميم / حشوة",
+      "extracted": "مفقود أو مخلوع",
+      "crown": "تاج أو قشرة"
+    },
+    "toothDialog": {
+      "selectCondition": "اختر حالة أو أضف نتيجة",
+      "previousFindings": "النتائج السابقة",
+      "noFindings": "لا توجد نتائج مسجلة",
+      "attachedPhotos": "الصور المرفقة",
+      "noPhotos": "لا توجد صور مرفقة",
+      "markMissing": "تسجيل كمفقود",
+      "unmarkMissing": "إلغاء التسجيل كمفقود",
+      "switchTo": "تبديل إلى",
+      "permanent": "دائم"
+    },
+    "findingsDialog": {
+      "title": "النتائج السريرية والمعايير",
+      "dialogTitle": "السن #{tooth} — النتائج السريرية",
+      "finding": "نتيجة",
+      "parameter": "معيار",
+      "placeholder": "صِف النتيجة السريرية أو المعيار...",
+      "addToChart": "إضافة إلى المخطط"
+    },
+    "photosDialog": {
+      "title": "صور السن",
+      "dialogTitle": "السن #{tooth} — الصور",
+      "upload": "رفع صورة",
+      "uploading": "جارٍ الرفع..."
+    },
+    "extractionDialog": {
+      "title": "تأكيد الخلع",
+      "body": "هل تريد تسجيل خلع السن رقم {tooth}؟ سيتم تحديث المخطط وفقاً لذلك.",
+      "confirm": "تأكيد",
+      "cancel": "إلغاء"
+    }
+  },
+  "periodontics": {
+    "title": "دواعم السن",
+    "newSession": "+ جلسة جديدة",
+    "noSessions": "لا توجد جلسات",
+    "deleteSession": "حذف الجلسة",
+    "params": {
+      "suppuration": "تقيح",
+      "mobility": "حركة السن",
+      "probingDepth": "عمق التجييب",
+      "clinicalAttach": "مستوى الارتباط السريري",
+      "gingivalMarginProbing": "هامش اللثة + عمق التجييب",
+      "mucogingivalJunction": "التقاء المخاطية اللثوية",
+      "furcation": "التشعب",
+      "bleeding": "نزيف",
+      "gingivalMargin": "هامش اللثة"
+    },
+    "views": {
+      "lingual": "لساني/حنكي",
+      "buccal": "شدقي/شفهي"
+    },
+    "anatomy": {
+      "distal": "بعدي",
+      "middle": "أوسط",
+      "mesial": "قرني"
+    },
+    "measureDialog": {
+      "title": "السن #{tooth} — {param}",
+      "titleMm": "السن #{tooth} — {param} (ملم)",
+      "submitClose": "حفظ وإغلاق"
+    }
+  },
+  "treatmentPlans": {
+    "title": "خطط العلاج",
+    "subtitle": "إدارة مراحل العلاج ومتابعة التقدم",
+    "newPlan": "خطة جديدة +",
+    "stats": {
+      "totalCost": "التكلفة الإجمالية",
+      "totalPhases": "إجمالي المراحل",
+      "completed": "مكتملة",
+      "activePlans": "الخطط النشطة"
+    },
+    "plan": {
+      "estCost": "التكلفة التقديرية",
+      "financialProgress": "التقدم المالي",
+      "clinicalProgress": "التقدم السريري",
+      "balance": "الرصيد: ${amount}",
+      "phases": "المراحل {done}/{total}",
+      "meta": "رقم الخطة: {id} · تاريخ الإنشاء: {date}",
+      "changeStatus": "انقر لتغيير الحالة"
+    },
+    "status": {
+      "Active": "نشطة",
+      "Completed": "مكتملة",
+      "On Hold": "معلقة",
+      "Cancelled": "ملغية"
+    },
+    "phaseStatus": {
+      "Planned": "مخطط",
+      "In Progress": "جارٍ",
+      "Completed": "مكتمل",
+      "Cancelled": "ملغي"
+    },
+    "empty": {
+      "noPhases": "لا توجد مراحل بعد",
+      "noPhasesHint": "أضف مراحل العلاج لمتابعة التقدم",
+      "noPlans": "لا توجد خطط علاج بعد",
+      "createFirst": "+ إنشاء خطتك الأولى"
+    },
+    "footer": {
+      "deletePlan": "حذف الخطة",
+      "changeStatus": "تغيير الحالة",
+      "addPhase": "إضافة مرحلة +",
+      "invoiceGenerated": "تم إنشاء الفاتورة $",
+      "generateInvoice": "إنشاء فاتورة"
+    },
+    "dialog": {
+      "newPlan": "خطة علاج جديدة",
+      "treatmentTitle": "عنوان الخطة *",
+      "planDetails": "تفاصيل إضافية عن خطة العلاج...",
+      "treatmentPhases": "مراحل العلاج",
+      "nPhases": "({n} مراحل)",
+      "quickSelect": "اختيار سريع",
+      "service": "الخدمة *",
+      "date": "التاريخ",
+      "price": "السعر",
+      "provider": "مقدم الخدمة (اختياري)",
+      "providerOptional": "مقدم الخدمة (اختياري)",
+      "clinicalNotes": "الملاحظات السريرية",
+      "phaseDetails": "تفاصيل المرحلة...",
+      "teethSelection": "اختيار الأسنان",
+      "selectAffected": "اختر الأسنان المتأثرة",
+      "selectAffectedTeeth": "اختر الأسنان المتأثرة",
+      "selectTeeth": "اختر الأسنان",
+      "nTeeth": "({n} أسنان)",
+      "addPhaseBtn": "إضافة المرحلة للخطة",
+      "addPhase": "إضافة مرحلة",
+      "add": "إضافة",
+      "notes": "الملاحظات",
+      "changeStatus": "تغيير الحالة",
+      "deleteConfirmTitle": "حذف الخطة؟",
+      "deleteConfirmDesc": "لا يمكن التراجع عن هذا الإجراء. سيتم حذف جميع المراحل.",
+      "delete": "حذف",
+      "cancel": "إلغاء",
+      "createPlan": "إنشاء الخطة",
+      "addPhaseTitle": "إضافة مرحلة علاج",
+      "changeStatusTitle": "تغيير حالة الخطة",
+      "none": "لا يوجد"
+    },
+    "deleteDialog": {
+      "title": "حذف الخطة؟",
+      "body": "لا يمكن التراجع عن هذا الإجراء. سيتم حذف جميع المراحل.",
+      "cancel": "إلغاء",
+      "confirm": "حذف الخطة"
+    },
+    "toast": {
+      "invoiceGenerated": "تم إنشاء الفاتورة بنجاح",
+      "invoiceFailed": "فشل إنشاء الفاتورة",
+      "loadFailed": "فشل تحميل الخطط"
+    },
+    "presets": {
+      "initialConsultation": "الاستشارة الأولية والأشعة",
+      "rootCanal": "علاج عصب",
+      "crownPlacing": "تركيب تاج",
+      "compositeFilling": "حشو كومبوزيت",
+      "toothExtraction": "خلع سن",
+      "implantPlacement": "زراعة سن",
+      "abutmentPlacement": "تركيب الدعامة",
+      "bridgeFabrication": "تصنيع جسر",
+      "orthodonticAdj": "تعديل تقويم",
+      "whitening": "تبييض أسنان",
+      "scalingRootPlaning": "تنظيف وتقليح",
+      "followUp": "زيارة متابعة"
+    }
+  },
+  "prescriptions": {
+    "title": "الوصفات الإلكترونية",
+    "subtitle": "عرض وإدارة أدوية المريض",
+    "newPrescription": "وصفة جديدة",
+    "card": {
+      "prescriptionNum": "وصفة #{id}",
+      "medicationsCount": "{n} دواء",
+      "notes": "ملاحظات:",
+      "print": "طباعة"
+    },
+    "actions": {
+      "downloadPdf": "تحميل PDF",
+      "delete": "حذف"
+    },
+    "printDialog": {
+      "title": "معاينة الطباعة",
+      "close": "إغلاق",
+      "printNow": "اطبع الآن"
+    },
+    "empty": {
+      "title": "لا توجد وصفات بعد",
+      "subtitle": "أنشئ وصفة إلكترونية جديدة لهذا المريض."
+    },
+    "toast": {
+      "deleted": "تم حذف الوصفة",
+      "deleteFailed": "فشل الحذف",
+      "duplicated": "تم نسخ الوصفة",
+      "duplicateFailed": "فشل النسخ"
+    },
+    "form": {
+      "medication": "الدواء",
+      "dosage": "الجرعة",
+      "frequency": "التكرار",
+      "duration": "المدة",
+      "instructions": "التعليمات / الملاحظات",
+      "phMedication": "مثال: أموكسيسيلين 500 ملغ",
+      "phDosage": "قرص واحد",
+      "phFrequency": "3 مرات يومياً",
+      "phDuration": "7 أيام",
+      "phInstructions": "تعليمات خاصة للمريض...",
+      "save": "حفظ الوصفة",
+      "cancel": "إلغاء"
+    }
+  },
+  "patientDocs": {
+    "title": "سجلات المريض",
+    "subtitle": "عرض وإدارة الأشعة والمستندات السريرية",
+    "uploadRecord": "رفع سجل",
+    "uploadDialog": {
+      "title": "رفع سجل المريض",
+      "fileName": "اسم الملف *",
+      "category": "التصنيف",
+      "phFileName": "مثال: أشعة بانورامية مايو 2026",
+      "upload": "رفع",
+      "cancel": "إلغاء"
+    },
+    "filters": {
+      "all": "جميع السجلات",
+      "xray": "أشعة وتصوير",
+      "documents": "وثائق ونماذج",
+      "other": "ملفات أخرى"
+    },
+    "fileCard": {
+      "download": "تحميل",
+      "delete": "حذف",
+      "deleteConfirm": "هل أنت متأكد من حذف هذا المستند؟"
+    },
+    "empty": {
+      "title": "لا توجد سجلات",
+      "general": "لم يتم رفع أي مستندات لهذا المريض بعد.",
+      "category": "لا توجد مستندات في تصنيف {category}."
+    },
+    "toast": {
+      "nameRequired": "يرجى إدخال اسم واختيار ملف",
+      "uploading": "جارٍ الرفع...",
+      "fileTooLarge": "الملف يتجاوز الحد الأقصى 50MB",
+      "uploaded": "تم رفع المستند بنجاح",
+      "deleting": "جارٍ الحذف...",
+      "deleted": "تم حذف المستند",
+      "deleteFailed": "فشل حذف المستند",
+      "unexpectedError": "حدث خطأ غير متوقع"
+    }
+  },
+  "patientBilling": {
+    "kpis": {
+      "totalPaid": "إجمالي المدفوع",
+      "successfulTransactions": "المعاملات الناجحة",
+      "totalBilled": "إجمالي الفواتير",
+      "lifetimeValue": "القيمة الإجمالية للمريض",
+      "outstandingBalance": "الرصيد المستحق",
+      "unpaidInvoices": "فواتير غير مدفوعة: {n}"
+    },
+    "invoiceHistory": "سجل الفواتير",
+    "createInvoice": "إنشاء فاتورة +",
+    "card": {
+      "balance": "الرصيد",
+      "amount": "المبلغ",
+      "status": {
+        "Paid": "مدفوع",
+        "Pending": "معلق",
+        "Overdue": "متأخر"
+      }
+    },
+    "paymentHistory": {
+      "title": "سجل المدفوعات",
+      "empty": "لا توجد مدفوعات مسجلة"
+    },
+    "print": {
+      "invoice": "فاتورة",
+      "billTo": "فاتورة إلى",
+      "from": "من",
+      "invoiceItems": "بنود الفاتورة",
+      "description": "الوصف",
+      "qty": "الكمية",
+      "price": "السعر",
+      "total": "الإجمالي",
+      "totalAmount": "المبلغ الإجمالي",
+      "balanceDue": "المبلغ المستحق",
+      "amount": "المبلغ",
+      "thankYou": "شكراً لاختياركم {clinicName} للعناية بصحة أسنانكم.",
+      "checksPayable": "يرجى تحرير الشيكات لصالح {clinicName}."
+    },
+    "empty": "لا يوجد سجل فواتير",
+    "toast": {
+      "deleting": "جارٍ حذف الفاتورة...",
+      "deleted": "تم حذف الفاتورة بنجاح",
+      "deleteFailed": "فشل حذف الفاتورة"
+    },
+    "form": {
+      "title": "فاتورة جديدة",
+      "subtitle": "إنشاء سجل فوترة جديد لهذا المريض",
+      "invoiceItems": "بنود الفاتورة",
+      "itemDescription": "وصف البند",
+      "qty": "الكمية",
+      "price": "السعر",
+      "dueDate": "تاريخ الاستحقاق (اختياري)",
+      "totalAmount": "إجمالي مبلغ الفاتورة",
+      "cancel": "إلغاء",
+      "create": "إنشاء الفاتورة"
+    }
+  },
+  "landing": {
+    "nav": {
+      "features": "المميزات",
+      "howItWorks": "كيف نعمل",
+      "pricing": "الأسعار",
+      "staffSignIn": "دخول الموظفين",
+      "ownerLogin": "دخول المالك",
+      "registerClinic": "تسجيل عيادة"
+    },
+    "hero": {
+      "badge": "✨ أحدث ثورة في إدارة عيادتك مع الذكاء الاصطناعي",
+      "titlePart1": "ارتقِ بعيادتك إلى المستقبل ",
+      "titleHighlight": "بذكاء واحترافية",
+      "subtitle": "المنصة السحابية المتكاملة لعيادات الأسنان الرائدة. أتمتة شاملة، تخطيط علاجي دقيق بالذكاء الاصطناعي، وإدارة مالية تضاعف أرباحك وتوفر وقتك.",
+      "clinicOwner": "صاحب العيادة",
+      "clinicOwnerDesc": "امتلك زمام المبادرة. أدر عيادتك مركزياً، راقب الأداء المالي لحظة بلحظة، وقد فريقك نحو التفوق والنجاح.",
+      "registerBtn": "ابدأ رحلة التحول الرقمي",
+      "staffMember": "أعضاء الطاقم الطبي",
+      "staffMemberDesc": "سجل الدخول للوصول إلى مساحة العمل الذكية، أدر مواعيدك وملفات مرضاك بكفاءة وسلاسة تامة.",
+      "staffBtn": "بوابة الطاقم الطبي",
+      "perk1": "نظام أمان وحماية للبيانات مطابق للمعايير العالمية",
+      "perk2": "تحليلات مالية دقيقة وتتبع فوري للإيرادات",
+      "perk3": "إدارة مرنة للمواعيد لتقليل نسبة التغيب"
+    },
+    "stats": {
+      "clinics": "عيادة رائدة",
+      "patients": "مريض سعيد",
+      "appointments": "موعد/شهرياً",
+      "satisfaction": "نسبة الرضا"
+    },
+    "features": {
+      "title": "منظومة متكاملة لعيادة لا تعرف الحدود",
+      "subtitle": "صممنا لك أدوات استثنائية مدعومة بالذكاء الاصطناعي لتبسيط الإدارة، تقليل الهدر المالي، والارتقاء بتجربة المريض.",
+      "f1Title": "جدولة مواعيد ذكية خالية من الثغرات",
+      "f1Desc": "وداعاً لتغيب المرضى. نظامنا يرسل تذكيرات تلقائية ذكية عبر واتساب و SMS لضمان امتلاء جدولك اليومي وتحقيق أقصى إنتاجية.",
+      "f2Title": "ملفات مرضى سحابية مشفرة بالكامل",
+      "f2Desc": "تاريخ طبي، خطط علاجية، وأشعة فموية في مكان واحد آمن. وصول فوري من أي جهاز لتقديم رعاية صحية أسرع وأكثر دقة.",
+      "f3Title": "إدارة مالية دقيقة تضاعف أرباحك",
+      "f3Desc": "تحكم تام بالتدفقات النقدية. إصدار فواتير بنقرة واحدة، تتبع المستحقات، وتقارير أداء تكشف لك فرص النمو وزيادة العائد (ROI).",
+      "f4Title": "مراقبة مستودع ومخزون استباقية",
+      "f4Desc": "إدارة ذكية للمواد والمستلزمات الطبية. احصل على تنبيهات مبكرة عند انخفاض المخزون لمنع أي توقف مفاجئ في العمليات."
+    },
+    "howItWorks": {
+      "title": "مسارك نحو عيادة رقمية بالكامل",
+      "subtitle": "انتقال سلس وسريع. ابدأ بإدارة عيادتك باحترافية في 3 خطوات بسيطة.",
+      "step1Title": "1. إنشاء وتخصيص مساحتك",
+      "step1Desc": "سجل عيادتك في دقائق، أضف شعارك، وحدد قائمة خدماتك وأسعارك بدقة لبناء هويتك الرقمية.",
+      "step2Title": "2. بناء فريق العمل وتوزيع المهام",
+      "step2Desc": "ادعُ الأطباء، المساعدين، وموظفي الاستقبال. خصص صلاحيات دقيقة لكل فرد لضمان سير العمل بأعلى كفاءة وأمان.",
+      "step3Title": "3. الانطلاق نحو أرباح أعلى",
+      "step3Desc": "استقبل مرضاك، أصدر فواتيرك، وراقب نمو عيادتك من خلال لوحات تحكم تفاعلية متقدمة."
+    },
+    "pricing": {
+      "title": "استثمار استراتيجي ينمو مع عيادتك",
+      "subtitle": "خطط شفافة ومدروسة تناسب طموحك. اختر الباقة التي ستقود عيادتك نحو القمة.",
+      "month": "شهرياً",
+      "basic": {
+        "name": "الأساسية",
+        "price": "٤٩$",
+        "desc": "الخيار الأمثل للعيادات الناشئة التي تبحث عن أتمتة موثوقة وبداية قوية.",
+        "f1": "إدارة حتى ١٠٠٠ ملف مريض",
+        "f2": "نظام جدولة مواعيد متكامل",
+        "f3": "لوحة تحكم وتقارير أساسية",
+        "f4": "دعم فني عبر البريد الإلكتروني",
+        "f5": "مستخدم واحد (طبيب واحد)",
+        "cta": "ابدأ نسختك التجريبية"
+      },
+      "pro": {
+        "name": "الاحترافية",
+        "price": "٩٩$",
+        "desc": "المنظومة الشاملة للمراكز الطبية الرائدة الباحثة عن التميز التشغيلي والنمو المالي.",
+        "f1": "عدد غير محدود من ملفات المرضى",
+        "f2": "مساعد الذكاء الاصطناعي لتخطيط العلاج",
+        "f3": "تقارير مالية وتشغيلية متقدمة",
+        "f4": "إدارة متكاملة للمخزون والمختبر",
+        "f5": "أولوية دعم فني على مدار الساعة",
+        "f6": "تخصيص كامل للهوية البصرية (White-label)",
+        "cta": "ارتقِ بعيادتك الآن",
+        "popularBadge": "الخيار الاستراتيجي"
+      }
+    },
+    "footer": {
+      "desc": "الجيل القادم من إدارة عيادات الأسنان. نبني أدوات تساعد الأطباء على التركيز على ما يهم حقاً: رعاية المرضى.",
+      "product": "المنتج",
+      "company": "الشركة",
+      "legal": "القانونية",
+      "features": "المميزات",
+      "pricing": "الأسعار",
+      "demo": "تجربة حية",
+      "updates": "التحديثات",
+      "about": "عن الشركة",
+      "careers": "الوظائف",
+      "blog": "المدونة",
+      "contact": "تواصل معنا",
+      "privacy": "الخصوصية",
+      "terms": "الشروط",
+      "security": "الأمان",
+      "rights": "© 2026 SmileCare Inc. جميع الحقوق محفوظة.",
+      "privacyPolicy": "سياسة الخصوصية",
+      "termsOfService": "شروط الخدمة",
+      "cookiePolicy": "سياسة ملفات تعريف الارتباط"
+    }
   }
 }

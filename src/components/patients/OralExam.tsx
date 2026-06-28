@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition, useEffect } from "react";
+import { useState, useTransition, useEffect, useMemo, useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -18,7 +18,7 @@ import {
   deletePrescription as deletePrescriptionAction,
   deleteVisitRecord
 } from "@/app/actions/patients";
-import { useRef } from "react";
+import { useTranslations } from "next-intl";
 
 // ============ TYPES ============
 type TissueStatus = "healthy" | "needs attention" | "pathological";
@@ -55,11 +55,6 @@ interface PrescriptionItem {
 }
 
 // ============ STATUS CONFIGS ============
-const STATUS_OPTIONS: { value: TissueStatus; label: string; color: string; dotColor: string }[] = [
-  { value: "healthy", label: "healthy", color: "bg-gray-100 text-gray-700 border-gray-200", dotColor: "bg-emerald-500" },
-  { value: "needs attention", label: "needs attention", color: "bg-blue-500 text-white border-blue-600", dotColor: "bg-blue-500" },
-  { value: "pathological", label: "pathological", color: "bg-red-500 text-white border-red-600", dotColor: "bg-red-500" },
-];
 
 const DEFAULT_CONDITIONS: OralCondition[] = [
   { id: "c1", name: "Erosion", active: true },
@@ -76,7 +71,14 @@ const ALL_CONDITIONS_LIBRARY = [
 ];
 
 export function OralExam({ patient, onRefresh }: { patient: any; onRefresh?: () => void }) {
+  const t = useTranslations('oralExam');
   const [isPending, startTransition] = useTransition();
+
+  const statusOptions = useMemo(() => [
+    { value: "healthy" as TissueStatus, label: t("status.normal"), color: "bg-gray-100 text-gray-700 border-gray-200", dotColor: "bg-emerald-500" },
+    { value: "needs attention" as TissueStatus, label: t("status.needsAttention"), color: "bg-blue-500 text-white border-blue-600", dotColor: "bg-blue-500" },
+    { value: "pathological" as TissueStatus, label: t("status.pathological"), color: "bg-red-500 text-white border-red-600", dotColor: "bg-red-500" },
+  ], [t]);
   // ============ STATE ============
   const [tissues, setTissues] = useState<TissueItem[]>(() => [
     "Lips", "Buccal Mucosa", "Tongue", "Floor of Mouth", "Palate", "Gingiva",
@@ -311,15 +313,15 @@ export function OralExam({ patient, onRefresh }: { patient: any; onRefresh?: () 
     });
   };
 
-  const getStatusConfig = (status: TissueStatus) => STATUS_OPTIONS.find(s => s.value === status)!;
+  const getStatusConfig = (status: TissueStatus) => statusOptions.find(s => s.value === status)!;
 
   return (
     <div className="space-y-6 animate-fade-in-up">
       {/* =============== Soft Tissue Examination =============== */}
-      <Card className="border-0 shadow-sm">
-        <CardHeader className="pb-3 border-b border-gray-100">
-          <CardTitle className="text-sm font-semibold text-gray-900 flex items-center gap-2">
-            <Smile className="w-4 h-4 text-blue-500" /> Soft Tissue Examination
+      <Card className="border-0 shadow-sm dark:bg-slate-900 dark:border-slate-800">
+        <CardHeader className="pb-3 border-b border-gray-100 dark:border-slate-800">
+          <CardTitle className="text-sm font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+            <Smile className="w-4 h-4 text-blue-500" /> {t('softTissue.title')}
           </CardTitle>
         </CardHeader>
         <CardContent className="pt-4 space-y-4">
@@ -327,7 +329,7 @@ export function OralExam({ patient, onRefresh }: { patient: any; onRefresh?: () 
             return (
               <div key={item.name} className="flex items-center justify-between py-1 px-2">
                 <div className="flex items-center gap-2">
-                  <span className="text-sm font-medium text-gray-700 min-w-[120px]">{item.name}</span>
+                  <span className="text-sm font-medium text-gray-700 dark:text-slate-300 min-w-[120px]">{t(`tissues.${item.name}`)}</span>
                   {item.notes && (
                     <button onClick={() => setTissueDialog(idx)} className="text-[10px] text-blue-500 hover:underline">
                       View Notes
@@ -335,34 +337,34 @@ export function OralExam({ patient, onRefresh }: { patient: any; onRefresh?: () 
                   )}
                 </div>
                 
-                <div className="flex items-center bg-gray-100 rounded-lg p-1">
+                <div className="flex items-center bg-gray-100 dark:bg-slate-800 rounded-lg p-1">
                   <button
                     onClick={() => handleTissueStatusChange(idx, "healthy")}
                     disabled={isPending}
                     className={`px-4 py-1.5 rounded-md text-xs font-medium transition-all ${
                       item.status === "healthy" 
-                        ? "bg-white text-emerald-600 shadow-sm" 
-                        : "text-gray-500 hover:text-gray-700"
+                        ? "bg-white text-emerald-600 shadow-sm dark:bg-slate-700 dark:text-emerald-400" 
+                        : "text-gray-500 hover:text-gray-700 dark:text-slate-400 dark:hover:text-slate-300"
                     }`}
                   >
-                    Normal
+                    {t('status.normal')}
                   </button>
                   <button
                     onClick={() => handleTissueStatusChange(idx, "pathological")}
                     disabled={isPending}
                     className={`px-4 py-1.5 rounded-md text-xs font-medium transition-all ${
                       item.status === "pathological" 
-                        ? "bg-white text-red-600 shadow-sm" 
-                        : "text-gray-500 hover:text-gray-700"
+                        ? "bg-white text-red-600 shadow-sm dark:bg-slate-700 dark:text-red-400" 
+                        : "text-gray-500 hover:text-gray-700 dark:text-slate-400 dark:hover:text-slate-300"
                     }`}
                   >
-                    Abnormal
+                    {t('status.abnormal')}
                   </button>
                 </div>
                 
                 <button 
                   onClick={() => setTissueDialog(idx)}
-                  className="p-1.5 text-gray-400 hover:text-blue-500 transition-colors"
+                  className="p-1.5 text-gray-400 hover:text-blue-500 dark:hover:text-blue-400 transition-colors"
                 >
                   <MessageSquare className="w-4 h-4" />
                 </button>
@@ -373,10 +375,10 @@ export function OralExam({ patient, onRefresh }: { patient: any; onRefresh?: () 
       </Card>
 
       {/* =============== Diseases and Conditions =============== */}
-      <Card className="border-0 shadow-sm bg-orange-50/50">
-        <CardHeader className="pb-3 border-b border-orange-100 flex flex-row items-center justify-between">
-          <CardTitle className="text-sm font-semibold text-orange-800 flex items-center gap-2">
-            Diseases and conditions of the mouth
+      <Card className="border-0 shadow-sm bg-orange-50/50 dark:bg-orange-900/10 dark:border-slate-800">
+        <CardHeader className="pb-3 border-b border-orange-100 dark:border-orange-900/30 flex flex-row items-center justify-between">
+          <CardTitle className="text-sm font-semibold text-orange-800 dark:text-orange-400 flex items-center gap-2">
+            {t('diseases.title')}
           </CardTitle>
           <div className="w-8 h-8 rounded-full bg-amber-500 flex items-center justify-center shadow-sm">
             <Lightbulb className="w-4 h-4 text-white" />
@@ -387,9 +389,9 @@ export function OralExam({ patient, onRefresh }: { patient: any; onRefresh?: () 
             {conditions.filter(c => c.active).map((cond) => (
               <div 
                 key={cond.id} 
-                className="px-4 py-2 bg-white border border-gray-200 rounded-full text-sm text-center text-gray-700 font-medium shadow-sm flex items-center justify-center gap-2 group hover:border-red-200 transition-colors"
+                className="px-4 py-2 bg-white border border-gray-200 rounded-full text-sm text-center text-gray-700 font-medium shadow-sm flex items-center justify-center gap-2 group hover:border-red-200 transition-colors dark:bg-slate-800 dark:border-slate-700 dark:text-slate-300 dark:hover:border-red-900/50"
               >
-                <span>{cond.name}</span>
+                <span>{t(`conditions.${cond.name}`, { defaultValue: cond.name } as any)}</span>
                 <button 
                   onClick={() => toggleCondition(cond.id)}
                   className="opacity-0 group-hover:opacity-100 transition-opacity text-gray-400 hover:text-red-500"
@@ -399,7 +401,7 @@ export function OralExam({ patient, onRefresh }: { patient: any; onRefresh?: () 
               </div>
             ))}
             {conditions.filter(c => c.active).length === 0 && (
-              <p className="text-sm text-gray-400 col-span-2 text-center py-3">No active conditions</p>
+              <p className="text-sm text-gray-400 col-span-2 text-center py-3">{t('diseases.noActive')}</p>
             )}
           </div>
           <div className="flex justify-end">
@@ -408,17 +410,17 @@ export function OralExam({ patient, onRefresh }: { patient: any; onRefresh?: () 
               onClick={() => setConditionsDialog(true)}
               className="text-blue-600 text-xs gap-1 h-auto p-0 font-medium"
             >
-              Manage the oral conditions list <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center ml-1"><Plus className="w-3 h-3" /></div>
+              {t('diseases.manageList')} <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center ml-1"><Plus className="w-3 h-3" /></div>
             </Button>
           </div>
         </CardContent>
       </Card>
 
       {/* =============== Other Conditions Notes =============== */}
-      <Card className="border-0 shadow-sm">
-        <CardHeader className="pb-3 border-b border-gray-100 flex flex-row items-center justify-between">
-          <CardTitle className="text-sm font-semibold text-gray-900">
-            Other disease/health condition:
+      <Card className="border-0 shadow-sm dark:bg-slate-900 dark:border-slate-800">
+        <CardHeader className="pb-3 border-b border-gray-100 dark:border-slate-800 flex flex-row items-center justify-between">
+          <CardTitle className="text-sm font-semibold text-gray-900 dark:text-white">
+            {t('otherNotes.title')}
           </CardTitle>
           <button 
             onClick={() => {
@@ -440,22 +442,22 @@ export function OralExam({ patient, onRefresh }: { patient: any; onRefresh?: () 
             <textarea
               value={otherNotes}
               onChange={(e) => setOtherNotes(e.target.value)}
-              placeholder="Note any important information regarding the patient's oral health..."
-              className="w-full min-h-[120px] p-4 rounded-xl border border-blue-200 bg-blue-50/30 text-sm text-gray-800 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all"
+              placeholder={t('otherNotes.placeholder')}
+              className="w-full min-h-[120px] p-4 rounded-xl border border-blue-200 bg-blue-50/30 text-sm text-gray-800 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all dark:bg-slate-800 dark:border-slate-700 dark:text-white"
               autoFocus
             />
           ) : (
             <div 
-              className="p-4 bg-gray-50 border border-gray-100 rounded-xl text-sm text-gray-500 flex gap-2 w-full min-h-[100px] cursor-pointer hover:bg-gray-100/50 transition-colors"
+              className="p-4 bg-gray-50 border border-gray-100 rounded-xl text-sm text-gray-500 flex gap-2 w-full min-h-[100px] cursor-pointer hover:bg-gray-100/50 transition-colors dark:bg-slate-800/50 dark:border-slate-800 dark:hover:bg-slate-800 dark:text-slate-400"
               onClick={() => setIsEditingNotes(true)}
             >
               <FileText className="w-4 h-4 text-gray-400 flex-shrink-0 mt-0.5" />
-              {otherNotes || "Note any important information regarding the patient's oral health"}
+              {otherNotes || t('otherNotes.noNotes')}
             </div>
           )}
           {otherNotes && !isEditingNotes && (
             <div className="flex justify-end mt-2">
-              <Badge variant="outline" className="text-[10px] text-emerald-600 bg-emerald-50 border-emerald-200">✓ Saved</Badge>
+              <Badge variant="outline" className="text-[10px] text-emerald-600 bg-emerald-50 border-emerald-200">{t('otherNotes.saved')}</Badge>
             </div>
           )}
         </CardContent>
@@ -463,10 +465,10 @@ export function OralExam({ patient, onRefresh }: { patient: any; onRefresh?: () 
 
       {/* =============== Diagnoses and Prescriptions Buttons =============== */}
       <div className="space-y-3 pt-2">
-        <div className="w-full bg-amber-100/80 text-amber-800 text-[10px] font-bold uppercase tracking-wider py-2.5 text-center rounded-lg border border-amber-200">
-          Diagnoses and prescriptions
+        <div className="w-full bg-amber-100/80 text-amber-800 text-[10px] font-bold uppercase tracking-wider py-2.5 text-center rounded-lg border border-amber-200 dark:bg-amber-900/20 dark:border-amber-900/50 dark:text-amber-400">
+          {t('diagPrescTitle')}
           <span className="ml-2 text-amber-600 font-normal lowercase">
-            ({diagnoses.length} diagnoses · {prescriptions.length} prescriptions)
+            {t('diagPrescCount', { diagnoses: diagnoses.length, prescriptions: prescriptions.length })}
           </span>
         </div>
         <div className="grid grid-cols-2 gap-3">
@@ -474,7 +476,7 @@ export function OralExam({ patient, onRefresh }: { patient: any; onRefresh?: () 
             onClick={() => setViewDiagnosesDialog(true)}
             className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold h-12 rounded-xl shadow-md shadow-blue-500/20 uppercase tracking-wide"
           >
-            Diagnosis & Chief Complaint
+            {t('tabs.diagnosis')}
             {diagnoses.length > 0 && (
               <Badge className="ml-2 bg-white/20 text-white text-[10px]">{diagnoses.length}</Badge>
             )}
@@ -483,7 +485,7 @@ export function OralExam({ patient, onRefresh }: { patient: any; onRefresh?: () 
             onClick={() => setViewPrescriptionsDialog(true)}
             className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold h-12 rounded-xl shadow-md shadow-blue-500/20 uppercase tracking-wide"
           >
-            Prescription
+            {t('tabs.prescriptions')}
             {prescriptions.length > 0 && (
               <Badge className="ml-2 bg-white/20 text-white text-[10px]">{prescriptions.length}</Badge>
             )}
@@ -495,11 +497,11 @@ export function OralExam({ patient, onRefresh }: { patient: any; onRefresh?: () 
 
       {/* Tissue Status Change Dialog */}
       <Dialog open={tissueDialog !== null} onOpenChange={(open) => !open && setTissueDialog(null)}>
-        <DialogContent className="sm:max-w-md p-0 overflow-hidden bg-white border-0 shadow-2xl rounded-2xl">
-          <DialogHeader className="px-6 py-4 border-b border-gray-100 bg-gray-50 m-0">
-            <DialogTitle className="text-lg font-bold text-gray-800 flex items-center gap-2">
+        <DialogContent className="sm:max-w-md p-0 overflow-hidden bg-white dark:bg-slate-900 border-0 shadow-2xl rounded-2xl dark:text-white">
+          <DialogHeader className="px-6 py-4 border-b border-gray-100 dark:border-slate-800 bg-gray-50 dark:bg-slate-800 m-0">
+            <DialogTitle className="text-lg font-bold text-gray-800 dark:text-white flex items-center gap-2">
               <Smile className="w-5 h-5 text-blue-600" /> 
-              {tissueDialog !== null ? tissues[tissueDialog]?.name : ""}
+              {tissueDialog !== null ? t(`tissues.${tissues[tissueDialog]?.name}`) : ""}
             </DialogTitle>
           </DialogHeader>
           <div className="p-6 space-y-5">
@@ -507,14 +509,14 @@ export function OralExam({ patient, onRefresh }: { patient: any; onRefresh?: () 
             <div className="space-y-2">
               <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">Status</p>
               <div className="grid grid-cols-3 gap-2">
-                {STATUS_OPTIONS.map((opt) => (
+                {statusOptions.map((opt) => (
                   <button
                     key={opt.value}
                     onClick={() => tissueDialog !== null && handleTissueStatusChange(tissueDialog, opt.value)}
                     className={`px-3 py-3 rounded-xl text-xs font-semibold border-2 transition-all flex flex-col items-center gap-1.5 ${
                       tissueDialog !== null && tissues[tissueDialog]?.status === opt.value
                         ? `${opt.color} ring-2 ring-offset-2 ring-blue-300 shadow-md scale-[1.02]`
-                        : "bg-white border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50"
+                        : "bg-white border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-700"
                     }`}
                   >
                     <div className={`w-4 h-4 rounded-full ${opt.dotColor}`} />
@@ -535,7 +537,7 @@ export function OralExam({ patient, onRefresh }: { patient: any; onRefresh?: () 
                   }
                 }}
                 placeholder="Add any observations about this tissue area..."
-                className="w-full h-24 rounded-xl border border-gray-200 bg-gray-50/50 p-3 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300"
+                className="w-full h-24 rounded-xl border border-gray-200 bg-gray-50/50 p-3 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 dark:bg-slate-800 dark:border-slate-700 dark:text-white"
               />
             </div>
 
@@ -557,10 +559,10 @@ export function OralExam({ patient, onRefresh }: { patient: any; onRefresh?: () 
 
       {/* Manage Conditions Dialog */}
       <Dialog open={conditionsDialog} onOpenChange={setConditionsDialog}>
-        <DialogContent className="sm:max-w-lg p-0 overflow-hidden bg-white border-0 shadow-2xl rounded-2xl">
-          <DialogHeader className="px-6 py-4 border-b border-orange-100 bg-orange-50 m-0">
-            <DialogTitle className="text-lg font-bold text-orange-800 flex items-center gap-2">
-              <Lightbulb className="w-5 h-5 text-amber-600" /> Manage Oral Conditions
+        <DialogContent className="sm:max-w-lg p-0 overflow-hidden bg-white dark:bg-slate-900 border-0 shadow-2xl rounded-2xl dark:text-white">
+          <DialogHeader className="px-6 py-4 border-b border-orange-100 dark:border-orange-900/50 bg-orange-50 dark:bg-orange-900/20 m-0">
+            <DialogTitle className="text-lg font-bold text-orange-800 dark:text-orange-400 flex items-center gap-2">
+              <Lightbulb className="w-5 h-5 text-amber-600" /> {t('diseases.manageList')}
             </DialogTitle>
           </DialogHeader>
           <div className="p-6 space-y-5 max-h-[60vh] overflow-y-auto">
@@ -570,8 +572,8 @@ export function OralExam({ patient, onRefresh }: { patient: any; onRefresh?: () 
                 type="text"
                 value={newConditionName}
                 onChange={(e) => setNewConditionName(e.target.value)}
-                placeholder="Add custom condition..."
-                className="flex-1 h-10 px-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300"
+                placeholder={t('diseases.addCustom')}
+                className="flex-1 h-10 px-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 dark:bg-slate-800 dark:border-slate-700 dark:text-white"
                 onKeyDown={(e) => e.key === "Enter" && addCondition(newConditionName)}
               />
               <Button 
@@ -585,7 +587,7 @@ export function OralExam({ patient, onRefresh }: { patient: any; onRefresh?: () 
 
             {/* Quick-add from library */}
             <div className="space-y-2">
-              <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">Conditions Library</p>
+              <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">{t('diseases.library')}</p>
               <div className="flex flex-wrap gap-2">
                 {ALL_CONDITIONS_LIBRARY.map(name => {
                   const existing = conditions.find(c => c.name === name);
@@ -603,11 +605,11 @@ export function OralExam({ patient, onRefresh }: { patient: any; onRefresh?: () 
                       className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-all ${
                         isActive
                           ? "bg-blue-600 text-white border-blue-700 shadow-sm"
-                          : "bg-white text-gray-600 border-gray-200 hover:border-blue-300 hover:bg-blue-50"
+                          : "bg-white text-gray-600 border-gray-200 hover:border-blue-300 hover:bg-blue-50 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-blue-900/30"
                       }`}
                     >
                       {isActive && <Check className="w-3 h-3 inline mr-1" />}
-                      {name}
+                      {t(`conditions.${name}`, { defaultValue: name } as any)}
                     </button>
                   );
                 })}
@@ -617,13 +619,13 @@ export function OralExam({ patient, onRefresh }: { patient: any; onRefresh?: () 
             {/* Active conditions list */}
             <div className="space-y-2">
               <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">
-                Active Conditions ({conditions.filter(c => c.active).length})
+                {t('diseases.activeConditions')} ({conditions.filter(c => c.active).length})
               </p>
               {conditions.filter(c => c.active).map(cond => (
-                <div key={cond.id} className="flex items-center justify-between p-3 rounded-xl border border-gray-100 bg-gray-50/50 group">
+                <div key={cond.id} className="flex items-center justify-between p-3 rounded-xl border border-gray-100 bg-gray-50/50 group dark:bg-slate-800/50 dark:border-slate-800">
                   <div className="flex items-center gap-2">
                     <div className="w-2 h-2 rounded-full bg-amber-500" />
-                    <span className="text-sm font-medium text-gray-700">{cond.name}</span>
+                    <span className="text-sm font-medium text-gray-700 dark:text-slate-300">{t(`conditions.${cond.name}`, { defaultValue: cond.name } as any)}</span>
                   </div>
                   <button onClick={() => removeCondition(cond.id)} className="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-red-500 transition-opacity">
                     <Trash2 className="w-4 h-4" />
@@ -637,10 +639,10 @@ export function OralExam({ patient, onRefresh }: { patient: any; onRefresh?: () 
 
       {/* View Diagnoses Dialog */}
       <Dialog open={viewDiagnosesDialog} onOpenChange={setViewDiagnosesDialog}>
-        <DialogContent className="sm:max-w-xl p-0 overflow-hidden bg-white border-0 shadow-2xl rounded-2xl">
-          <DialogHeader className="px-6 py-4 border-b border-gray-100 bg-gray-50 m-0">
-            <DialogTitle className="text-lg font-bold text-gray-800 flex items-center gap-2">
-              <ClipboardList className="w-5 h-5 text-blue-600" /> Diagnosis & Chief Complaint
+        <DialogContent className="sm:max-w-xl p-0 overflow-hidden bg-white dark:bg-slate-900 border-0 shadow-2xl rounded-2xl dark:text-white">
+          <DialogHeader className="px-6 py-4 border-b border-gray-100 dark:border-slate-800 bg-gray-50 dark:bg-slate-800 m-0">
+            <DialogTitle className="text-lg font-bold text-gray-800 dark:text-white flex items-center gap-2">
+              <ClipboardList className="w-5 h-5 text-blue-600" /> {t('tabs.diagnosis')}
             </DialogTitle>
           </DialogHeader>
           <div className="p-6 space-y-5 max-h-[65vh] overflow-y-auto">
@@ -648,12 +650,12 @@ export function OralExam({ patient, onRefresh }: { patient: any; onRefresh?: () 
               onClick={() => { setViewDiagnosesDialog(false); setDiagnosisDialog(true); }}
               className="w-full bg-blue-600 hover:bg-blue-700 text-white rounded-xl h-10 text-sm font-semibold shadow-md shadow-blue-500/20"
             >
-              <Plus className="w-4 h-4 mr-2" /> New Diagnosis
+              <Plus className="w-4 h-4 mr-2" /> {t('diagnosis.add')}
             </Button>
 
             <div className="space-y-3">
               {diagnoses.length > 0 ? diagnoses.map(d => (
-                <div key={d.id} className="p-4 rounded-xl border border-gray-100 bg-gray-50/30 space-y-3 group hover:border-blue-100 transition-colors">
+                <div key={d.id} className="p-4 rounded-xl border border-gray-100 bg-gray-50/30 space-y-3 group hover:border-blue-100 transition-colors dark:bg-slate-800/50 dark:border-slate-800 dark:hover:border-blue-900/50">
                   <div className="flex items-start justify-between">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1">
@@ -662,13 +664,13 @@ export function OralExam({ patient, onRefresh }: { patient: any; onRefresh?: () 
                           d.severity === "moderate" ? "bg-amber-100 text-amber-700 border-amber-200" :
                           "bg-emerald-100 text-emerald-700 border-emerald-200"
                         }`}>
-                          {d.severity}
+                          {t(`diagnosisSeverity.${d.severity}`)}
                         </Badge>
                         <span className="text-[10px] text-gray-400">{d.date}</span>
                       </div>
-                      <p className="text-sm font-bold text-gray-900">{d.diagnosis}</p>
-                      <p className="text-xs text-gray-500 mt-1"><span className="font-semibold">Chief Complaint:</span> {d.chiefComplaint}</p>
-                      {d.notes && <p className="text-xs text-gray-500 mt-1.5 bg-white p-2 rounded-lg border border-gray-100">{d.notes}</p>}
+                      <p className="text-sm font-bold text-gray-900 dark:text-white">{d.diagnosis}</p>
+                      <p className="text-xs text-gray-500 dark:text-slate-400 mt-1"><span className="font-semibold">{t('diagnosis.fields.chiefComplaint')}</span> {d.chiefComplaint}</p>
+                      {d.notes && <p className="text-xs text-gray-500 dark:text-slate-400 mt-1.5 bg-white dark:bg-slate-800 p-2 rounded-lg border border-gray-100 dark:border-slate-700">{d.notes}</p>}
                     </div>
                     <button onClick={() => deleteDiagnosis(d.id)} className="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-red-500 transition-opacity ml-3">
                       <Trash2 className="w-4 h-4" />
@@ -676,7 +678,7 @@ export function OralExam({ patient, onRefresh }: { patient: any; onRefresh?: () 
                   </div>
                 </div>
               )) : (
-                <p className="text-sm text-gray-400 text-center py-6">No diagnoses recorded yet</p>
+                <p className="text-sm text-gray-400 text-center py-6">{t('diagnosis.empty')}</p>
               )}
             </div>
           </div>
@@ -685,35 +687,35 @@ export function OralExam({ patient, onRefresh }: { patient: any; onRefresh?: () 
 
       {/* New Diagnosis Form Dialog */}
       <Dialog open={diagnosisDialog} onOpenChange={setDiagnosisDialog}>
-        <DialogContent className="sm:max-w-lg p-0 overflow-hidden bg-white border-0 shadow-2xl rounded-2xl">
-          <DialogHeader className="px-6 py-4 border-b border-gray-100 bg-gray-50 m-0">
-            <DialogTitle className="text-lg font-bold text-gray-800 flex items-center gap-2">
-              <AlertTriangle className="w-5 h-5 text-blue-600" /> New Diagnosis
+        <DialogContent className="sm:max-w-lg p-0 overflow-hidden bg-white dark:bg-slate-900 border-0 shadow-2xl rounded-2xl dark:text-white">
+          <DialogHeader className="px-6 py-4 border-b border-gray-100 dark:border-slate-800 bg-gray-50 dark:bg-slate-800 m-0">
+            <DialogTitle className="text-lg font-bold text-gray-800 dark:text-white flex items-center gap-2">
+              <AlertTriangle className="w-5 h-5 text-blue-600" /> {t('diagnosis.dialog.title')}
             </DialogTitle>
           </DialogHeader>
           <div className="p-6 space-y-4">
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Chief Complaint *</label>
+              <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">{t('diagnosis.dialog.chiefComplaint')} *</label>
               <input
                 type="text"
                 value={newDiagnosis.chiefComplaint}
                 onChange={(e) => setNewDiagnosis(p => ({ ...p, chiefComplaint: e.target.value }))}
-                placeholder="What is the patient's main concern?"
-                className="w-full h-10 px-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300"
+                placeholder={t('diagnosis.dialog.phComplaint')}
+                className="w-full h-10 px-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 dark:bg-slate-800 dark:border-slate-700 dark:text-white"
               />
             </div>
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Diagnosis *</label>
+              <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">{t('diagnosis.dialog.diagnosis')} *</label>
               <input
                 type="text"
                 value={newDiagnosis.diagnosis}
                 onChange={(e) => setNewDiagnosis(p => ({ ...p, diagnosis: e.target.value }))}
-                placeholder="Enter diagnosis..."
-                className="w-full h-10 px-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300"
+                placeholder={t('diagnosis.dialog.phDiagnosis')}
+                className="w-full h-10 px-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 dark:bg-slate-800 dark:border-slate-700 dark:text-white"
               />
             </div>
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Severity</label>
+              <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">{t('diagnosis.dialog.severity')}</label>
               <div className="grid grid-cols-3 gap-2">
                 {(["mild", "moderate", "severe"] as const).map(s => (
                   <button
@@ -724,21 +726,21 @@ export function OralExam({ patient, onRefresh }: { patient: any; onRefresh?: () 
                         ? s === "severe" ? "bg-red-50 border-red-400 text-red-700"
                           : s === "moderate" ? "bg-amber-50 border-amber-400 text-amber-700"
                           : "bg-emerald-50 border-emerald-400 text-emerald-700"
-                        : "bg-white border-gray-200 text-gray-500 hover:bg-gray-50"
+                        : "bg-white border-gray-200 text-gray-500 hover:bg-gray-50 dark:bg-slate-800 dark:border-slate-700 dark:hover:bg-slate-700 dark:text-slate-300"
                     }`}
                   >
-                    {s}
+                    {t(`diagnosisSeverity.${s}`)}
                   </button>
                 ))}
               </div>
             </div>
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Notes</label>
+              <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">{t('diagnosis.dialog.clinicalNotes')}</label>
               <textarea
                 value={newDiagnosis.notes}
                 onChange={(e) => setNewDiagnosis(p => ({ ...p, notes: e.target.value }))}
-                placeholder="Additional observations..."
-                className="w-full h-20 rounded-xl border border-gray-200 bg-gray-50/50 p-3 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300"
+                placeholder={t('diagnosis.dialog.phNotes')}
+                className="w-full h-20 rounded-xl border border-gray-200 bg-gray-50/50 p-3 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 dark:bg-slate-800 dark:border-slate-700 dark:text-white"
               />
             </div>
             <Button 
@@ -746,7 +748,7 @@ export function OralExam({ patient, onRefresh }: { patient: any; onRefresh?: () 
               disabled={!newDiagnosis.chiefComplaint.trim() || !newDiagnosis.diagnosis.trim()}
               className="w-full bg-blue-600 hover:bg-blue-700 text-white rounded-xl h-11 text-sm font-semibold shadow-md shadow-blue-500/20"
             >
-              <Save className="w-4 h-4 mr-2" /> Save Diagnosis
+              <Save className="w-4 h-4 mr-2" /> {t('diagnosis.dialog.save')}
             </Button>
           </div>
         </DialogContent>
@@ -754,10 +756,10 @@ export function OralExam({ patient, onRefresh }: { patient: any; onRefresh?: () 
 
       {/* View Prescriptions Dialog */}
       <Dialog open={viewPrescriptionsDialog} onOpenChange={setViewPrescriptionsDialog}>
-        <DialogContent className="sm:max-w-xl p-0 overflow-hidden bg-white border-0 shadow-2xl rounded-2xl">
-          <DialogHeader className="px-6 py-4 border-b border-gray-100 bg-gray-50 m-0">
-            <DialogTitle className="text-lg font-bold text-gray-800 flex items-center gap-2">
-              <Pill className="w-5 h-5 text-purple-600" /> Prescriptions
+        <DialogContent className="sm:max-w-xl p-0 overflow-hidden bg-white dark:bg-slate-900 border-0 shadow-2xl rounded-2xl dark:text-white">
+          <DialogHeader className="px-6 py-4 border-b border-gray-100 dark:border-slate-800 bg-gray-50 dark:bg-slate-800 m-0">
+            <DialogTitle className="text-lg font-bold text-gray-800 dark:text-white flex items-center gap-2">
+              <Pill className="w-5 h-5 text-purple-600" /> {t('tabs.prescriptions')}
             </DialogTitle>
           </DialogHeader>
           <div className="p-6 space-y-5 max-h-[65vh] overflow-y-auto">
@@ -765,34 +767,34 @@ export function OralExam({ patient, onRefresh }: { patient: any; onRefresh?: () 
               onClick={() => { setViewPrescriptionsDialog(false); setPrescriptionDialog(true); }}
               className="w-full bg-purple-600 hover:bg-purple-700 text-white rounded-xl h-10 text-sm font-semibold shadow-md shadow-purple-500/20"
             >
-              <Plus className="w-4 h-4 mr-2" /> New Prescription
+              <Plus className="w-4 h-4 mr-2" /> {t('prescriptions.add')}
             </Button>
 
             <div className="space-y-3">
               {prescriptions.length > 0 ? prescriptions.map(p => (
-                <div key={p.id} className="p-4 rounded-xl border border-gray-100 bg-gray-50/30 space-y-2 group hover:border-purple-100 transition-colors">
+                <div key={p.id} className="p-4 rounded-xl border border-gray-100 bg-gray-50/30 space-y-2 group hover:border-purple-100 transition-colors dark:bg-slate-800/50 dark:border-slate-800 dark:hover:border-purple-900/50">
                   <div className="flex items-start justify-between">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1">
                         <Pill className="w-4 h-4 text-purple-500" />
-                        <span className="text-sm font-bold text-gray-900">{p.medication}</span>
+                        <span className="text-sm font-bold text-gray-900 dark:text-white">{p.medication}</span>
                         <span className="text-[10px] text-gray-400">{p.date}</span>
                       </div>
                       <div className="grid grid-cols-3 gap-2 mt-2">
-                        <div className="bg-white p-2 rounded-lg border border-gray-100 text-center">
-                          <p className="text-[10px] text-gray-400 uppercase">Dosage</p>
+                        <div className="bg-white dark:bg-slate-800 p-2 rounded-lg border border-gray-100 dark:border-slate-700 text-center">
+                          <p className="text-[10px] text-gray-400 uppercase">{t('prescriptions.fields.dosage')}</p>
                           <p className="text-xs font-semibold text-gray-700">{p.dosage}</p>
                         </div>
-                        <div className="bg-white p-2 rounded-lg border border-gray-100 text-center">
-                          <p className="text-[10px] text-gray-400 uppercase">Frequency</p>
+                        <div className="bg-white dark:bg-slate-800 p-2 rounded-lg border border-gray-100 dark:border-slate-700 text-center">
+                          <p className="text-[10px] text-gray-400 uppercase">{t('prescriptions.fields.frequency')}</p>
                           <p className="text-xs font-semibold text-gray-700">{p.frequency}</p>
                         </div>
-                        <div className="bg-white p-2 rounded-lg border border-gray-100 text-center">
-                          <p className="text-[10px] text-gray-400 uppercase">Duration</p>
+                        <div className="bg-white dark:bg-slate-800 p-2 rounded-lg border border-gray-100 dark:border-slate-700 text-center">
+                          <p className="text-[10px] text-gray-400 uppercase">{t('prescriptions.fields.duration')}</p>
                           <p className="text-xs font-semibold text-gray-700">{p.duration}</p>
                         </div>
                       </div>
-                      {p.notes && <p className="text-xs text-gray-500 mt-2 bg-white p-2 rounded-lg border border-gray-100">📋 {p.notes}</p>}
+                      {p.notes && <p className="text-xs text-gray-500 mt-2 bg-white dark:bg-slate-800 dark:border-slate-700 dark:text-slate-400 p-2 rounded-lg border border-gray-100">📋 {p.notes}</p>}
                     </div>
                     <button onClick={() => deletePrescription(p.id)} className="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-red-500 transition-opacity ml-3">
                       <Trash2 className="w-4 h-4" />
@@ -800,7 +802,7 @@ export function OralExam({ patient, onRefresh }: { patient: any; onRefresh?: () 
                   </div>
                 </div>
               )) : (
-                <p className="text-sm text-gray-400 text-center py-6">No prescriptions yet</p>
+                <p className="text-sm text-gray-400 text-center py-6">{t('prescriptions.empty')}</p>
               )}
             </div>
           </div>
@@ -809,62 +811,62 @@ export function OralExam({ patient, onRefresh }: { patient: any; onRefresh?: () 
 
       {/* New Prescription Form Dialog */}
       <Dialog open={prescriptionDialog} onOpenChange={setPrescriptionDialog}>
-        <DialogContent className="sm:max-w-lg p-0 overflow-hidden bg-white border-0 shadow-2xl rounded-2xl">
-          <DialogHeader className="px-6 py-4 border-b border-purple-100 bg-purple-50 m-0">
-            <DialogTitle className="text-lg font-bold text-purple-800 flex items-center gap-2">
-              <Pill className="w-5 h-5 text-purple-600" /> New Prescription
+        <DialogContent className="sm:max-w-lg p-0 overflow-hidden bg-white dark:bg-slate-900 border-0 shadow-2xl rounded-2xl dark:text-white">
+          <DialogHeader className="px-6 py-4 border-b border-purple-100 dark:border-purple-900/50 bg-purple-50 dark:bg-purple-900/20 m-0">
+            <DialogTitle className="text-lg font-bold text-purple-800 dark:text-purple-400 flex items-center gap-2">
+              <Pill className="w-5 h-5 text-purple-600" /> {t('prescriptions.dialog.title')}
             </DialogTitle>
           </DialogHeader>
           <div className="p-6 space-y-4">
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Medication *</label>
+              <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">{t('prescriptions.dialog.medicationName')} *</label>
               <input
                 type="text"
                 value={newPrescription.medication}
                 onChange={(e) => setNewPrescription(p => ({ ...p, medication: e.target.value }))}
-                placeholder="e.g., Amoxicillin 500mg"
-                className="w-full h-10 px-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-300"
+                placeholder={t('prescriptions.dialog.phMed')}
+                className="w-full h-10 px-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-300 dark:bg-slate-800 dark:border-slate-700 dark:text-white"
               />
             </div>
             <div className="grid grid-cols-3 gap-3">
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Dosage *</label>
+                <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">{t('prescriptions.dialog.dosage')} *</label>
                 <input
                   type="text"
                   value={newPrescription.dosage}
                   onChange={(e) => setNewPrescription(p => ({ ...p, dosage: e.target.value }))}
-                  placeholder="e.g., 1 tablet"
-                  className="w-full h-10 px-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-300"
+                  placeholder={t('prescriptions.dialog.phDosage')}
+                  className="w-full h-10 px-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-300 dark:bg-slate-800 dark:border-slate-700 dark:text-white"
                 />
               </div>
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Frequency</label>
+                <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">{t('prescriptions.dialog.frequency')}</label>
                 <input
                   type="text"
                   value={newPrescription.frequency}
                   onChange={(e) => setNewPrescription(p => ({ ...p, frequency: e.target.value }))}
-                  placeholder="e.g., 3x daily"
-                  className="w-full h-10 px-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-300"
+                  placeholder={t('prescriptions.dialog.phFrequency')}
+                  className="w-full h-10 px-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-300 dark:bg-slate-800 dark:border-slate-700 dark:text-white"
                 />
               </div>
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Duration</label>
+                <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">{t('prescriptions.dialog.duration')}</label>
                 <input
                   type="text"
                   value={newPrescription.duration}
                   onChange={(e) => setNewPrescription(p => ({ ...p, duration: e.target.value }))}
-                  placeholder="e.g., 7 days"
-                  className="w-full h-10 px-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-300"
+                  placeholder={t('prescriptions.dialog.phDuration')}
+                  className="w-full h-10 px-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-300 dark:bg-slate-800 dark:border-slate-700 dark:text-white"
                 />
               </div>
             </div>
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Notes</label>
+              <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">{t('prescriptions.dialog.instructions')}</label>
               <textarea
                 value={newPrescription.notes}
                 onChange={(e) => setNewPrescription(p => ({ ...p, notes: e.target.value }))}
-                placeholder="Special instructions..."
-                className="w-full h-20 rounded-xl border border-gray-200 bg-gray-50/50 p-3 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-300"
+                placeholder={t('prescriptions.dialog.phInstructions')}
+                className="w-full h-20 rounded-xl border border-gray-200 bg-gray-50/50 p-3 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-300 dark:bg-slate-800 dark:border-slate-700 dark:text-white"
               />
             </div>
             <Button 
@@ -872,7 +874,7 @@ export function OralExam({ patient, onRefresh }: { patient: any; onRefresh?: () 
               disabled={!newPrescription.medication.trim() || !newPrescription.dosage.trim()}
               className="w-full bg-purple-600 hover:bg-purple-700 text-white rounded-xl h-11 text-sm font-semibold shadow-md shadow-purple-500/20"
             >
-              <Save className="w-4 h-4 mr-2" /> Save Prescription
+              <Save className="w-4 h-4 mr-2" /> {t('prescriptions.dialog.save')}
             </Button>
           </div>
         </DialogContent>

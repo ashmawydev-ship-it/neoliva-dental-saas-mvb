@@ -185,9 +185,9 @@ export function NewAppointmentDialog({ doctors, services }: NewAppointmentDialog
           <span className="sm:hidden">{t('newAppointment')}</span>
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[600px] p-0 overflow-hidden bg-white border-0 shadow-2xl rounded-2xl md:rounded-3xl">
-        <DialogHeader className="px-6 md:px-8 py-4 md:py-6 border-b border-gray-100 bg-gray-50 flex flex-row items-center justify-between m-0">
-          <DialogTitle className="text-xl md:text-2xl font-bold text-gray-800 flex items-center gap-3">
+      <DialogContent className="sm:max-w-[600px] p-0 overflow-hidden bg-white border-0 shadow-2xl rounded-2xl md:rounded-3xl dark:bg-slate-900">
+        <DialogHeader className="px-6 md:px-8 py-4 md:py-6 border-b border-gray-100 bg-gray-50 flex flex-row items-center justify-between m-0 dark:bg-slate-800 dark:border-slate-700">
+          <DialogTitle className="text-xl md:text-2xl font-bold text-gray-800 dark:text-white flex items-center gap-3">
             <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl md:rounded-2xl bg-blue-600 flex items-center justify-center text-white shadow-lg shadow-blue-500/20">
               <CalendarIcon className="w-5 h-5 md:w-6 md:h-6" />
             </div>
@@ -200,12 +200,12 @@ export function NewAppointmentDialog({ doctors, services }: NewAppointmentDialog
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
               {/* Patient Selection (Async Combobox Search) */}
               <div className="space-y-2 relative">
-                <Label className="text-xs md:text-sm font-bold text-gray-700 uppercase tracking-wider flex items-center gap-2">
+                <Label className="text-xs md:text-sm font-bold text-gray-700 uppercase tracking-wider flex items-center gap-2 dark:text-slate-300">
                   <UserPlus className="w-4 h-4 text-blue-500" /> {t('form.patient')}
                 </Label>
                 {watchedPatientId ? (
-                  <div className="flex items-center justify-between h-10 md:h-12 px-4 border border-blue-200 bg-blue-50/30 rounded-xl md:rounded-2xl">
-                    <div className="flex items-center gap-2 text-sm text-blue-900 font-medium">
+                  <div className="flex items-center justify-between h-10 md:h-12 px-4 border border-blue-200 bg-blue-50/30 rounded-xl md:rounded-2xl dark:border-blue-800 dark:bg-blue-900/20">
+                    <div className="flex items-center gap-2 text-sm text-blue-900 font-medium dark:text-blue-100">
                       <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center text-xs text-blue-700 font-bold">
                         {selectedPatientName.substring(0, 2).toUpperCase()}
                       </div>
@@ -232,7 +232,7 @@ export function NewAppointmentDialog({ doctors, services }: NewAppointmentDialog
                       <Search className="absolute left-3 w-4 h-4 text-gray-400 pointer-events-none" />
                       <Input 
                         placeholder="Search patient by name or phone..." 
-                        className="h-10 md:h-12 pl-10 pr-10 border-gray-200 focus:ring-blue-500/20 rounded-xl md:rounded-2xl bg-gray-50/50"
+                        className="h-10 md:h-12 pl-10 pr-10 border-gray-200 focus:ring-blue-500/20 rounded-xl md:rounded-2xl bg-gray-50/50 dark:bg-slate-800 dark:border-slate-700 dark:text-white"
                         value={patientQuery}
                         onChange={(e) => handleSearch(e.target.value)}
                         onFocus={() => { if (patientQuery.trim().length > 0) setShowDropdown(true); }}
@@ -245,7 +245,7 @@ export function NewAppointmentDialog({ doctors, services }: NewAppointmentDialog
                       <>
                         <div className="fixed inset-0 z-10" onClick={() => setShowDropdown(false)} />
                         
-                        <div className="absolute top-full left-0 right-0 mt-2 z-20 max-h-[200px] overflow-y-auto bg-white border border-gray-100 shadow-xl rounded-xl p-1 animate-in fade-in slide-in-from-top-1 duration-150">
+                        <div className="absolute top-full left-0 right-0 mt-2 z-20 max-h-[200px] overflow-y-auto bg-white border border-gray-100 shadow-xl rounded-xl p-1 animate-in fade-in slide-in-from-top-1 duration-150 dark:bg-slate-800 dark:border-slate-700">
                           {patientResults.length === 0 ? (
                             <div className="p-3 text-xs text-gray-500 text-center">No patients found.</div>
                           ) : (
@@ -254,7 +254,7 @@ export function NewAppointmentDialog({ doctors, services }: NewAppointmentDialog
                                 key={p.id}
                                 type="button"
                                 onClick={() => handleSelectPatient(p.id, p.name)}
-                                className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-900 rounded-lg transition-colors flex flex-col cursor-pointer border-0 bg-transparent"
+                                className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-900 rounded-lg transition-colors flex flex-col cursor-pointer border-0 bg-transparent dark:text-slate-200 dark:hover:bg-slate-700 dark:hover:text-white"
                               >
                                 <span className="font-semibold">{p.name}</span>
                                 <span className="text-[10px] text-gray-500">{p.phone ? p.phone : p.displayId}</span>
@@ -271,14 +271,14 @@ export function NewAppointmentDialog({ doctors, services }: NewAppointmentDialog
 
               {/* Doctor Selection */}
               <div className="space-y-2">
-                <Label className="text-xs md:text-sm font-bold text-gray-700 uppercase tracking-wider flex items-center gap-2">
+                <Label className="text-xs md:text-sm font-bold text-gray-700 uppercase tracking-wider flex items-center gap-2 dark:text-slate-300">
                   <Stethoscope className="w-4 h-4 text-blue-500" /> {t('form.doctor')}
                 </Label>
                 <Select value={watchedDoctorId} onValueChange={(val) => setValue("doctorId", val ?? "", { shouldValidate: true })}>
-                  <SelectTrigger className="h-10 md:h-12 border-gray-200 focus:ring-blue-500/20 rounded-xl md:rounded-2xl bg-gray-50/50">
+                  <SelectTrigger className="h-10 md:h-12 border-gray-200 focus:ring-blue-500/20 rounded-xl md:rounded-2xl bg-gray-50/50 dark:bg-slate-800 dark:border-slate-700 dark:text-white">
                     <SelectValue placeholder={t('form.selectDoctor')} />
                   </SelectTrigger>
-                  <SelectContent className="rounded-xl md:rounded-2xl border-gray-100 shadow-xl p-1 bg-white">
+                  <SelectContent className="rounded-xl md:rounded-2xl border-gray-100 shadow-xl p-1 bg-white dark:bg-slate-800 dark:border-slate-700 dark:text-white">
                     {doctors.map(d => (
                       <SelectItem key={d.id} value={d.id} className="rounded-lg md:rounded-xl my-0.5">Dr. {d.name}</SelectItem>
                     ))}
@@ -289,14 +289,14 @@ export function NewAppointmentDialog({ doctors, services }: NewAppointmentDialog
 
               {/* Service Selection */}
               <div className="space-y-2">
-                <Label className="text-xs md:text-sm font-bold text-gray-700 uppercase tracking-wider flex items-center gap-2">
+                <Label className="text-xs md:text-sm font-bold text-gray-700 uppercase tracking-wider flex items-center gap-2 dark:text-slate-300">
                   <ClipboardList className="w-4 h-4 text-blue-500" /> {t('form.service')}
                 </Label>
                 <Select value={watchedServiceId} onValueChange={(val) => handleServiceChange(val ?? "")}>
-                  <SelectTrigger className="h-10 md:h-12 border-gray-200 focus:ring-blue-500/20 rounded-xl md:rounded-2xl bg-gray-50/50">
+                  <SelectTrigger className="h-10 md:h-12 border-gray-200 focus:ring-blue-500/20 rounded-xl md:rounded-2xl bg-gray-50/50 dark:bg-slate-800 dark:border-slate-700 dark:text-white">
                     <SelectValue placeholder={t('form.selectService')} />
                   </SelectTrigger>
-                  <SelectContent className="rounded-xl md:rounded-2xl border-gray-100 shadow-xl p-1 bg-white">
+                  <SelectContent className="rounded-xl md:rounded-2xl border-gray-100 shadow-xl p-1 bg-white dark:bg-slate-800 dark:border-slate-700 dark:text-white">
                     {services.map(s => (
                       <SelectItem key={s.id} value={s.id} className="rounded-lg md:rounded-xl my-0.5">{s.name} (${s.price})</SelectItem>
                     ))}
@@ -307,40 +307,40 @@ export function NewAppointmentDialog({ doctors, services }: NewAppointmentDialog
 
               {/* Treatment Name */}
               <div className="space-y-2">
-                <Label className="text-xs md:text-sm font-bold text-gray-700 uppercase tracking-wider flex items-center gap-2">
+                <Label className="text-xs md:text-sm font-bold text-gray-700 uppercase tracking-wider flex items-center gap-2 dark:text-slate-300">
                   <Palette className="w-4 h-4 text-blue-500" /> Treatment
                 </Label>
                 <Input 
                   {...register("treatment")}
                   placeholder="e.g. Tooth Extraction" 
-                  className="h-10 md:h-12 border-gray-200 focus:ring-blue-500/20 rounded-xl md:rounded-2xl bg-gray-50/50 text-gray-900"
+                  className="h-10 md:h-12 border-gray-200 focus:ring-blue-500/20 rounded-xl md:rounded-2xl bg-gray-50/50 text-gray-900 dark:bg-slate-800 dark:border-slate-700 dark:text-white"
                 />
                 {errors.treatment && <p className="text-xs text-red-500 mt-0.5 font-medium">{errors.treatment.message}</p>}
               </div>
 
               {/* Date */}
               <div className="space-y-2">
-                <Label className="text-xs md:text-sm font-bold text-gray-700 uppercase tracking-wider flex items-center gap-2">
+                <Label className="text-xs md:text-sm font-bold text-gray-700 uppercase tracking-wider flex items-center gap-2 dark:text-slate-300">
                   <CalendarIcon className="w-4 h-4 text-blue-500" /> {t('form.date')}
                 </Label>
                 <Input 
                   type="date" 
                   value={getDateValue()}
                   onChange={(e) => setValue("date", e.target.value ? new Date(e.target.value) : new Date(), { shouldValidate: true })}
-                  className="h-10 md:h-12 border-gray-200 focus:ring-blue-500/20 rounded-xl md:rounded-2xl bg-gray-50/50 text-gray-900"
+                  className="h-10 md:h-12 border-gray-200 focus:ring-blue-500/20 rounded-xl md:rounded-2xl bg-gray-50/50 text-gray-900 dark:bg-slate-800 dark:border-slate-700 dark:text-white"
                 />
                 {errors.date && <p className="text-xs text-red-500 mt-0.5 font-medium">{errors.date.message}</p>}
               </div>
 
               {/* Time */}
               <div className="space-y-2">
-                <Label className="text-xs md:text-sm font-bold text-gray-700 uppercase tracking-wider flex items-center gap-2">
+                <Label className="text-xs md:text-sm font-bold text-gray-700 uppercase tracking-wider flex items-center gap-2 dark:text-slate-300">
                   <Clock className="w-4 h-4 text-blue-500" /> {t('form.time')}
                 </Label>
                 <Input 
                   type="time" 
                   {...register("time")}
-                  className="h-10 md:h-12 border-gray-200 focus:ring-blue-500/20 rounded-xl md:rounded-2xl bg-gray-50/50 text-gray-900"
+                  className="h-10 md:h-12 border-gray-200 focus:ring-blue-500/20 rounded-xl md:rounded-2xl bg-gray-50/50 text-gray-900 dark:bg-slate-800 dark:border-slate-700 dark:text-white"
                 />
                 {errors.time && <p className="text-xs text-red-500 mt-0.5 font-medium">{errors.time.message}</p>}
               </div>
@@ -366,22 +366,22 @@ export function NewAppointmentDialog({ doctors, services }: NewAppointmentDialog
 
             {/* Notes */}
             <div className="space-y-2">
-              <Label className="text-xs md:text-sm font-bold text-gray-700 uppercase tracking-wider">{t('form.notes')}</Label>
+              <Label className="text-xs md:text-sm font-bold text-gray-700 uppercase tracking-wider dark:text-slate-300">{t('form.notes')}</Label>
               <Textarea 
                 {...register("notes")}
                 placeholder="Any special instructions or clinical notes..." 
-                className="min-h-[100px] border-gray-200 focus:ring-blue-500/20 rounded-xl md:rounded-2xl bg-gray-50/50 resize-none text-gray-900"
+                className="min-h-[100px] border-gray-200 focus:ring-blue-500/20 rounded-xl md:rounded-2xl bg-gray-50/50 resize-none text-gray-900 dark:bg-slate-800 dark:border-slate-700 dark:text-white"
               />
               {errors.notes && <p className="text-xs text-red-500 mt-0.5 font-medium">{errors.notes.message}</p>}
             </div>
           </div>
 
-          <DialogFooter className="px-6 md:px-8 py-4 md:py-6 border-t border-gray-100 bg-gray-50 flex flex-col-reverse sm:flex-row gap-2.5 sm:gap-3 sm:justify-end">
+          <DialogFooter className="px-6 md:px-8 py-4 md:py-6 border-t border-gray-100 bg-gray-50 flex flex-col-reverse sm:flex-row gap-2.5 sm:gap-3 sm:justify-end dark:bg-slate-800 dark:border-slate-700">
             <Button 
               type="button" 
               variant="outline" 
               onClick={() => setIsOpen(false)}
-              className="w-full sm:w-auto h-10 md:h-12 px-6 rounded-xl md:rounded-2xl font-semibold border-gray-200 hover:bg-white cursor-pointer"
+              className="w-full sm:w-auto h-10 md:h-12 px-6 rounded-xl md:rounded-2xl font-semibold border-gray-200 hover:bg-white cursor-pointer dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700"
               disabled={isSubmitting}
             >
               Cancel

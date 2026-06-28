@@ -24,12 +24,14 @@ import { toast } from "sonner";
 import { deleteInvoice } from "@/app/actions/billing";
 import { InvoiceForm } from "./InvoiceForm";
 import { PaymentModal } from "./PaymentModal";
+import { useTranslations } from "next-intl";
 
 interface BillingListProps {
   patientId: string;
   patientName: string;
   invoiceHistory: any[];
   outstanding: number;
+  clinicName?: string;
   onRefresh?: () => void;
 }
 
@@ -38,8 +40,10 @@ export function BillingList({
   patientName, 
   invoiceHistory = [], 
   outstanding,
+  clinicName = "SmileCare",
   onRefresh 
 }: BillingListProps) {
+  const t = useTranslations('patientBilling');
   const [isInvoiceModalOpen, setIsInvoiceModalOpen] = useState(false);
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
   const [selectedInvoice, setSelectedInvoice] = useState<any>(null);
@@ -52,7 +56,7 @@ export function BillingList({
     const htmlContent = `
       <html>
         <head>
-          <title>Invoice - ${invoice.displayId || invoice.id.substring(0, 8)}</title>
+          <title>${t('print.invoice')} - ${invoice.displayId || invoice.id.substring(0, 8)}</title>
           <style>
             @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
             body { font-family: 'Inter', sans-serif; color: #1e293b; margin: 0; padding: 40px; line-height: 1.5; }
@@ -84,37 +88,34 @@ export function BillingList({
         <body>
           <div class="invoice-card">
             <div class="header">
-              <div class="logo">SmileCare</div>
+              <div class="logo">${clinicName}</div>
               <div class="invoice-info">
-                <h1>Invoice</h1>
+                <h1>${t('print.invoice')}</h1>
                 <p>#${invoice.displayId || invoice.id.substring(0, 8).toUpperCase()}</p>
-                <p>Date: ${new Date(invoice.createdAt).toLocaleDateString()}</p>
-                <div class="status-badge status-${invoice.status.toLowerCase()}">${invoice.status}</div>
+                <p>${new Date(invoice.createdAt).toLocaleDateString()}</p>
+                <div class="status-badge status-${invoice.status.toLowerCase()}">${t('card.status.' + invoice.status.charAt(0).toUpperCase() + invoice.status.slice(1).toLowerCase())}</div>
               </div>
             </div>
 
             <div style="display: flex; gap: 60px; margin-bottom: 50px;">
               <div class="details-section" style="flex: 1;">
-                <h3>From</h3>
-                <p><strong>SmileCare Dental Clinic</strong></p>
-                <p>123 Clinic Avenue, Medical District</p>
-                <p>New York, NY 10001</p>
-                <p>+1 (800) SMILE-99</p>
+                <h3>${t('print.from')}</h3>
+                <p><strong>${clinicName}</strong></p>
               </div>
               <div class="details-section" style="flex: 1;">
-                <h3>Bill To</h3>
+                <h3>${t('print.billTo')}</h3>
                 <p><strong>${patientName}</strong></p>
-                <p>Patient ID: ${patientId.substring(0, 8)}</p>
+                <p>ID: ${patientId.substring(0, 8)}</p>
               </div>
             </div>
 
             <table>
               <thead>
                 <tr>
-                  <th>Description</th>
-                  <th>Qty</th>
-                  <th class="amount-col">Price</th>
-                  <th class="amount-col">Total</th>
+                  <th>${t('print.description')}</th>
+                  <th>${t('print.qty')}</th>
+                  <th class="amount-col">${t('print.price')}</th>
+                  <th class="amount-col">${t('print.total')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -131,7 +132,7 @@ export function BillingList({
 
             <div class="totals">
               <div class="total-row">
-                <span>Total Amount</span>
+                <span>${t('print.totalAmount')}</span>
                 <span>$${Number(invoice.totalAmount).toFixed(2)}</span>
               </div>
               <div class="total-row">
@@ -139,14 +140,14 @@ export function BillingList({
                 <span>$${Number(invoice.paidAmount).toFixed(2)}</span>
               </div>
               <div class="total-row grand-total">
-                <span>Balance Due</span>
+                <span>${t('print.balanceDue')}</span>
                 <span>$${(Number(invoice.totalAmount) - Number(invoice.paidAmount)).toFixed(2)}</span>
               </div>
             </div>
 
             <div class="footer">
-              <p>Thank you for choosing SmileCare for your dental health.</p>
-              <p>Please make all checks payable to SmileCare Dental Clinic.</p>
+              <p>${t('print.thankYou', { clinicName })}</p>
+              <p>${t('print.checksPayable', { clinicName })}</p>
             </div>
           </div>
           <script>
@@ -166,30 +167,30 @@ export function BillingList({
   };
 
   const handleDelete = async (invoiceId: string) => {
-    if (!confirm("Are you sure you want to delete this invoice? This action cannot be undone.")) return;
+    if (!confirm(t('toast.deleteConfirm', { defaultValue: "Are you sure you want to delete this invoice? This action cannot be undone." }))) return;
     
-    const toastId = toast.loading("Deleting invoice...");
+    const toastId = toast.loading(t('toast.deleting'));
     try {
       const result = await deleteInvoice(patientId, invoiceId);
       if (result.success) {
-        toast.success("Invoice deleted successfully", { id: toastId });
+        toast.success(t('toast.deleted'), { id: toastId });
         if (onRefresh) onRefresh();
       } else {
         throw new Error(result.error);
       }
     } catch (error: any) {
-      toast.error(error.message || "Failed to delete invoice", { id: toastId });
+      toast.error(error.message || t('toast.deleteFailed'), { id: toastId });
     }
   };
 
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'PAID':
-        return <Badge className="bg-emerald-50 text-emerald-600 border-emerald-100 hover:bg-emerald-100">Paid</Badge>;
+        return <Badge className="bg-emerald-50 text-emerald-600 border-emerald-100 hover:bg-emerald-100">{t('card.status.Paid')}</Badge>;
       case 'OVERDUE':
-        return <Badge className="bg-rose-50 text-rose-600 border-rose-100 hover:bg-rose-100">Overdue</Badge>;
+        return <Badge className="bg-rose-50 text-rose-600 border-rose-100 hover:bg-rose-100">{t('card.status.Overdue')}</Badge>;
       default:
-        return <Badge className="bg-blue-50 text-blue-600 border-blue-100 hover:bg-blue-100">Pending</Badge>;
+        return <Badge className="bg-blue-50 text-blue-600 border-blue-100 hover:bg-blue-100">{t('card.status.Pending')}</Badge>;
     }
   };
 
@@ -201,7 +202,7 @@ export function BillingList({
           <CardContent className="p-6">
             <div className="flex justify-between items-start">
               <div>
-                <p className="text-indigo-100 text-sm font-medium">Outstanding Balance</p>
+                <p className="text-indigo-100 text-sm font-medium">{t('kpis.outstandingBalance')}</p>
                 <h3 className="text-3xl font-black mt-1">${outstanding.toLocaleString(undefined, { minimumFractionDigits: 2 })}</h3>
               </div>
               <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center backdrop-blur-sm">
@@ -210,73 +211,73 @@ export function BillingList({
             </div>
             <div className="mt-6 flex items-center gap-2 text-indigo-100/80 text-xs font-bold uppercase tracking-wider">
               <AlertCircle className="w-3.5 h-3.5" />
-              {invoiceHistory.filter(i => i.status !== 'PAID').length} Unpaid Invoices
+              {t('kpis.unpaidInvoices', { n: invoiceHistory.filter(i => i.status !== 'PAID').length })}
             </div>
           </CardContent>
           <div className="absolute -bottom-6 -right-6 w-32 h-32 bg-white/5 rounded-full blur-3xl"></div>
         </Card>
 
-        <Card className="border-0 shadow-sm bg-white overflow-hidden">
+        <Card className="border-0 shadow-sm bg-white dark:bg-slate-900 overflow-hidden dark:border dark:border-slate-800">
           <CardContent className="p-6">
             <div className="flex justify-between items-start">
               <div>
-                <p className="text-gray-500 text-sm font-medium">Total Billed</p>
-                <h3 className="text-3xl font-black mt-1 text-gray-900">
+                <p className="text-gray-500 text-sm font-medium">{t('kpis.totalBilled')}</p>
+                <h3 className="text-3xl font-black mt-1 text-gray-900 dark:text-white">
                   ${invoiceHistory.reduce((sum, inv) => sum + Number(inv.totalAmount), 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}
                 </h3>
               </div>
-              <div className="w-12 h-12 bg-gray-50 rounded-2xl flex items-center justify-center">
+              <div className="w-12 h-12 bg-gray-50 dark:bg-slate-800 rounded-2xl flex items-center justify-center">
                 <Receipt className="w-6 h-6 text-gray-400" />
               </div>
             </div>
             <div className="mt-6 flex items-center gap-2 text-gray-400 text-xs font-bold uppercase tracking-wider">
               <History className="w-3.5 h-3.5" />
-              Lifetime Patient Value
+              {t('kpis.lifetimeValue')}
             </div>
           </CardContent>
         </Card>
 
-        <Card className="border-0 shadow-sm bg-white overflow-hidden">
+        <Card className="border-0 shadow-sm bg-white dark:bg-slate-900 overflow-hidden dark:border dark:border-slate-800">
           <CardContent className="p-6">
             <div className="flex justify-between items-start">
               <div>
-                <p className="text-gray-500 text-sm font-medium">Total Paid</p>
+                <p className="text-gray-500 text-sm font-medium">{t('kpis.totalPaid')}</p>
                 <h3 className="text-3xl font-black mt-1 text-emerald-600">
                   ${invoiceHistory.reduce((sum, inv) => sum + Number(inv.paidAmount), 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}
                 </h3>
               </div>
-              <div className="w-12 h-12 bg-emerald-50 rounded-2xl flex items-center justify-center">
+              <div className="w-12 h-12 bg-emerald-50 dark:bg-emerald-900/30 rounded-2xl flex items-center justify-center">
                 <CheckCircle2 className="w-6 h-6 text-emerald-500" />
               </div>
             </div>
             <div className="mt-6 flex items-center gap-2 text-emerald-500/70 text-xs font-bold uppercase tracking-wider">
               <CreditCard className="w-3.5 h-3.5" />
-              Successful Transactions
+              {t('kpis.successfulTransactions')}
             </div>
           </CardContent>
         </Card>
       </div>
 
       {/* Actions Bar */}
-      <div className="flex justify-between items-center bg-white p-4 rounded-2xl border border-gray-100 shadow-sm">
-        <h4 className="text-lg font-bold text-gray-900 ml-2">Invoice History</h4>
+      <div className="flex justify-between items-center bg-white dark:bg-slate-900 p-4 rounded-2xl border border-gray-100 dark:border-slate-800 shadow-sm">
+        <h4 className="text-lg font-bold text-gray-900 dark:text-white ml-2">{t('invoiceHistory')}</h4>
         <Button 
           onClick={() => setIsInvoiceModalOpen(true)}
           className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl h-11 px-6 font-bold shadow-lg shadow-indigo-100 transition-all active:scale-95"
         >
-          <Plus className="w-4 h-4 mr-2" /> Create Invoice
+          <Plus className="w-4 h-4 mr-2" /> {t('createInvoice')}
         </Button>
       </div>
 
       {/* Invoice List */}
       <div className="space-y-4">
         {invoiceHistory.length === 0 ? (
-          <div className="py-20 bg-white rounded-3xl border-2 border-dashed border-gray-100 flex flex-col items-center justify-center text-center">
-            <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center text-gray-200 mb-4">
+          <div className="py-20 bg-white dark:bg-slate-900 rounded-3xl border-2 border-dashed border-gray-100 dark:border-slate-800 flex flex-col items-center justify-center text-center">
+            <div className="w-20 h-20 bg-gray-50 dark:bg-slate-800 rounded-full flex items-center justify-center text-gray-200 dark:text-gray-600 mb-4">
               <Receipt className="w-10 h-10" />
             </div>
-            <h4 className="text-lg font-bold text-gray-900">No Billing History</h4>
-            <p className="text-sm text-gray-500 max-w-xs mx-auto">
+            <h4 className="text-lg font-bold text-gray-900 dark:text-white">{t('empty')}</h4>
+            <p className="text-sm text-gray-500 dark:text-gray-400 max-w-xs mx-auto">
               Start by creating an invoice for treatments provided.
             </p>
             <Button 
@@ -284,30 +285,30 @@ export function BillingList({
               onClick={() => setIsInvoiceModalOpen(true)}
               className="mt-6 rounded-xl border-gray-200"
             >
-              <Plus className="w-4 h-4 mr-2" /> Create First Invoice
+              <Plus className="w-4 h-4 mr-2" /> {t('createInvoice')}
             </Button>
           </div>
         ) : (
           invoiceHistory.map((invoice) => (
             <Card key={invoice.id} className={cn(
-              "border-0 shadow-sm overflow-hidden transition-all duration-300",
-              expandedInvoice === invoice.id ? "ring-2 ring-indigo-500/10 shadow-xl" : "hover:shadow-md hover:border-gray-200"
+              "border border-transparent dark:border-slate-800 shadow-sm overflow-hidden transition-all duration-300 bg-white dark:bg-slate-900",
+              expandedInvoice === invoice.id ? "ring-2 ring-indigo-500/10 shadow-xl" : "hover:shadow-md hover:border-gray-200 dark:hover:border-slate-700"
             )}>
               <CardContent className="p-0">
                 <div 
-                  className="p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 cursor-pointer hover:bg-gray-50/50 transition-colors"
+                  className="p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 cursor-pointer hover:bg-gray-50/50 dark:hover:bg-slate-800/50 transition-colors"
                   onClick={() => setExpandedInvoice(expandedInvoice === invoice.id ? null : invoice.id)}
                 >
                   <div className="flex items-center gap-4">
                     <div className={cn(
                       "w-12 h-12 rounded-2xl flex items-center justify-center shrink-0",
-                      invoice.status === 'PAID' ? "bg-emerald-50 text-emerald-600" : "bg-indigo-50 text-indigo-600"
+                      invoice.status === 'PAID' ? "bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400" : "bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400"
                     )}>
                       <Receipt className="w-6 h-6" />
                     </div>
                     <div className="min-w-0">
                       <div className="flex items-center gap-2 mb-0.5">
-                        <span className="text-sm font-black text-gray-900 truncate">{invoice.displayId || `INV-${invoice.id.substring(0, 8).toUpperCase()}`}</span>
+                        <span className="text-sm font-black text-gray-900 dark:text-white truncate">{invoice.displayId || `INV-${invoice.id.substring(0, 8).toUpperCase()}`}</span>
                         {getStatusBadge(invoice.status)}
                       </div>
                       <div className="flex items-center gap-3 text-xs text-gray-500 font-medium">
@@ -321,12 +322,12 @@ export function BillingList({
 
                   <div className="flex items-center justify-between md:justify-end gap-6">
                     <div className="text-right">
-                      <p className="text-xs text-gray-400 font-bold uppercase tracking-tighter">Amount</p>
-                      <p className="text-lg font-black text-gray-900">${Number(invoice.totalAmount).toLocaleString()}</p>
+                      <p className="text-xs text-gray-400 font-bold uppercase tracking-tighter">{t('card.amount')}</p>
+                      <p className="text-lg font-black text-gray-900 dark:text-white">${Number(invoice.totalAmount).toLocaleString()}</p>
                     </div>
                     
                     <div className="text-right">
-                      <p className="text-xs text-gray-400 font-bold uppercase tracking-tighter">Balance</p>
+                      <p className="text-xs text-gray-400 font-bold uppercase tracking-tighter">{t('card.balance')}</p>
                       <p className={cn(
                         "text-lg font-black",
                         (Number(invoice.totalAmount) - Number(invoice.paidAmount)) > 0 ? "text-rose-500" : "text-emerald-500"
@@ -347,7 +348,7 @@ export function BillingList({
                           <CreditCard className="w-4 h-4 mr-2" /> Pay
                         </Button>
                       )}
-                      <Button variant="ghost" size="icon" className="h-9 w-9 rounded-xl text-gray-400">
+                      <Button variant="ghost" size="icon" className="h-9 w-9 rounded-xl text-gray-400 dark:hover:bg-slate-800">
                         {expandedInvoice === invoice.id ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
                       </Button>
                     </div>
@@ -356,30 +357,30 @@ export function BillingList({
 
                 {/* Expanded Details */}
                 {expandedInvoice === invoice.id && (
-                  <div className="px-5 pb-5 pt-2 border-t border-gray-50 bg-gray-50/30 animate-in slide-in-from-top-2 duration-300">
+                  <div className="px-5 pb-5 pt-2 border-t border-gray-50 dark:border-slate-800 bg-gray-50/30 dark:bg-slate-900/50 animate-in slide-in-from-top-2 duration-300">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-4">
                       {/* Items */}
                       <div className="space-y-4">
                         <div className="flex items-center justify-between">
-                          <h5 className="text-xs font-black text-gray-400 uppercase tracking-widest">Invoice Items</h5>
-                          <Badge variant="outline" className="bg-white text-gray-500 border-gray-100">{invoice.items?.length || 0} Items</Badge>
+                          <h5 className="text-xs font-black text-gray-400 uppercase tracking-widest">{t('print.invoiceItems')}</h5>
+                          <Badge variant="outline" className="bg-white dark:bg-slate-800 text-gray-500 dark:text-gray-400 border-gray-100 dark:border-slate-700">{invoice.items?.length || 0} Items</Badge>
                         </div>
-                        <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
+                        <div className="bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 overflow-hidden">
                           {invoice.items?.map((item: any, idx: number) => (
                             <div key={item.id} className={cn(
                               "flex justify-between items-center p-3 text-sm font-medium",
-                              idx !== invoice.items.length - 1 && "border-b border-gray-50"
+                              idx !== invoice.items.length - 1 && "border-b border-gray-50 dark:border-slate-700"
                             )}>
                               <div className="flex flex-col">
-                                <span className="text-gray-700">{item.description}</span>
+                                <span className="text-gray-700 dark:text-gray-300">{item.description}</span>
                                 <span className="text-[10px] text-gray-400">Qty: {item.quantity} × ${Number(item.price).toFixed(2)}</span>
                               </div>
-                              <span className="font-bold text-gray-900">${(Number(item.price) * item.quantity).toFixed(2)}</span>
+                              <span className="font-bold text-gray-900 dark:text-white">${(Number(item.price) * item.quantity).toFixed(2)}</span>
                             </div>
                           ))}
-                          <div className="bg-gray-50/50 p-3 flex justify-between items-center text-sm font-black border-t border-gray-100">
-                            <span className="text-gray-500">Total Amount</span>
-                            <span className="text-indigo-600">${Number(invoice.totalAmount).toFixed(2)}</span>
+                          <div className="bg-gray-50/50 dark:bg-slate-900/50 p-3 flex justify-between items-center text-sm font-black border-t border-gray-100 dark:border-slate-700">
+                            <span className="text-gray-500">{t('print.totalAmount')}</span>
+                            <span className="text-indigo-600 dark:text-indigo-400">${Number(invoice.totalAmount).toFixed(2)}</span>
                           </div>
                         </div>
                       </div>
@@ -387,38 +388,38 @@ export function BillingList({
                       {/* Payments */}
                       <div className="space-y-4">
                         <div className="flex items-center justify-between">
-                          <h5 className="text-xs font-black text-gray-400 uppercase tracking-widest">Payment History</h5>
-                          <Badge variant="outline" className="bg-white text-emerald-500 border-emerald-50">{invoice.payments?.length || 0} Payments</Badge>
+                          <h5 className="text-xs font-black text-gray-400 uppercase tracking-widest">{t('paymentHistory.title')}</h5>
+                          <Badge variant="outline" className="bg-white dark:bg-slate-800 text-emerald-500 border-emerald-50 dark:border-emerald-900/30">{invoice.payments?.length || 0} Payments</Badge>
                         </div>
-                        <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
+                        <div className="bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 overflow-hidden">
                           {(!invoice.payments || invoice.payments.length === 0) ? (
                             <div className="p-8 text-center text-gray-400">
-                              <p className="text-xs font-medium italic">No payments recorded yet</p>
+                              <p className="text-xs font-medium italic">{t('paymentHistory.empty')}</p>
                             </div>
                           ) : (
                             invoice.payments.map((payment: any, idx: number) => (
                               <div key={payment.id} className={cn(
                                 "flex justify-between items-center p-3 text-sm",
-                                idx !== invoice.payments.length - 1 && "border-b border-gray-50"
+                                idx !== invoice.payments.length - 1 && "border-b border-gray-50 dark:border-slate-700"
                               )}>
                                 <div className="flex items-center gap-3">
-                                  <div className="w-8 h-8 bg-emerald-50 text-emerald-500 rounded-lg flex items-center justify-center shrink-0">
+                                  <div className="w-8 h-8 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-500 rounded-lg flex items-center justify-center shrink-0">
                                     <CheckCircle2 className="w-4 h-4" />
                                   </div>
                                   <div>
-                                    <p className="font-bold text-gray-900">${Number(payment.amount).toFixed(2)}</p>
+                                    <p className="font-bold text-gray-900 dark:text-white">${Number(payment.amount).toFixed(2)}</p>
                                     <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">{payment.method} · {new Date(payment.paidAt).toLocaleDateString()}</p>
                                   </div>
                                 </div>
                                 <div className="text-right">
-                                  <Badge className="bg-emerald-50 text-emerald-500 border-0 h-5 text-[9px] font-bold uppercase">Success</Badge>
+                                  <Badge className="bg-emerald-50 dark:bg-emerald-900/30 text-emerald-500 border-0 h-5 text-[9px] font-bold uppercase">Success</Badge>
                                 </div>
                               </div>
                             ))
                           )}
-                          <div className="bg-gray-50/50 p-3 flex justify-between items-center text-sm font-black border-t border-gray-100">
+                          <div className="bg-gray-50/50 dark:bg-slate-900/50 p-3 flex justify-between items-center text-sm font-black border-t border-gray-100 dark:border-slate-700">
                             <span className="text-gray-500">Total Paid</span>
-                            <span className="text-emerald-600">${Number(invoice.paidAmount).toFixed(2)}</span>
+                            <span className="text-emerald-600 dark:text-emerald-400">${Number(invoice.paidAmount).toFixed(2)}</span>
                           </div>
                         </div>
                       </div>
@@ -426,12 +427,12 @@ export function BillingList({
 
                     <div className="flex justify-end gap-3 mt-8">
                       <Button variant="ghost" size="sm" onClick={() => handleDelete(invoice.id)} className="text-rose-500 hover:text-rose-600 hover:bg-rose-50 rounded-xl h-10 font-bold">
-                        <Trash2 className="w-4 h-4 mr-2" /> Delete Invoice
+                        <Trash2 className="w-4 h-4 mr-2" /> {t('toast.deleting', { defaultValue: "Delete Invoice" })}
                       </Button>
                       <Button 
                         variant="outline" 
                         size="sm" 
-                        className="rounded-xl h-10 border-gray-200 font-bold text-gray-700"
+                        className="rounded-xl h-10 border-gray-200 dark:border-slate-700 font-bold text-gray-700 dark:text-gray-300 dark:hover:bg-slate-800"
                         onClick={(e) => {
                           e.stopPropagation();
                           handlePrint(invoice);

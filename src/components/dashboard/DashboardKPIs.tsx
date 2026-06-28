@@ -78,7 +78,7 @@ export function DashboardKPIs({ data }: KPIProps) {
           whileHover={{ y: -5 }}
           className="group"
         >
-          <Card className="border-0 shadow-xl shadow-gray-100/50 bg-white hover:shadow-2xl hover:shadow-indigo-100 transition-all duration-300 rounded-3xl overflow-hidden relative">
+          <Card className="border-0 shadow-xl shadow-gray-100/50 dark:shadow-none bg-white dark:bg-slate-900 hover:shadow-2xl hover:shadow-indigo-100 dark:hover:shadow-none transition-all duration-300 rounded-3xl overflow-hidden relative">
             <CardContent className="p-6 relative z-10">
               <div className="flex items-center justify-between mb-4">
                 <div className={`p-3 rounded-2xl bg-gradient-to-br ${kpi.gradient} text-white shadow-lg ${kpi.shadow} group-hover:scale-110 transition-transform duration-500`}>

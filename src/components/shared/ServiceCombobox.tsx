@@ -67,7 +67,7 @@ export function ServiceCombobox({
           role="combobox"
           aria-expanded={open}
           className={cn(
-            "w-full justify-between h-11 px-4 bg-white hover:bg-gray-50 border-gray-200 rounded-xl transition-all duration-200",
+            "w-full justify-between h-11 px-4 bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700 border-gray-200 dark:border-slate-700 rounded-xl transition-all duration-200",
             selectedService && "border-primary/30 bg-primary/5",
             className
           )}
@@ -75,7 +75,7 @@ export function ServiceCombobox({
           <div className="flex items-center gap-2 truncate">
             {selectedService ? (
               <>
-                <span className="font-medium text-gray-900">{selectedService.name}</span>
+                <span className="font-medium text-gray-900 dark:text-white">{selectedService.name}</span>
                 <Badge variant="secondary" className="text-[10px] h-5 bg-white/50 text-primary border-primary/10">
                   {selectedService.category}
                 </Badge>
@@ -89,7 +89,7 @@ export function ServiceCombobox({
       </PopoverTrigger>
 
       <PopoverContent className="p-0 w-[var(--radix-popover-trigger-width)]" align="start" sideOffset={8}>
-        <Command className="rounded-xl border shadow-lg overflow-hidden">
+        <Command className="rounded-xl border dark:border-slate-800 shadow-lg overflow-hidden dark:bg-slate-900">
           <div className="flex items-center border-b px-3">
             <CommandInput 
               placeholder="Search services, categories..." 
@@ -132,7 +132,7 @@ export function ServiceCombobox({
                     </div>
                   </div>
                   <div className="text-right ml-4">
-                    <span className="text-sm font-bold text-gray-900">
+                    <span className="text-sm font-bold text-gray-900 dark:text-white">
                       ${Number(service.price).toLocaleString()}
                     </span>
                   </div>

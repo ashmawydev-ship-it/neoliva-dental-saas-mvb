@@ -130,12 +130,12 @@ export function AddPatientDialog() {
         </Button>
       </DialogTrigger>
       
-      <DialogContent className="sm:max-w-md md:max-w-xl lg:max-w-2xl h-[90vh] flex flex-col p-0 overflow-hidden bg-gray-50 border-0 shadow-2xl rounded-2xl text-gray-900">
+      <DialogContent className="sm:max-w-md md:max-w-xl lg:max-w-2xl h-[90vh] flex flex-col p-0 overflow-hidden bg-gray-50 dark:bg-slate-900 border-0 shadow-2xl rounded-2xl text-gray-900 dark:text-white">
         {/* App-like Header */}
-        <DialogHeader className="bg-white px-4 py-3 flex flex-row items-center justify-between border-b shrink-0 m-0 space-y-0">
+        <DialogHeader className="bg-white dark:bg-slate-800 dark:border-slate-700 px-4 py-3 flex flex-row items-center justify-between border-b shrink-0 m-0 space-y-0">
           <div className="flex items-center gap-3">
-            <DialogTitle className="text-lg font-semibold text-gray-700 flex items-center gap-2">
-              <span className="bg-gray-100 p-1.5 rounded-lg">
+            <DialogTitle className="text-lg font-semibold text-gray-700 dark:text-white flex items-center gap-2">
+              <span className="bg-gray-100 dark:bg-slate-700 p-1.5 rounded-lg">
                 <PlusCircle className="h-4 w-4 text-gray-500" />
               </span>
               Patient's Form
@@ -155,15 +155,15 @@ export function AddPatientDialog() {
                 General Profile Info
               </div>
               
-              <div className="p-4 space-y-4 bg-gray-100 pb-2">
+              <div className="p-4 space-y-4 bg-gray-100 dark:bg-slate-800/50 pb-2">
                 <div className="flex items-start gap-4">
                   {/* Camera Upload Area */}
-                  <div className="w-24 h-24 bg-gray-200 border-2 border-blue-300 rounded-xl flex items-center justify-center shrink-0 cursor-pointer hover:bg-gray-300 transition-colors">
+                  <div className="w-24 h-24 bg-gray-200 dark:bg-slate-700 border-2 border-blue-300 dark:border-blue-700 rounded-xl flex items-center justify-center shrink-0 cursor-pointer hover:bg-gray-300 dark:hover:bg-slate-600 transition-colors">
                     <Camera className="h-8 w-8 text-gray-400" />
                   </div>
                   
                   <div className="flex-1 space-y-2 flex flex-col justify-center">
-                    <p className="text-xs text-gray-600 leading-tight pr-2">
+                    <p className="text-xs text-gray-600 dark:text-gray-300 leading-tight pr-2">
                       Touch the camera icon to take a new profile picture using your camera.
                     </p>
                   </div>
@@ -171,28 +171,28 @@ export function AddPatientDialog() {
               </div>
 
               {/* Contact Details */}
-              <div className="bg-blue-100 text-blue-900 border-b border-blue-200 py-2 px-6 font-semibold text-sm shadow-sm flex items-center tracking-wide uppercase">
+              <div className="bg-blue-100 dark:bg-blue-900/40 text-blue-900 dark:text-blue-100 border-b border-blue-200 dark:border-blue-800 py-2 px-6 font-semibold text-sm shadow-sm flex items-center tracking-wide uppercase">
                 <span>Contact details</span>
               </div>
               
-              <div className="p-4 space-y-4 bg-gray-100">
+              <div className="p-4 space-y-4 bg-gray-100 dark:bg-slate-800/50">
                 <div className="space-y-1.5">
-                  <Label className="text-sm font-medium text-gray-700">Name:</Label>
+                  <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">Name:</Label>
                   <Input 
                     {...register("name")}
                     placeholder="enter patient's full name" 
-                    className="bg-white border-gray-200 rounded-xl h-11 shadow-sm text-gray-900 focus-visible:ring-blue-500" 
+                    className="bg-white border-gray-200 rounded-xl h-11 shadow-sm text-gray-900 focus-visible:ring-blue-500 dark:bg-slate-800 dark:border-slate-700 dark:text-white" 
                   />
                   {errors.name && <p className="text-xs text-red-500 mt-0.5 font-medium">{errors.name.message}</p>}
                 </div>
 
                 <div className="space-y-1.5">
-                  <Label className="text-sm font-medium text-gray-700">Phone 1:</Label>
+                  <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">Phone 1:</Label>
                   <div className="flex gap-2">
                     <Input 
                       {...register("phone1")}
                       placeholder="enter primary phone number" 
-                      className="bg-white border-gray-200 rounded-xl h-11 shadow-sm flex-1 text-gray-900 focus-visible:ring-blue-500" 
+                      className="bg-white border-gray-200 rounded-xl h-11 shadow-sm flex-1 text-gray-900 focus-visible:ring-blue-500 dark:bg-slate-800 dark:border-slate-700 dark:text-white" 
                     />
                     <Button type="button" size="icon" className="bg-blue-500 hover:bg-blue-600 text-white rounded-full h-11 w-11 shrink-0 shadow-sm flex items-center justify-center p-0 border-0">
                       <Phone className="h-5 w-5" />
@@ -202,12 +202,12 @@ export function AddPatientDialog() {
                 </div>
 
                 <div className="space-y-1.5">
-                  <Label className="text-sm font-medium text-gray-700">Phone 2:</Label>
+                  <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">Phone 2:</Label>
                   <div className="flex gap-2">
                     <Input 
                       {...register("phone2")}
                       placeholder="enter secondary phone number" 
-                      className="bg-white border-gray-200 rounded-xl h-11 shadow-sm flex-1 text-gray-900 focus-visible:ring-blue-500" 
+                      className="bg-white border-gray-200 rounded-xl h-11 shadow-sm flex-1 text-gray-900 focus-visible:ring-blue-500 dark:bg-slate-800 dark:border-slate-700 dark:text-white" 
                     />
                     <Button type="button" size="icon" className="bg-blue-500 hover:bg-blue-600 text-white rounded-full h-11 w-11 shrink-0 shadow-sm flex items-center justify-center p-0 border-0">
                       <Phone className="h-5 w-5" />
@@ -217,13 +217,13 @@ export function AddPatientDialog() {
                 </div>
 
                 <div className="space-y-1.5">
-                  <Label className="text-sm font-medium text-gray-700">E-mail:</Label>
+                  <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">E-mail:</Label>
                   <div className="flex gap-2">
                     <Input 
                       {...register("email")}
                       type="text"
                       placeholder="enter e-mail" 
-                      className="bg-white border-gray-200 rounded-xl h-11 shadow-sm flex-1 text-gray-900 focus-visible:ring-blue-500" 
+                      className="bg-white border-gray-200 rounded-xl h-11 shadow-sm flex-1 text-gray-900 focus-visible:ring-blue-500 dark:bg-slate-800 dark:border-slate-700 dark:text-white" 
                     />
                     <Button type="button" size="icon" className="bg-blue-400 hover:bg-blue-500 text-white rounded-xl h-11 w-11 shrink-0 shadow-sm flex items-center justify-center p-0 border-0">
                       <Mail className="h-5 w-5" />
@@ -233,31 +233,31 @@ export function AddPatientDialog() {
                 </div>
 
                 <div className="space-y-1.5">
-                  <Label className="text-sm font-medium text-gray-700">Address:</Label>
+                  <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">Address:</Label>
                   <Input 
                     {...register("address")}
                     placeholder="enter address" 
-                    className="bg-white border-gray-200 rounded-xl h-11 shadow-sm text-gray-900 focus-visible:ring-blue-500" 
+                    className="bg-white border-gray-200 rounded-xl h-11 shadow-sm text-gray-900 focus-visible:ring-blue-500 dark:bg-slate-800 dark:border-slate-700 dark:text-white" 
                   />
                   {errors.address && <p className="text-xs text-red-500 mt-0.5 font-medium">{errors.address.message}</p>}
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1.5">
-                    <Label className="text-sm font-medium text-gray-700">Post code:</Label>
+                    <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">Post code:</Label>
                     <Input 
                       {...register("postCode")}
                       placeholder="enter post code" 
-                      className="bg-white border-gray-200 rounded-xl h-11 shadow-sm text-gray-900 focus-visible:ring-blue-500" 
+                      className="bg-white border-gray-200 rounded-xl h-11 shadow-sm text-gray-900 focus-visible:ring-blue-500 dark:bg-slate-800 dark:border-slate-700 dark:text-white" 
                     />
                     {errors.postCode && <p className="text-xs text-red-500 mt-0.5 font-medium">{errors.postCode.message}</p>}
                   </div>
                   <div className="space-y-1.5">
-                    <Label className="text-sm font-medium text-gray-700">City:</Label>
+                    <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">City:</Label>
                     <Input 
                       {...register("city")}
                       placeholder="enter city" 
-                      className="bg-white border-gray-200 rounded-xl h-11 shadow-sm text-gray-900 focus-visible:ring-blue-500" 
+                      className="bg-white border-gray-200 rounded-xl h-11 shadow-sm text-gray-900 focus-visible:ring-blue-500 dark:bg-slate-800 dark:border-slate-700 dark:text-white" 
                     />
                     {errors.city && <p className="text-xs text-red-500 mt-0.5 font-medium">{errors.city.message}</p>}
                   </div>
@@ -265,14 +265,14 @@ export function AddPatientDialog() {
               </div>
 
               {/* Private Info */}
-              <div className="bg-blue-100 text-blue-900 border-b border-blue-200 border-t py-2 px-6 font-semibold text-sm shadow-sm tracking-wide uppercase">
+              <div className="bg-blue-100 dark:bg-blue-900/40 text-blue-900 dark:text-blue-100 border-b border-blue-200 dark:border-blue-800 border-t py-2 px-6 font-semibold text-sm shadow-sm tracking-wide uppercase">
                 Private info
               </div>
 
-              <div className="p-4 space-y-4 bg-gray-100">
+              <div className="p-4 space-y-4 bg-gray-100 dark:bg-slate-800/50">
                 <div className="space-y-1.5 flex flex-col gap-1.5">
-                  <Label className="text-sm font-medium text-gray-700">Gender:</Label>
-                  <div className="flex bg-gray-200/60 rounded-xl overflow-hidden border border-gray-100 p-1 relative shadow-inner">
+                  <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">Gender:</Label>
+                  <div className="flex bg-gray-200/60 dark:bg-slate-900/60 rounded-xl overflow-hidden border border-gray-100 dark:border-slate-800 p-1 relative shadow-inner">
                     {["Female", "Male", "Other"].map((g) => (
                       <button
                         key={g}
@@ -280,8 +280,8 @@ export function AddPatientDialog() {
                         onClick={() => setValue("gender", g)}
                         className={`flex-1 rounded-lg font-semibold text-sm h-10 transition-all duration-300 ease-out cursor-pointer ${
                           watchedGender === g 
-                            ? "bg-white text-blue-600 shadow ring-1 ring-black/5" 
-                            : "text-gray-500 hover:text-gray-700 hover:bg-gray-100/50"
+                            ? "bg-white dark:bg-slate-800 text-blue-600 dark:text-blue-400 shadow ring-1 ring-black/5" 
+                            : "text-gray-500 hover:text-gray-700 hover:bg-gray-100/50 dark:hover:bg-slate-800/50 dark:text-slate-400 dark:hover:text-slate-200"
                          }`}
                       >
                         {g}
@@ -292,8 +292,8 @@ export function AddPatientDialog() {
                 </div>
 
                 <div className="space-y-1.5 flex flex-col gap-1.5">
-                  <Label className="text-sm font-medium text-gray-700">Marital status:</Label>
-                  <div className="flex bg-gray-200/60 rounded-xl overflow-hidden border border-gray-100 p-1 relative shadow-inner">
+                  <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">Marital status:</Label>
+                  <div className="flex bg-gray-200/60 dark:bg-slate-900/60 rounded-xl overflow-hidden border border-gray-100 dark:border-slate-800 p-1 relative shadow-inner">
                     {["Single", "Married", "Underage"].map((status) => (
                       <button
                         key={status}
@@ -301,8 +301,8 @@ export function AddPatientDialog() {
                         onClick={() => setValue("maritalStatus", status)}
                         className={`flex-1 rounded-lg font-semibold text-sm h-10 transition-all duration-300 ease-out cursor-pointer ${
                           watchedMaritalStatus === status 
-                            ? "bg-white text-blue-600 shadow ring-1 ring-black/5" 
-                            : "text-gray-500 hover:text-gray-700 hover:bg-gray-100/50"
+                            ? "bg-white dark:bg-slate-800 text-blue-600 dark:text-blue-400 shadow ring-1 ring-black/5" 
+                            : "text-gray-500 hover:text-gray-700 hover:bg-gray-100/50 dark:hover:bg-slate-800/50 dark:text-slate-400 dark:hover:text-slate-200"
                          }`}
                       >
                         {status}
@@ -313,14 +313,14 @@ export function AddPatientDialog() {
                 </div>
 
                 <div className="space-y-1.5 flex flex-col gap-1.5">
-                  <Label className="text-sm font-medium text-gray-700 flex items-center gap-1">Date of Birth: <span className="text-lg">🎂</span></Label>
+                  <Label className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center gap-1">Date of Birth: <span className="text-lg">🎂</span></Label>
                   <div className="flex gap-2">
                     <Input 
                       type="date"
                       {...register("dob")}
-                      className="flex-1 bg-white border-gray-200 focus-visible:border-blue-500 focus-visible:ring-1 focus-visible:ring-blue-500 rounded-xl h-11 shadow-sm font-medium text-gray-700 px-4" 
+                      className="flex-1 bg-white border-gray-200 focus-visible:border-blue-500 focus-visible:ring-1 focus-visible:ring-blue-500 rounded-xl h-11 shadow-sm font-medium text-gray-700 px-4 dark:bg-slate-800 dark:border-slate-700 dark:text-white" 
                     />
-                    <div className="bg-blue-50 border border-blue-100 rounded-xl h-11 px-4 flex items-center justify-center text-sm font-bold text-blue-700 shadow-sm min-w-[70px]">
+                    <div className="bg-blue-50 dark:bg-blue-900/30 border border-blue-100 dark:border-blue-800 rounded-xl h-11 px-4 flex items-center justify-center text-sm font-bold text-blue-700 dark:text-blue-400 shadow-sm min-w-[70px]">
                       {watchedDob ? calculateAge(watchedDob) : "Age"}
                     </div>
                   </div>
@@ -328,74 +328,74 @@ export function AddPatientDialog() {
                 </div>
 
                 <div className="space-y-1.5">
-                  <Label className="text-sm font-medium text-gray-700">Occupation:</Label>
+                  <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">Occupation:</Label>
                   <Input 
                     {...register("occupation")}
                     placeholder="enter profession" 
-                    className="bg-white border-gray-200 rounded-xl h-11 shadow-sm text-gray-900 focus-visible:ring-blue-500" 
+                    className="bg-white border-gray-200 rounded-xl h-11 shadow-sm text-gray-900 focus-visible:ring-blue-500 dark:bg-slate-800 dark:border-slate-700 dark:text-white" 
                   />
                   {errors.occupation && <p className="text-xs text-red-500 mt-0.5 font-medium">{errors.occupation.message}</p>}
                 </div>
 
                 <div className="space-y-1.5">
-                  <Label className="text-sm font-medium text-gray-700">Insurance:</Label>
+                  <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">Insurance:</Label>
                   <Input 
                     {...register("insurance")}
                     placeholder="enter insurance name" 
-                    className="bg-white border-gray-200 rounded-xl h-11 shadow-sm text-gray-900 focus-visible:ring-blue-500" 
+                    className="bg-white border-gray-200 rounded-xl h-11 shadow-sm text-gray-900 focus-visible:ring-blue-500 dark:bg-slate-800 dark:border-slate-700 dark:text-white" 
                   />
                   {errors.insurance && <p className="text-xs text-red-500 mt-0.5 font-medium">{errors.insurance.message}</p>}
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1.5">
-                    <Label className="text-sm font-medium text-gray-700">SSN:</Label>
+                    <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">SSN:</Label>
                     <Input 
                       {...register("ssn")}
                       placeholder="SSN" 
-                      className="bg-white border-gray-200 rounded-xl h-11 shadow-sm text-gray-900 focus-visible:ring-blue-500" 
+                      className="bg-white border-gray-200 rounded-xl h-11 shadow-sm text-gray-900 focus-visible:ring-blue-500 dark:bg-slate-800 dark:border-slate-700 dark:text-white" 
                     />
                     {errors.ssn && <p className="text-xs text-red-500 mt-0.5 font-medium">{errors.ssn.message}</p>}
                   </div>
                   <div className="space-y-1.5">
-                    <Label className="text-sm font-medium text-gray-700">ID Number:</Label>
+                    <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">ID Number:</Label>
                     <Input 
                       {...register("idNumber")}
                       placeholder="ID Number" 
-                      className="bg-white border-gray-200 rounded-xl h-11 shadow-sm text-gray-900 focus-visible:ring-blue-500" 
+                      className="bg-white border-gray-200 rounded-xl h-11 shadow-sm text-gray-900 focus-visible:ring-blue-500 dark:bg-slate-800 dark:border-slate-700 dark:text-white" 
                     />
                     {errors.idNumber && <p className="text-xs text-red-500 mt-0.5 font-medium">{errors.idNumber.message}</p>}
                   </div>
                 </div>
                 
                 <div className="space-y-1.5">
-                  <Label className="text-sm font-medium text-gray-700 text-red-600 flex items-center gap-1">
+                  <Label className="text-sm font-medium text-gray-700 dark:text-gray-300 text-red-600 flex items-center gap-1">
                     <ActivityIcon className="h-3.5 w-3.5" /> Medical Alert:
                   </Label>
                   <Input 
                     {...register("medicalAlert")}
                     placeholder="e.g. penicillin allergy" 
-                    className="bg-white border-gray-200 rounded-xl h-11 shadow-sm text-gray-900 border-red-100 focus-visible:ring-red-500/20" 
+                    className="bg-white border-gray-200 rounded-xl h-11 shadow-sm text-gray-900 border-red-100 focus-visible:ring-red-500/20 dark:bg-slate-800 dark:border-slate-700 dark:text-white" 
                   />
                   {errors.medicalAlert && <p className="text-xs text-red-500 mt-0.5 font-medium">{errors.medicalAlert.message}</p>}
                 </div>
               </div>
 
                {/* Additional info */}
-               <div className="bg-blue-100 text-blue-900 border-b border-blue-200 border-t py-2 px-6 font-semibold text-sm shadow-sm tracking-wide uppercase">
+               <div className="bg-blue-100 dark:bg-blue-900/40 text-blue-900 dark:text-blue-100 border-b border-blue-200 dark:border-blue-800 border-t py-2 px-6 font-semibold text-sm shadow-sm tracking-wide uppercase">
                 Additional info
               </div>
 
-              <div className="p-4 space-y-4 bg-gray-100 pb-10">
+              <div className="p-4 space-y-4 bg-gray-100 dark:bg-slate-800/50 pb-10">
                 <div className="space-y-1.5">
-                  <Label className="text-sm font-medium text-gray-700">Referred by:</Label>
+                  <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">Referred by:</Label>
                   <div className="flex gap-2">
                     <div className="relative flex-1">
                       <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
                       <Input 
                         {...register("referredBy")}
                         placeholder="Search or enter name" 
-                        className="bg-white border-gray-200 rounded-xl h-11 shadow-sm pl-10 text-gray-900 focus-visible:ring-blue-500" 
+                        className="bg-white border-gray-200 rounded-xl h-11 shadow-sm pl-10 text-gray-900 focus-visible:ring-blue-500 dark:bg-slate-800 dark:border-slate-700 dark:text-white" 
                       />
                     </div>
                     <Button type="button" size="icon" className="bg-blue-400 hover:bg-blue-500 text-white rounded-xl h-11 w-11 shrink-0 shadow-sm p-0 flex items-center justify-center border-0">
@@ -406,30 +406,30 @@ export function AddPatientDialog() {
                 </div>
 
                 <div className="space-y-1.5 flex flex-col gap-1.5">
-                  <Label className="text-sm font-medium text-gray-700">Registered:</Label>
-                  <div className="bg-blue-50 border border-blue-100 text-blue-800 text-center rounded-xl h-11 shadow-sm flex items-center justify-center font-semibold">
+                  <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">Registered:</Label>
+                  <div className="bg-blue-50 dark:bg-blue-900/30 border border-blue-100 dark:border-blue-800 text-blue-800 dark:text-blue-400 text-center rounded-xl h-11 shadow-sm flex items-center justify-center font-semibold">
                     {registrationDate}
                   </div>
                 </div>
 
                 <div className="space-y-1.5 flex flex-col gap-1.5">
-                  <Label className="text-sm font-medium text-gray-700">Notes:</Label>
+                  <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">Notes:</Label>
                   <Textarea 
                     {...register("notes")}
                     placeholder="Enter any other noteworthy information about this patient..." 
-                    className="bg-white border-gray-200 focus-visible:ring-blue-500 rounded-xl shadow-sm min-h-[120px] resize-none p-4 text-gray-900" 
+                    className="bg-white border-gray-200 focus-visible:ring-blue-500 rounded-xl shadow-sm min-h-[120px] resize-none p-4 text-gray-900 dark:bg-slate-800 dark:border-slate-700 dark:text-white" 
                   />
                   {errors.notes && <p className="text-xs text-red-500 mt-0.5 font-medium">{errors.notes.message}</p>}
                 </div>
 
                 <div className="space-y-1.5 flex flex-col gap-1.5">
-                  <Label className="text-sm font-medium text-gray-700">Signature:</Label>
+                  <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">Signature:</Label>
                   <div 
                     onClick={() => setValue("isSigned", !watchedIsSigned)}
                     className={`w-full max-w-[260px] h-28 border-2 border-dashed rounded-xl flex items-center justify-center cursor-crosshair transition-colors relative ${
                       watchedIsSigned 
-                        ? "bg-blue-50/50 border-blue-300" 
-                        : "bg-gray-50 hover:bg-gray-100 border-gray-300"
+                        ? "bg-blue-50/50 dark:bg-blue-900/20 border-blue-300 dark:border-blue-700" 
+                        : "bg-gray-50 dark:bg-slate-800 hover:bg-gray-100 dark:hover:bg-slate-700 border-gray-300 dark:border-slate-600"
                     }`}
                   >
                     {!watchedIsSigned ? (
@@ -455,23 +455,23 @@ export function AddPatientDialog() {
                   className={`w-full h-12 rounded-xl shadow-sm font-semibold mt-4 transition-all duration-300 cursor-pointer ${
                     watchedIsDeceased 
                       ? "bg-red-500 hover:bg-red-600 text-white border-transparent ring-2 ring-red-500/50 ring-offset-2" 
-                      : "bg-white text-gray-700 border-gray-200 hover:bg-red-50 hover:text-red-600 hover:border-red-200"
+                      : "bg-white dark:bg-slate-800 text-gray-700 dark:text-slate-300 border-gray-200 dark:border-slate-700 hover:bg-red-50 dark:hover:bg-red-900/30 hover:text-red-600 dark:hover:text-red-400 hover:border-red-200 dark:hover:border-red-800"
                   }`}
                 >
                   {watchedIsDeceased ? "Patient is marked as deceased" : "The patient is deceased"}
                 </Button>
                 {errors.isDeceased && <p className="text-xs text-red-500 mt-0.5 font-medium">{errors.isDeceased.message}</p>}
                 
-                <div className="h-4 bg-gray-100 w-full mt-2 rounded-b-xl"></div>
+                <div className="h-4 bg-gray-100 dark:bg-slate-800/50 w-full mt-2 rounded-b-xl"></div>
               </div>
             </div>
           </div>
-          <DialogFooter className="bg-white px-6 py-4 border-t flex flex-col-reverse sm:flex-row gap-2.5 sm:gap-3 sm:justify-end shrink-0 w-full">
+          <DialogFooter className="bg-white dark:bg-slate-800 dark:border-slate-700 px-6 py-4 border-t flex flex-col-reverse sm:flex-row gap-2.5 sm:gap-3 sm:justify-end shrink-0 w-full">
             <Button 
               type="button" 
               variant="outline" 
               onClick={() => setOpen(false)}
-              className="w-full sm:w-auto px-6 rounded-xl border-gray-200 text-gray-700 hover:bg-gray-50 h-11 shadow-sm font-medium cursor-pointer"
+              className="w-full sm:w-auto px-6 rounded-xl border-gray-200 dark:border-slate-600 text-gray-700 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-700 h-11 shadow-sm font-medium cursor-pointer"
               disabled={loading}
             >
               DISCARD

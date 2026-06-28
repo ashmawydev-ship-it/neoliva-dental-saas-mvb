@@ -46,7 +46,7 @@ export function ToothCell({
       disabled={!onClick}
       className={cn(
         "focus:outline-none transition-all p-1 rounded-xl flex items-center justify-center w-full",
-        onClick && "hover:bg-gray-100 cursor-pointer",
+        onClick && "hover:bg-gray-100 dark:hover:bg-slate-800 cursor-pointer",
         isSelected && "bg-primary/5",
         buttonClassName
       )}
@@ -69,7 +69,7 @@ export function ToothCell({
       {isTop && (
         <span className={cn(
           "text-[11px] font-bold text-center w-full transition-colors",
-          toothType === "primary" ? "text-purple-600" : "text-gray-700",
+          toothType === "primary" ? "text-purple-600 dark:text-purple-400" : "text-gray-700 dark:text-slate-300",
           isSelected && "text-primary font-black"
         )}>
           {label || toothId}
@@ -90,7 +90,7 @@ export function ToothCell({
       {!isTop && (
         <span className={cn(
           "text-[11px] font-bold text-center w-full transition-colors",
-          toothType === "primary" ? "text-purple-600" : "text-gray-700",
+          toothType === "primary" ? "text-purple-600 dark:text-purple-400" : "text-gray-700 dark:text-slate-300",
           isSelected && "text-primary font-black"
         )}>
           {label || toothId}

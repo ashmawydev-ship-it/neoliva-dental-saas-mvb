@@ -50,21 +50,21 @@ export function ToothSelector({
         stroke="currentColor"
         onClick={() => toggleTooth(toothId)}
         buttonClassName={cn(
-          isSelected ? "text-primary" : "text-muted-foreground/40"
+          isSelected ? "text-primary" : "text-slate-300 dark:text-slate-400"
         )}
       />
     );
   };
 
   return (
-    <div className={cn("space-y-4 p-4 border rounded-2xl bg-white shadow-sm", className)}>
+    <div className={cn("space-y-4 p-4 border rounded-2xl bg-white dark:bg-slate-900 dark:border-slate-800 shadow-sm", className)}>
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <div className="p-2 bg-primary/10 rounded-lg">
             <Grid2X2 className="w-4 h-4 text-primary" />
           </div>
           <div>
-            <h4 className="text-sm font-bold text-gray-900">Tooth Selection</h4>
+            <h4 className="text-sm font-bold text-gray-900 dark:text-white">Tooth Selection</h4>
             <p className="text-[11px] text-muted-foreground">Select one or more teeth or quadrants</p>
           </div>
         </div>

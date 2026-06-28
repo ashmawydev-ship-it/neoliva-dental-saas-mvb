@@ -783,5 +783,776 @@
       "templateCreated": "Template created successfully",
       "templateUpdated": "Template updated successfully"
     }
+  },
+  "patientProfile": {
+    "patientId": "Patient ID: {id} · Registered since {date}",
+    "statusBadge": "{status} Patient",
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive",
+      "archived": "Archived"
+    },
+    "info": {
+      "title": "Personal Information",
+      "phone": "Phone",
+      "email": "Email",
+      "dob": "Date of Birth",
+      "address": "Address"
+    },
+    "allergies": { "title": "Allergies & Alerts" },
+    "quickStats": {
+      "title": "Quick Stats",
+      "totalVisits": "Total Visits",
+      "outstanding": "Outstanding",
+      "lastXray": "Last X-Ray",
+      "insurance": "Insurance"
+    },
+    "tabs": {
+      "history": "History",
+      "medicalHistory": "Medical History",
+      "oralExam": "Oral Exam",
+      "toothChart": "Tooth Chart",
+      "periodonto": "Periodonto",
+      "plans": "Plans",
+      "rx": "Rx",
+      "documents": "Documents",
+      "billing": "Billing"
+    }
+  },
+  "visitHistory": {
+    "newVisit": "New Visit",
+    "byCategory": "By Category",
+    "save": "Save",
+    "cancel": "Cancel",
+    "print": "Print",
+    "delete": "Delete",
+    "filters": "Filters",
+    "newest": "Newest",
+    "oldest": "Oldest",
+    "searchPlaceholder": "Search visits by treatment, doctor, notes...",
+    "timeline": "Visit Timeline",
+    "emptyHistory": "No visit history yet.",
+    "noResults": "No visits found.",
+    "totalVisits": "Total Visits",
+    "lastVisit": "Last Visit",
+    "all": "All",
+    "clearFilters": "Clear filters",
+    "viewDetails": "View Details",
+    "clinicalNotes": "Clinical Notes",
+    "noNotes": "No notes recorded",
+    "quickSelect": "Quick Select Treatment",
+    "treatmentProcedure": "Treatment / Procedure *",
+    "category": "Category",
+    "results": "results",
+    "dialog": {
+      "title": "New Visit Record",
+      "treatment": "Treatment",
+      "date": "Date",
+      "doctor": "Doctor",
+      "toothNumber": "Tooth Number",
+      "notes": "Notes"
+    },
+    "visit": {
+      "tooth": "Tooth",
+      "duration": "Duration",
+      "cost": "Cost",
+      "doctor": "Doctor",
+      "notes": "Notes"
+    },
+    "categories": {
+      "Examination": "Examination",
+      "Restorative": "Restorative",
+      "Endodontic": "Endodontic",
+      "Surgical": "Surgical",
+      "Preventive": "Preventive",
+      "Orthodontic": "Orthodontic",
+      "Cosmetic": "Cosmetic",
+      "Other": "Other"
+    },
+    "presets": {
+      "routineCleaning": "Routine Cleaning & Polishing",
+      "dentalExam": "Dental Examination",
+      "panoramicXray": "Panoramic X-Ray & Examination",
+      "compositeFilling": "Composite Filling",
+      "rootCanal": "Root Canal Treatment",
+      "crownPrep": "Crown Preparation",
+      "extraction": "Tooth Extraction",
+      "wisdomExtraction": "Wisdom Tooth Extraction",
+      "whitening": "Teeth Whitening Session",
+      "orthodonticAdj": "Orthodontic Adjustment",
+      "implant": "Dental Implant",
+      "veneer": "Veneer Placement",
+      "gumTreatment": "Gum Treatment",
+      "bridge": "Bridge Placement"
+    }
+  },
+  "medicalHistory": {
+    "sections": {
+      "conditions": "Medical Conditions",
+      "allergies": "Allergies",
+      "medications": "Current Medications",
+      "surgicalHistory": "Surgical History",
+      "familyHistory": "Family History",
+      "lifestyle": "Lifestyle & Vitals",
+      "generalNotes": "General Medical Notes"
+    },
+    "conditions": {
+      "empty": "No medical conditions",
+      "addLink": "+ Add condition",
+      "diagnosed": "Diagnosed: {date}",
+      "status": {
+        "Active": "Active",
+        "Controlled": "Controlled",
+        "Managed": "Managed",
+        "Monitoring": "Monitoring",
+        "Resolved": "Resolved"
+      }
+    },
+    "allergies": {
+      "empty": "No known allergies",
+      "nkda": "NKDA ✓",
+      "noDetails": "No details",
+      "severity": {
+        "Severe": "Severe",
+        "Moderate": "Moderate",
+        "Mild": "Mild"
+      }
+    },
+    "medications": {
+      "empty": "No current medications",
+      "addLink": "+ Add medication"
+    },
+    "surgical": {
+      "empty": "No surgical history",
+      "addLink": "+ Add surgery"
+    },
+    "family": {
+      "empty": "No family history recorded",
+      "addLink": "+ Add family history",
+      "relation": "Relation: {value}",
+      "relations": {
+        "Father": "Father",
+        "Mother": "Mother",
+        "Brother": "Brother",
+        "Sister": "Sister",
+        "Grandfather": "Grandfather",
+        "Grandmother": "Grandmother"
+      }
+    },
+    "lifestyle": {
+      "bloodType": "Blood Type",
+      "smokingStatus": "Smoking Status",
+      "alcoholUse": "Alcohol Use",
+      "smoking": { "Never": "Never", "Former": "Former", "Current": "Current" },
+      "alcohol": { "None": "None", "Social": "Social", "Regular": "Regular" }
+    },
+    "notes": {
+      "placeholder": "Add any additional medical notes, observations, or important details...",
+      "clickToAdd": "Click to add medical notes..."
+    },
+    "dialogs": {
+      "addCondition": {
+        "title": "Add Medical Condition",
+        "conditionName": "Condition Name *",
+        "yearDiagnosed": "Year Diagnosed",
+        "status": "Status",
+        "notes": "Notes",
+        "phCondition": "e.g., Hypertension",
+        "phYear": "e.g., 2020",
+        "phNotes": "Additional details...",
+        "save": "Save Condition"
+      },
+      "addAllergy": {
+        "title": "Add Allergy",
+        "allergen": "Allergen *",
+        "severity": "Severity",
+        "reactionType": "Reaction Type",
+        "phAllergen": "e.g., Penicillin",
+        "phReaction": "e.g., Anaphylaxis, Rash, Swelling",
+        "save": "Save Allergy"
+      },
+      "addMedication": {
+        "title": "Add Medication",
+        "medicationName": "Medication Name *",
+        "dosage": "Dosage",
+        "frequency": "Frequency",
+        "prescribedFor": "Prescribed For",
+        "phMed": "e.g., Lisinopril 10mg",
+        "phDosage": "e.g., 1 tablet",
+        "phFrequency": "e.g., Twice daily",
+        "phFor": "e.g., Blood Pressure",
+        "save": "Save Medication"
+      },
+      "addSurgery": {
+        "title": "Add Surgical History",
+        "procedure": "Surgery / Procedure *",
+        "date": "Date",
+        "notes": "Notes",
+        "phProcedure": "e.g., Wisdom Tooth Extraction",
+        "phDate": "e.g., Mar 2024",
+        "phNotes": "Complications, recovery notes...",
+        "save": "Save Surgery"
+      },
+      "addFamily": {
+        "title": "Add Family History",
+        "condition": "Condition *",
+        "relation": "Relation",
+        "phCondition": "e.g., Diabetes, Heart Disease",
+        "save": "Save Family History"
+      }
+    }
+  },
+  "oralExam": {
+    "softTissue": {
+      "title": "Soft Tissue Examination"
+    },
+    "status": {
+      "normal": "Normal",
+      "abnormal": "Abnormal",
+      "pathological": "Pathological",
+      "needsAttention": "Needs Attention"
+    },
+    "tissues": {
+      "Lips": "Lips",
+      "Buccal Mucosa": "Buccal Mucosa",
+      "Tongue": "Tongue",
+      "Floor of Mouth": "Floor of Mouth",
+      "Palate": "Palate",
+      "Gingiva": "Gingiva",
+      "Salivary Glands": "Salivary Glands",
+      "Occlusion": "Occlusion",
+      "Pharynx": "Pharynx"
+    },
+    "diseases": {
+      "title": "Diseases and conditions of the mouth",
+      "manageList": "Manage the oral conditions list",
+      "addCustom": "Add custom condition...",
+      "noActive": "No active conditions",
+      "library": "Conditions Library",
+      "activeConditions": "Active Conditions"
+    },
+    "otherNotes": {
+      "title": "Other disease/health condition:",
+      "placeholder": "Note any important information regarding the patient's oral health...",
+      "saved": "✓ Saved",
+      "noNotes": "No notes"
+    },
+    "diagPrescCount": "({diagnoses} diagnoses · {prescriptions} prescriptions)",
+    "diagPrescTitle": "Diagnoses and prescriptions",
+    "tabs": {
+      "prescriptions": "Prescription",
+      "diagnosis": "Diagnosis & Chief Complaint"
+    },
+    "prescriptions": {
+      "add": "Add Prescription",
+      "empty": "No prescriptions yet",
+      "fields": {
+        "medication": "Medication",
+        "dosage": "Dosage",
+        "frequency": "Frequency",
+        "duration": "Duration",
+        "notes": "Notes"
+      },
+      "dialog": {
+        "title": "Add Prescription",
+        "medicationName": "Medication Name",
+        "dosage": "Dosage",
+        "frequency": "Frequency",
+        "duration": "Duration",
+        "instructions": "Special Instructions",
+        "phMed": "e.g., Amoxicillin 500mg",
+        "phDosage": "e.g., 1 tablet",
+        "phFrequency": "e.g., 3x daily",
+        "phDuration": "e.g., 7 days",
+        "phInstructions": "Special instructions...",
+        "save": "Save Prescription"
+      }
+    },
+    "diagnosis": {
+      "add": "Add Diagnosis",
+      "empty": "No diagnoses recorded",
+      "fields": {
+        "chiefComplaint": "Chief Complaint:",
+        "severity": "Severity:",
+        "notes": "Notes:"
+      },
+      "dialog": {
+        "title": "Add Diagnosis & Chief Complaint",
+        "chiefComplaint": "Chief Complaint",
+        "diagnosis": "Diagnosis",
+        "severity": "Severity",
+        "clinicalNotes": "Clinical Notes",
+        "phComplaint": "What is the patient's main concern?",
+        "phDiagnosis": "Enter diagnosis...",
+        "phNotes": "Additional observations...",
+        "save": "Save Diagnosis"
+      }
+    },
+    "diagnosisSeverity": {
+      "mild": "Mild",
+      "moderate": "Moderate",
+      "severe": "Severe"
+    },
+    "conditions": {
+      "Erosion": "Erosion",
+      "Gingivitis": "Gingivitis",
+      "Herpes": "Herpes",
+      "Xerostomia": "Xerostomia",
+      "Periodontitis": "Periodontitis",
+      "Bruxism": "Bruxism",
+      "Oral Candidiasis": "Oral Candidiasis",
+      "Leukoplakia": "Leukoplakia",
+      "Aphthous Ulcer": "Aphthous Ulcer",
+      "Oral Lichen Planus": "Oral Lichen Planus",
+      "TMJ Disorder": "TMJ Disorder",
+      "Halitosis": "Halitosis",
+      "Dental Fluorosis": "Dental Fluorosis",
+      "Oral Cancer": "Oral Cancer",
+      "Burning Mouth Syndrome": "Burning Mouth Syndrome"
+    }
+  },
+  "toothChart": {
+    "title": "Adult Odontogram (FDI)",
+    "subtitle": "Interactive 32-tooth chart for mapping conditions.",
+    "primaryDeciduous": "Primary (Deciduous)",
+    "conditionKey": "Condition Key",
+    "legend": {
+      "crown": "Crown",
+      "extracted": "Extracted",
+      "filled": "Filled",
+      "caries": "Caries",
+      "healthy": "Healthy"
+    },
+    "chartNote": {
+      "title": "Doctor's Chart Note",
+      "empty": "No notes recorded. Click Edit to add a note.",
+      "edit": "Edit",
+      "save": "Save",
+      "cancel": "Cancel",
+      "updating": "Updating Chart..."
+    },
+    "conditions": {
+      "healthy": "Healthy",
+      "caries": "Caries",
+      "filled": "Filled",
+      "crown": "Crown",
+      "extracted": "Extracted"
+    },
+    "tooltips": {
+      "healthy": "Healthy Tooth",
+      "caries": "Dental Caries",
+      "filled": "Restoration / Filling",
+      "extracted": "Missing or Extracted",
+      "crown": "Crown or Veneer"
+    },
+    "toothDialog": {
+      "selectCondition": "Select condition or add findings",
+      "previousFindings": "Previous Findings",
+      "noFindings": "No findings recorded yet",
+      "attachedPhotos": "Attached Photos",
+      "noPhotos": "No photos attached yet",
+      "markMissing": "Mark as missing",
+      "unmarkMissing": "Unmark missing",
+      "switchTo": "Switch to",
+      "permanent": "permanent"
+    },
+    "findingsDialog": {
+      "title": "Clinical findings & Parameters",
+      "dialogTitle": "Tooth #{tooth} — Clinical Findings",
+      "finding": "Finding",
+      "parameter": "Parameter",
+      "placeholder": "Describe the clinical finding or parameter...",
+      "addToChart": "Add to Chart"
+    },
+    "photosDialog": {
+      "title": "Photos containing this tooth",
+      "dialogTitle": "Tooth #{tooth} — Photos",
+      "upload": "Upload Photo",
+      "uploading": "Uploading…"
+    },
+    "extractionDialog": {
+      "title": "Confirm Extraction",
+      "body": "Are you sure you want to mark Tooth #{tooth} as extracted? This will record the tooth as extracted and update the chart accordingly.",
+      "confirm": "Confirm Extraction",
+      "cancel": "Cancel"
+    }
+  },
+  "periodontics": {
+    "title": "Periodontics",
+    "newSession": "+ New Session",
+    "noSessions": "No Sessions Found",
+    "deleteSession": "Delete Session",
+    "params": {
+      "suppuration": "Suppuration",
+      "mobility": "Mobility",
+      "probingDepth": "Probing depth",
+      "clinicalAttach": "Clinical attach. level",
+      "gingivalMarginProbing": "Gingival margin + probing depth",
+      "mucogingivalJunction": "Mucogingival junction",
+      "furcation": "Furcation",
+      "bleeding": "Bleeding",
+      "gingivalMargin": "Gingival margin"
+    },
+    "views": {
+      "lingual": "Lingual/Palatal",
+      "buccal": "Buccal/Labial"
+    },
+    "anatomy": {
+      "distal": "Distal",
+      "middle": "Middle",
+      "mesial": "Mesial"
+    },
+    "measureDialog": {
+      "title": "#{tooth} {param}",
+      "titleMm": "#{tooth} {param} (mm)",
+      "submitClose": "Submit and close"
+    }
+  },
+  "treatmentPlans": {
+    "title": "Treatment Plans",
+    "subtitle": "Manage phased treatments and progress.",
+    "newPlan": "New Plan +",
+    "stats": {
+      "totalCost": "Total Cost",
+      "totalPhases": "Total Phases",
+      "completed": "Completed",
+      "activePlans": "Active Plans"
+    },
+    "plan": {
+      "estCost": "EST. COST",
+      "financialProgress": "Financial Progress",
+      "clinicalProgress": "Clinical Progress",
+      "balance": "Balance: ${amount}",
+      "phases": "{done}/{total} Phases",
+      "meta": "Plan ID: {id} · Created on {date}",
+      "changeStatus": "Click to change status"
+    },
+    "status": {
+      "Active": "Active",
+      "Completed": "Completed",
+      "On Hold": "On Hold",
+      "Cancelled": "Cancelled"
+    },
+    "phaseStatus": {
+      "Planned": "Planned",
+      "In Progress": "In Progress",
+      "Completed": "Completed",
+      "Cancelled": "Cancelled"
+    },
+    "empty": {
+      "noPhases": "No phases added yet",
+      "noPhasesHint": "Add treatment phases to track progress",
+      "noPlans": "No treatment plans yet",
+      "createFirst": "+ Create your first plan"
+    },
+    "footer": {
+      "deletePlan": "Delete Plan",
+      "changeStatus": "Change Status",
+      "addPhase": "Add Phase",
+      "invoiceGenerated": "Invoice Generated",
+      "generateInvoice": "Generate Invoice"
+    },
+    "dialog": {
+      "newPlan": "Create New Treatment Plan",
+      "treatmentTitle": "Treatment Title *",
+      "planDetails": "Additional details about the treatment plan...",
+      "treatmentPhases": "Treatment Phases",
+      "nPhases": "({n} Phases)",
+      "quickSelect": "Quick Select",
+      "service": "Service *",
+      "date": "Date",
+      "price": "Price",
+      "provider": "Provider (Optional)",
+      "providerOptional": "Provider (Optional)",
+      "clinicalNotes": "Clinical Notes",
+      "phaseDetails": "Phase details...",
+      "teethSelection": "Teeth Selection",
+      "selectAffected": "Select Affected Teeth",
+      "selectAffectedTeeth": "Select affected teeth",
+      "selectTeeth": "Select Teeth",
+      "nTeeth": "{n} Teeth",
+      "addPhaseBtn": "Add Phase",
+      "addPhase": "Add Phase",
+      "add": "Add",
+      "notes": "Notes",
+      "changeStatus": "Change Status",
+      "deleteConfirmTitle": "Delete Plan?",
+      "deleteConfirmDesc": "This action cannot be undone. All phases will be removed.",
+      "delete": "Delete",
+      "cancel": "Cancel",
+      "createPlan": "Create Plan",
+      "addPhaseTitle": "Add Treatment Phase",
+      "changeStatusTitle": "Change Plan Status",
+      "none": "None"
+    },
+    "deleteDialog": {
+      "title": "Delete Plan?",
+      "body": "This action cannot be undone. All phases will be removed.",
+      "cancel": "Cancel",
+      "confirm": "Delete"
+    },
+    "toast": {
+      "invoiceGenerated": "Invoice generated successfully",
+      "invoiceFailed": "Failed to generate invoice. Please try again.",
+      "loadFailed": "Failed to load plans"
+    },
+    "presets": {
+      "initialConsultation": "Initial Consultation & X-Rays",
+      "rootCanal": "Root Canal Treatment",
+      "crownPlacing": "Crown Placing",
+      "compositeFilling": "Composite Filling",
+      "toothExtraction": "Tooth Extraction",
+      "implantPlacement": "Dental Implant Placement",
+      "abutmentPlacement": "Abutment Placement",
+      "bridgeFabrication": "Bridge Fabrication",
+      "orthodonticAdj": "Orthodontic Adjustment",
+      "whitening": "Teeth Whitening",
+      "scalingRootPlaning": "Scaling & Root Planing",
+      "followUp": "Follow-up Visit"
+    }
+  },
+  "prescriptions": {
+    "title": "E-Prescriptions",
+    "subtitle": "View and manage patient medications.",
+    "newPrescription": "New Prescription",
+    "card": {
+      "prescriptionNum": "Prescription #{id}",
+      "medicationsCount": "Medications {n}",
+      "notes": "Notes:",
+      "print": "Print"
+    },
+    "actions": {
+      "downloadPdf": "Download PDF",
+      "delete": "Delete"
+    },
+    "printDialog": {
+      "title": "Print Preview",
+      "close": "Close",
+      "printNow": "Print Now"
+    },
+    "empty": {
+      "title": "No Prescriptions Yet",
+      "subtitle": "Create a new e-prescription for this patient."
+    },
+    "toast": {
+      "deleted": "Prescription removed",
+      "deleteFailed": "Failed to delete",
+      "duplicated": "Prescription duplicated",
+      "duplicateFailed": "Failed to duplicate"
+    },
+    "form": {
+      "medication": "Medication",
+      "dosage": "Dosage",
+      "frequency": "Frequency",
+      "duration": "Duration",
+      "instructions": "Instructions / Notes",
+      "phMedication": "e.g., Amoxicillin 500mg",
+      "phDosage": "1 tab",
+      "phFrequency": "3 times / day",
+      "phDuration": "7 days",
+      "phInstructions": "Special instructions for the patient...",
+      "save": "Save Prescription",
+      "cancel": "Cancel"
+    }
+  },
+  "patientDocs": {
+    "title": "Patient Records",
+    "subtitle": "View and manage clinical X-rays, scans, and documents.",
+    "uploadRecord": "Upload Record",
+    "uploadDialog": {
+      "title": "Upload Patient Record",
+      "fileName": "File Name *",
+      "category": "Category",
+      "phFileName": "e.g. Panoramic X-Ray May 2026",
+      "upload": "Upload",
+      "cancel": "Cancel"
+    },
+    "filters": {
+      "all": "All Records",
+      "xray": "X-Ray / Scans",
+      "documents": "Documents / Forms",
+      "other": "Other Files"
+    },
+    "fileCard": {
+      "download": "Download",
+      "delete": "Delete",
+      "deleteConfirm": "Are you sure you want to delete this document?"
+    },
+    "empty": {
+      "title": "No records found",
+      "general": "This patient doesn't have any uploaded documents yet.",
+      "category": "There are no documents in the {category} category."
+    },
+    "toast": {
+      "nameRequired": "Please provide a name and select a file",
+      "uploading": "Uploading file...",
+      "fileTooLarge": "File exceeds the 50MB limit",
+      "uploaded": "Document uploaded successfully",
+      "deleting": "Deleting document...",
+      "deleted": "Document deleted",
+      "deleteFailed": "Failed to delete document",
+      "unexpectedError": "An unexpected error occurred"
+    }
+  },
+  "patientBilling": {
+    "kpis": {
+      "totalPaid": "Total Paid",
+      "successfulTransactions": "SUCCESSFUL TRANSACTIONS",
+      "totalBilled": "Total Billed",
+      "lifetimeValue": "LIFETIME PATIENT VALUE",
+      "outstandingBalance": "Outstanding Balance",
+      "unpaidInvoices": "UNPAID INVOICES {n}"
+    },
+    "invoiceHistory": "Invoice History",
+    "createInvoice": "Create Invoice +",
+    "card": {
+      "balance": "BALANCE",
+      "amount": "AMOUNT",
+      "status": {
+        "Paid": "Paid",
+        "Pending": "Pending",
+        "Overdue": "Overdue"
+      }
+    },
+    "paymentHistory": {
+      "title": "Payment History",
+      "empty": "No payments recorded yet"
+    },
+    "print": {
+      "invoice": "Invoice",
+      "billTo": "Bill To",
+      "from": "From",
+      "invoiceItems": "Invoice Items",
+      "description": "Description",
+      "qty": "Qty",
+      "price": "Price",
+      "total": "Total",
+      "totalAmount": "Total Amount",
+      "balanceDue": "Balance Due",
+      "amount": "Amount",
+      "thankYou": "Thank you for choosing {clinicName} for your dental health.",
+      "checksPayable": "Please make all checks payable to {clinicName}."
+    },
+    "empty": "No Billing History",
+    "toast": {
+      "deleting": "Deleting invoice...",
+      "deleted": "Invoice deleted successfully",
+      "deleteFailed": "Failed to delete invoice"
+    },
+    "form": {
+      "title": "New Invoice",
+      "subtitle": "Generate a new billing record for this patient.",
+      "invoiceItems": "Invoice Items",
+      "itemDescription": "Item description",
+      "qty": "Qty",
+      "price": "Price",
+      "dueDate": "Due Date (Optional)",
+      "totalAmount": "Total Invoice Amount",
+      "cancel": "Cancel",
+      "create": "Create Invoice"
+    }
+  },
+  "landing": {
+    "nav": {
+      "features": "Features",
+      "howItWorks": "How it Works",
+      "pricing": "Pricing",
+      "staffSignIn": "Staff Sign In",
+      "ownerLogin": "Owner Login",
+      "registerClinic": "Register Clinic"
+    },
+    "hero": {
+      "badge": "✨ Revolutionize Your Practice with AI",
+      "titlePart1": "Elevate Your Clinic to the ",
+      "titleHighlight": "Future of Dentistry",
+      "subtitle": "The ultimate cloud platform for leading dental practices. Automate workflows, harness AI-driven treatment planning, and maximize your profitability effortlessly.",
+      "clinicOwner": "Clinic Owner",
+      "clinicOwnerDesc": "Take the lead. Manage your clinic centrally, monitor financial performance in real-time, and drive your team towards excellence.",
+      "registerBtn": "Start Your Digital Transformation",
+      "staffMember": "Medical Staff",
+      "staffMemberDesc": "Log in to your smart workspace. Manage your appointments and patient records seamlessly and efficiently.",
+      "staffBtn": "Enter Staff Portal",
+      "perk1": "World-Class Data Security & Protection",
+      "perk2": "Precision Financial Analytics & Tracking",
+      "perk3": "Smart Scheduling to Minimize No-Shows"
+    },
+    "stats": {
+      "clinics": "Leading Clinics",
+      "patients": "Happy Patients",
+      "appointments": "Appointments/Mo",
+      "satisfaction": "Satisfaction Rate"
+    },
+    "features": {
+      "title": "A Complete Ecosystem with No Limits",
+      "subtitle": "We've crafted exceptional AI-powered tools to simplify management, eliminate financial waste, and elevate the patient experience.",
+      "f1Title": "Flawless Smart Scheduling",
+      "f1Desc": "Say goodbye to no-shows. Our system sends intelligent automated reminders via WhatsApp and SMS to ensure maximum daily productivity.",
+      "f2Title": "Fully Encrypted Cloud Records",
+      "f2Desc": "Medical history, treatment plans, and X-rays in one secure hub. Instant access from any device for faster, more accurate care.",
+      "f3Title": "Precision Finance & Billing",
+      "f3Desc": "Total control over cash flow. One-click invoicing, outstanding balance tracking, and performance reports that reveal growth opportunities (ROI).",
+      "f4Title": "Proactive Inventory Management",
+      "f4Desc": "Smart management for medical supplies. Get early low-stock alerts to prevent any sudden operational halts."
+    },
+    "howItWorks": {
+      "title": "Your Path to a Fully Digital Clinic",
+      "subtitle": "A seamless transition. Start managing your clinic professionally in 3 simple steps.",
+      "step1Title": "1. Create & Customize",
+      "step1Desc": "Register your clinic in minutes, add your logo, and precisely define your services and pricing to build your digital identity.",
+      "step2Title": "2. Build & Empower Your Team",
+      "step2Desc": "Invite doctors, assistants, and receptionists. Assign precise permissions to ensure secure and efficient workflows.",
+      "step3Title": "3. Launch Towards Higher Profits",
+      "step3Desc": "Welcome patients, issue invoices, and monitor your clinic's growth through advanced interactive dashboards."
+    },
+    "pricing": {
+      "title": "A Strategic Investment That Grows With You",
+      "subtitle": "Transparent, well-thought-out plans. Choose the tier that will lead your clinic to the top.",
+      "month": "month",
+      "basic": {
+        "name": "Basic",
+        "price": "$49",
+        "desc": "The perfect choice for emerging clinics seeking reliable automation and a strong start.",
+        "f1": "Manage up to 1,000 patient records",
+        "f2": "Comprehensive scheduling system",
+        "f3": "Basic dashboard and reporting",
+        "f4": "Email technical support",
+        "f5": "Single user (One doctor)",
+        "cta": "Start Your Free Trial"
+      },
+      "pro": {
+        "name": "Professional",
+        "price": "$99",
+        "desc": "The comprehensive ecosystem for leading medical centers seeking operational excellence.",
+        "f1": "Unlimited patient records",
+        "f2": "AI assistant for treatment planning",
+        "f3": "Advanced financial & operational reports",
+        "f4": "Integrated inventory & lab management",
+        "f5": "Priority 24/7 technical support",
+        "f6": "Full White-label branding customization",
+        "cta": "Elevate Your Clinic Now",
+        "popularBadge": "Strategic Choice"
+      }
+    },
+    "footer": {
+      "desc": "The next generation of dental practice management. Building tools that help clinicians focus on what matters most: patient care.",
+      "product": "Product",
+      "company": "Company",
+      "legal": "Legal",
+      "features": "Features",
+      "pricing": "Pricing",
+      "demo": "Demo",
+      "updates": "Updates",
+      "about": "About",
+      "careers": "Careers",
+      "blog": "Blog",
+      "contact": "Contact",
+      "privacy": "Privacy",
+      "terms": "Terms",
+      "security": "Security",
+      "rights": "© 2026 SmileCare Inc. All rights reserved.",
+      "privacyPolicy": "Privacy Policy",
+      "termsOfService": "Terms of Service",
+      "cookiePolicy": "Cookie Policy"
+    }
   }
 }

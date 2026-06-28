@@ -22,11 +22,11 @@ import { useEffect } from "react";
 import { format, startOfMonth, endOfMonth, startOfWeek, endOfWeek, eachDayOfInterval, isSameMonth, isSameDay, addMonths, subMonths } from "date-fns";
 
 const statusConfig: Record<string, { icon: any; className: string }> = {
-  COMPLETED: { icon: CheckCircle2, className: "bg-emerald-50 text-emerald-700 border-emerald-100" },
-  IN_PROGRESS: { icon: AlertCircle, className: "bg-blue-50 text-blue-700 border-blue-100" },
-  SCHEDULED: { icon: Clock, className: "bg-slate-50 text-slate-600 border-slate-100" },
-  CANCELLED: { icon: XCircle, className: "bg-red-50 text-red-600 border-red-100" },
-  WAITING: { icon: Clock, className: "bg-amber-50 text-amber-700 border-amber-100" },
+  COMPLETED: { icon: CheckCircle2, className: "bg-emerald-50 text-emerald-700 border-emerald-100 dark:bg-emerald-900/30 dark:text-emerald-400 dark:border-emerald-800" },
+  IN_PROGRESS: { icon: AlertCircle, className: "bg-blue-50 text-blue-700 border-blue-100 dark:bg-blue-900/30 dark:text-blue-400 dark:border-blue-800" },
+  SCHEDULED: { icon: Clock, className: "bg-slate-50 text-slate-600 border-slate-100 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700" },
+  CANCELLED: { icon: XCircle, className: "bg-red-50 text-red-600 border-red-100 dark:bg-red-900/30 dark:text-red-400 dark:border-red-800" },
+  WAITING: { icon: Clock, className: "bg-amber-50 text-amber-700 border-amber-100 dark:bg-amber-900/30 dark:text-amber-400 dark:border-amber-800" },
 };
 
 export function AppointmentsView({ initialAppointments }: { initialAppointments: any[] }) {
@@ -76,30 +76,30 @@ export function AppointmentsView({ initialAppointments }: { initialAppointments:
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
           <Input
             placeholder="Search by patient or treatment..."
-            className="pl-10 h-10 rounded-xl bg-white border-gray-200 focus-visible:ring-blue-500/20"
+            className="pl-10 h-10 rounded-xl bg-white border-gray-200 focus-visible:ring-blue-500/20 dark:bg-slate-900 dark:border-slate-800 dark:text-white"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
-        <div className="flex gap-1.5 p-1 bg-gray-100/80 rounded-xl overflow-x-auto">
+        <div className="flex gap-1.5 p-1 bg-gray-100/80 rounded-xl overflow-x-auto dark:bg-slate-800">
           {["All", "SCHEDULED", "IN_PROGRESS", "COMPLETED", "CANCELLED"].map((status) => (
             <button
               key={status}
               onClick={() => setFilterStatus(status)}
               className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-all whitespace-nowrap ${filterStatus === status
-                  ? "bg-white text-gray-900 shadow-sm"
-                  : "text-gray-500 hover:text-gray-700"
+                  ? "bg-white text-gray-900 shadow-sm dark:bg-slate-700 dark:text-white"
+                  : "text-gray-500 hover:text-gray-700 dark:text-slate-400 dark:hover:text-slate-200"
                 }`}
             >
               {status === "All" ? "All" : status.replace('_', ' ').toLowerCase()}
             </button>
           ))}
         </div>
-        <div className="flex items-center gap-2 bg-gray-100/80 p-1 rounded-xl">
-          <button onClick={() => setView("list")} className={`p-1.5 rounded-lg transition-colors flex items-center justify-center ${view === "list" ? "bg-white shadow-sm text-blue-600" : "text-gray-400 hover:text-gray-600"}`}>
+        <div className="flex items-center gap-2 bg-gray-100/80 p-1 rounded-xl dark:bg-slate-800">
+          <button onClick={() => setView("list")} className={`p-1.5 rounded-lg transition-colors flex items-center justify-center ${view === "list" ? "bg-white shadow-sm text-blue-600 dark:bg-slate-700 dark:text-blue-400" : "text-gray-400 hover:text-gray-600 dark:hover:text-slate-300"}`}>
             <LayoutList className="w-4 h-4" />
           </button>
-          <button onClick={() => setView("calendar")} className={`p-1.5 rounded-lg transition-colors flex items-center justify-center ${view === "calendar" ? "bg-white shadow-sm text-blue-600" : "text-gray-400 hover:text-gray-600"}`}>
+          <button onClick={() => setView("calendar")} className={`p-1.5 rounded-lg transition-colors flex items-center justify-center ${view === "calendar" ? "bg-white shadow-sm text-blue-600 dark:bg-slate-700 dark:text-blue-400" : "text-gray-400 hover:text-gray-600 dark:hover:text-slate-300"}`}>
             <CalendarIcon className="w-4 h-4" />
           </button>
         </div>
@@ -107,10 +107,10 @@ export function AppointmentsView({ initialAppointments }: { initialAppointments:
 
       {/* Main View Area */}
       {view === "list" ? (
-        <Card className="border-0 shadow-sm overflow-hidden animate-fade-in-up">
+        <Card className="border-0 shadow-sm overflow-hidden animate-fade-in-up dark:bg-slate-900">
           <Table>
             <TableHeader>
-              <TableRow className="bg-gray-50/50 hover:bg-gray-50/50">
+              <TableRow className="bg-gray-50/50 hover:bg-gray-50/50 dark:bg-slate-800 dark:hover:bg-slate-800 border-b-slate-800">
                 <TableHead className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Patient</TableHead>
                 <TableHead className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Doctor</TableHead>
                 <TableHead className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Treatment</TableHead>
@@ -124,23 +124,23 @@ export function AppointmentsView({ initialAppointments }: { initialAppointments:
                 const config = statusConfig[apt.status] || statusConfig.SCHEDULED;
                 const StatusIcon = config.icon;
                 return (
-                  <TableRow key={apt.id} className="table-row-hover group">
+                  <TableRow key={apt.id} className="table-row-hover group dark:border-b-slate-800 dark:hover:bg-slate-800/50">
                     <TableCell>
                       <div className="flex items-center gap-3">
                         <div className={`w-9 h-9 rounded-lg bg-gradient-to-br ${apt.color} flex items-center justify-center text-white font-bold text-[10px]`}>
                           {apt.avatar}
                         </div>
                         <div>
-                          <p className="text-sm font-semibold text-gray-900">{apt.patient}</p>
-                          <p className="text-[10px] text-gray-400 font-mono uppercase">{apt.id.split('-')[0]}</p>
+                          <p className="text-sm font-semibold text-gray-900 dark:text-white">{apt.patient}</p>
+                          <p className="text-[10px] text-gray-400 font-mono uppercase dark:text-slate-500">{apt.id.split('-')[0]}</p>
                         </div>
                       </div>
                     </TableCell>
-                    <TableCell className="text-sm text-gray-600">{apt.doctor}</TableCell>
-                    <TableCell className="text-sm text-gray-700 font-medium">{apt.treatment}</TableCell>
+                    <TableCell className="text-sm text-gray-600 dark:text-slate-300">{apt.doctor}</TableCell>
+                    <TableCell className="text-sm text-gray-700 font-medium dark:text-slate-200">{apt.treatment}</TableCell>
                     <TableCell>
-                      <div className="text-sm text-gray-700">{apt.date}</div>
-                      <div className="text-xs text-gray-400 flex items-center gap-1">
+                      <div className="text-sm text-gray-700 dark:text-slate-200">{apt.date}</div>
+                      <div className="text-xs text-gray-400 flex items-center gap-1 dark:text-slate-500">
                         <Clock className="w-3 h-3" /> {apt.time}
                       </div>
                     </TableCell>
@@ -192,7 +192,7 @@ export function AppointmentsView({ initialAppointments }: { initialAppointments:
               })}
               {filtered.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={6} className="text-center py-8 text-gray-500">
+                  <TableCell colSpan={6} className="text-center py-8 text-gray-500 dark:text-slate-400">
                     No appointments found.
                   </TableCell>
                 </TableRow>
@@ -206,24 +206,24 @@ export function AppointmentsView({ initialAppointments }: { initialAppointments:
 
       {/* Edit Dialog */}
       <Dialog open={!!editingApt} onOpenChange={(open) => !open && setEditingApt(null)}>
-        <DialogContent className="sm:max-w-md p-0 overflow-hidden bg-white border-0 shadow-2xl rounded-2xl">
-          <DialogHeader className="px-6 py-4 border-b border-gray-100 bg-gray-50 flex flex-row items-center justify-between m-0">
-            <DialogTitle className="text-lg font-bold text-gray-800">Edit Appointment Status</DialogTitle>
+        <DialogContent className="sm:max-w-md p-0 overflow-hidden bg-white border-0 shadow-2xl rounded-2xl dark:bg-slate-900">
+          <DialogHeader className="px-6 py-4 border-b border-gray-100 bg-gray-50 flex flex-row items-center justify-between m-0 dark:bg-slate-800 dark:border-slate-700">
+            <DialogTitle className="text-lg font-bold text-gray-800 dark:text-white">Edit Appointment Status</DialogTitle>
           </DialogHeader>
 
           <div className="p-6 space-y-6">
-            <div className="p-4 bg-blue-50/50 border border-blue-100 rounded-xl flex items-center gap-4">
+            <div className="p-4 bg-blue-50/50 border border-blue-100 rounded-xl flex items-center gap-4 dark:bg-blue-900/20 dark:border-blue-800">
               <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-white font-bold bg-gradient-to-br ${editingApt?.color || 'from-gray-400 to-gray-500'} shadow-md`}>
                 {editingApt?.avatar}
               </div>
               <div>
-                <h3 className="font-bold text-gray-900">{editingApt?.patient}</h3>
-                <p className="text-xs font-semibold text-gray-500 tracking-wider uppercase mt-1">{editingApt?.treatment}</p>
+                <h3 className="font-bold text-gray-900 dark:text-white">{editingApt?.patient}</h3>
+                <p className="text-xs font-semibold text-gray-500 tracking-wider uppercase mt-1 dark:text-slate-400">{editingApt?.treatment}</p>
               </div>
             </div>
 
             <div className="space-y-3">
-              <label className="text-sm font-bold text-gray-700 uppercase tracking-wider">Update Status</label>
+              <label className="text-sm font-bold text-gray-700 uppercase tracking-wider dark:text-slate-300">Update Status</label>
               <div className="grid grid-cols-2 gap-3">
                 {["SCHEDULED", "IN_PROGRESS", "COMPLETED", "CANCELLED"].map(s => {
                   const Icon = statusConfig[s] ? statusConfig[s].icon : Clock;
@@ -235,11 +235,11 @@ export function AppointmentsView({ initialAppointments }: { initialAppointments:
                       disabled={isUpdating === editingApt?.id}
                       onClick={() => handleStatusUpdate(editingApt.id, s)}
                       className={`p-3 border rounded-xl flex items-center gap-2 font-semibold text-xs capitalize transition-all shadow-sm ${editingApt?.status === s
-                          ? 'ring-2 ring-blue-500 border-transparent bg-blue-50 shadow-blue-500/20 text-blue-700'
-                          : 'border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50'
+                          ? 'ring-2 ring-blue-500 border-transparent bg-blue-50 shadow-blue-500/20 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'
+                          : 'border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50 dark:border-slate-700 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:border-slate-600'
                         } ${isUpdating === editingApt?.id ? 'opacity-50 cursor-not-allowed' : ''}`}
                     >
-                      <Icon className={`w-4 h-4 ${editingApt?.status === s ? 'text-blue-600' : 'text-gray-400'}`} />
+                      <Icon className={`w-4 h-4 ${editingApt?.status === s ? 'text-blue-600 dark:text-blue-400' : 'text-gray-400 dark:text-slate-500'}`} />
                       {label.toLowerCase()}
                     </button>
                   )
@@ -342,45 +342,45 @@ function CalendarView({ items }: { items: any[] }) {
     .sort((a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime());
 
   return (
-    <Card className="border-0 shadow-sm overflow-hidden py-0 px-0 animate-fade-in-up bg-white">
-      <div className="flex bg-white justify-between items-center px-6 py-4 border-b border-gray-100">
-        <h3 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+    <Card className="border-0 shadow-sm overflow-hidden py-0 px-0 animate-fade-in-up bg-white dark:bg-slate-900">
+      <div className="flex bg-white dark:bg-slate-900 justify-between items-center px-6 py-4 border-b border-gray-100 dark:border-slate-800">
+        <h3 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
           <CalendarDays className="w-5 h-5 text-blue-600" /> {format(currentDate, "MMMM yyyy")}
         </h3>
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" onClick={prevMonth} className="h-8 w-8 p-0 rounded-lg text-gray-500 cursor-pointer">&lt;</Button>
-          <Button variant="outline" size="sm" onClick={goToToday} className="h-8 rounded-lg font-semibold text-gray-700 cursor-pointer">Today</Button>
-          <Button variant="outline" size="sm" onClick={nextMonth} className="h-8 w-8 p-0 rounded-lg text-gray-500 cursor-pointer">&gt;</Button>
+          <Button variant="outline" size="sm" onClick={prevMonth} className="h-8 w-8 p-0 rounded-lg text-gray-500 cursor-pointer dark:text-slate-400 dark:border-slate-700">&lt;</Button>
+          <Button variant="outline" size="sm" onClick={goToToday} className="h-8 rounded-lg font-semibold text-gray-700 cursor-pointer dark:text-slate-300 dark:border-slate-700">Today</Button>
+          <Button variant="outline" size="sm" onClick={nextMonth} className="h-8 w-8 p-0 rounded-lg text-gray-500 cursor-pointer dark:text-slate-400 dark:border-slate-700">&gt;</Button>
         </div>
       </div>
 
       {/* Desktop Calendar Grid */}
       <div className="hidden md:block">
-        <div className="grid grid-cols-7 border-b border-gray-100 bg-gray-50/80">
+        <div className="grid grid-cols-7 border-b border-gray-100 bg-gray-50/80 dark:border-slate-800 dark:bg-slate-800">
           {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(d => (
-            <div key={d} className="text-center py-3 text-xs font-bold text-gray-500 uppercase tracking-wider border-r last:border-r-0 border-gray-100">
+            <div key={d} className="text-center py-3 text-xs font-bold text-gray-500 uppercase tracking-wider border-r last:border-r-0 border-gray-100 dark:text-slate-400 dark:border-slate-800">
               {d}
             </div>
           ))}
         </div>
-        <div className="flex flex-col bg-gray-200/50 gap-[1px]">
+        <div className="flex flex-col bg-gray-200/50 gap-[1px] dark:bg-slate-800">
           <div className="grid grid-cols-7 gap-[1px]">
             {days.map((day, i) => {
               const dayApps = items.filter((a: any) => isSameDay(new Date(a.startTime), day));
               const isCurrentMonth = isSameMonth(day, monthStart);
 
               return (
-                <div key={i} className={`min-h-[140px] bg-white p-2 flex flex-col ${!isCurrentMonth ? 'bg-gray-50/50 opacity-50' : 'hover:bg-blue-50/10'}`}>
-                  <span className={`text-sm font-semibold mb-2 w-8 h-8 flex items-center justify-center rounded-full ${isSameDay(day, new Date()) ? 'bg-blue-600 text-white shadow-md' : 'text-gray-700'}`}>
+                <div key={i} className={`min-h-[140px] bg-white dark:bg-slate-900 p-2 flex flex-col ${!isCurrentMonth ? 'bg-gray-50/50 opacity-50 dark:bg-slate-800' : 'hover:bg-blue-50/10 dark:hover:bg-blue-900/10'}`}>
+                  <span className={`text-sm font-semibold mb-2 w-8 h-8 flex items-center justify-center rounded-full ${isSameDay(day, new Date()) ? 'bg-blue-600 text-white shadow-md' : 'text-gray-700 dark:text-slate-300'}`}>
                     {format(day, "d")}
                   </span>
                   <div className="flex flex-col gap-1.5 overflow-y-auto mt-1 scrollbar-hide max-h-[100px] pb-2">
                     {dayApps.map((app: any) => (
-                      <div key={app.id} className="text-[10px] p-2 rounded-lg border border-gray-100 flex items-start gap-1.5 cursor-pointer hover:shadow-md transition-all bg-white relative overflow-hidden group">
+                      <div key={app.id} className="text-[10px] p-2 rounded-lg border border-gray-100 flex items-start gap-1.5 cursor-pointer hover:shadow-md transition-all bg-white relative overflow-hidden group dark:bg-slate-800 dark:border-slate-700">
                         <div className={`absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b ${app.color} opacity-80`} />
                         <div className="pl-2 leading-tight flex-1">
-                          <p className="font-bold text-gray-800 truncate mb-0.5">{app.time}</p>
-                          <p className="text-gray-600 font-medium truncate group-hover:text-blue-600 transition-colors">{app.patient}</p>
+                          <p className="font-bold text-gray-800 truncate mb-0.5 dark:text-white">{app.time}</p>
+                          <p className="text-gray-600 font-medium truncate group-hover:text-blue-600 transition-colors dark:text-slate-300 dark:group-hover:text-blue-400">{app.patient}</p>
                         </div>
                       </div>
                     ))}
@@ -395,23 +395,23 @@ function CalendarView({ items }: { items: any[] }) {
       {/* Mobile Calendar List View */}
       <div className="block md:hidden">
         {monthItems.length === 0 ? (
-          <div className="p-8 text-center text-gray-500 text-sm">
+          <div className="p-8 text-center text-gray-500 text-sm dark:text-slate-400">
             No appointments scheduled for this month.
           </div>
         ) : (
-          <div className="divide-y divide-gray-100">
+          <div className="divide-y divide-gray-100 dark:divide-slate-800">
             {monthItems.map((app: any) => {
               const appDate = new Date(app.startTime);
               return (
-                <div key={app.id} className="p-4 flex items-center justify-between hover:bg-gray-50 transition-colors">
+                <div key={app.id} className="p-4 flex items-center justify-between hover:bg-gray-50 transition-colors dark:hover:bg-slate-800/50">
                   <div className="flex items-center gap-3">
                     <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${app.color} flex flex-col items-center justify-center text-white flex-shrink-0`}>
                       <span className="text-[9px] font-bold uppercase">{format(appDate, "MMM")}</span>
                       <span className="text-sm font-extrabold -mt-1">{format(appDate, "d")}</span>
                     </div>
                     <div>
-                      <p className="text-sm font-bold text-gray-900">{app.patient}</p>
-                      <p className="text-xs text-gray-500 flex items-center gap-1">
+                      <p className="text-sm font-bold text-gray-900 dark:text-white">{app.patient}</p>
+                      <p className="text-xs text-gray-500 flex items-center gap-1 dark:text-slate-400">
                         <Clock className="w-3 h-3 text-gray-400" /> {app.time} · {app.doctor}
                       </p>
                     </div>

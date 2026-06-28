@@ -63,9 +63,9 @@ export function FinancialFlowSection({ data }: FinancialFlowProps) {
         </CardContent>
       </Card>
 
-      <Card className="border-0 shadow-sm">
+      <Card className="border-0 shadow-sm dark:bg-slate-900 dark:shadow-none">
         <CardHeader>
-          <CardTitle className="text-sm font-medium text-gray-500 flex items-center gap-2">
+          <CardTitle className="text-sm font-medium text-gray-500 dark:text-slate-400 flex items-center gap-2">
             <Clock className="w-4 h-4" />
             Recent Activity
           </CardTitle>
@@ -76,14 +76,14 @@ export function FinancialFlowSection({ data }: FinancialFlowProps) {
               <div key={item.id} className="flex gap-3">
                 <div className={cn(
                   "p-2 h-fit rounded-full",
-                  item.type === 'payment' ? "bg-emerald-50 text-emerald-600" : "bg-blue-50 text-blue-600"
+                  item.type === 'payment' ? "bg-emerald-50 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400" : "bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400"
                 )}>
                   {item.type === 'payment' ? <CheckCircle2 className="w-3.5 h-3.5" /> : <User className="w-3.5 h-3.5" />}
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-900 leading-none">{item.title}</p>
-                  <p className="text-xs text-gray-500 mt-1">{item.description}</p>
-                  <p className="text-[10px] text-gray-400 mt-1">{new Date(item.time).toLocaleTimeString()}</p>
+                  <p className="text-sm font-medium text-gray-900 dark:text-white leading-none">{item.title}</p>
+                  <p className="text-xs text-gray-500 dark:text-slate-400 mt-1">{item.description}</p>
+                  <p className="text-[10px] text-gray-400 dark:text-slate-500 mt-1">{new Date(item.time).toLocaleTimeString()}</p>
                 </div>
               </div>
             ))}

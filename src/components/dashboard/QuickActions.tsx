@@ -48,13 +48,13 @@ export function QuickActions() {
           <Button
             onClick={() => router.push(action.href)}
             variant="outline"
-            className="h-12 px-4 rounded-2xl border-gray-100 bg-white shadow-sm hover:shadow-xl hover:shadow-indigo-50 hover:border-indigo-100 transition-all duration-300 group overflow-hidden"
+            className="h-12 px-4 rounded-2xl border-gray-100 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm hover:shadow-xl dark:shadow-none dark:hover:shadow-none hover:shadow-indigo-50 hover:border-indigo-100 dark:hover:border-slate-700 transition-all duration-300 group overflow-hidden"
           >
             <div className={`p-1.5 rounded-xl bg-gradient-to-br ${action.color} text-white shadow-lg ${action.shadow} group-hover:scale-110 transition-transform`}>
               <action.icon className="w-3.5 h-3.5" />
             </div>
-            <span className="font-bold text-gray-700 text-xs ml-3">{action.label}</span>
-            <ChevronRight className="w-3 h-3 ml-2 text-gray-300 group-hover:text-indigo-400 group-hover:translate-x-1 transition-all" />
+            <span className="font-bold text-gray-700 dark:text-slate-300 text-xs ml-3">{action.label}</span>
+            <ChevronRight className="w-3 h-3 ml-2 text-gray-300 dark:text-slate-600 group-hover:text-indigo-400 group-hover:translate-x-1 transition-all" />
           </Button>
         </motion.div>
       ))}
@@ -63,7 +63,7 @@ export function QuickActions() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.8 }}
-        className="w-10 h-10 rounded-2xl bg-gray-900 text-white flex items-center justify-center hover:bg-black transition-colors shadow-lg"
+        className="w-10 h-10 rounded-2xl bg-gray-900 dark:bg-slate-800 text-white flex items-center justify-center hover:bg-black dark:hover:bg-slate-700 transition-colors shadow-lg dark:shadow-none"
       >
         <Plus className="w-5 h-5" />
       </motion.button>

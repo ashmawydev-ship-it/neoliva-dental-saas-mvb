@@ -1,4 +1,4 @@
-import { prisma } from "@/lib/prisma";
+import { prisma, rawPrisma } from "@/lib/prisma";
 import { Patient, Prisma } from "@/generated/client";
 
 export class PatientRepository {
@@ -38,7 +38,7 @@ export class PatientRepository {
   }
 
   async findUniqueGlobal(id: string) {
-    return prisma.patient.findUnique({
+    return rawPrisma.patient.findUnique({
       where: { id },
       select: { id: true, tenantId: true, name: true }
     });

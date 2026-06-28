@@ -17,10 +17,10 @@ export default async function AppointmentsPage() {
   const t = await getTranslations('appointments');
 
   const stats = [
-    { label: t('stats.totalToday'), value: statsData.totalToday.toString(), icon: CalendarDays, accent: "text-blue-600 bg-blue-50" },
-    { label: t('stats.completed'), value: statsData.completed.toString(), icon: CheckCircle2, accent: "text-emerald-600 bg-emerald-50" },
-    { label: t('stats.inProgress'), value: statsData.inProgress.toString(), icon: Clock, accent: "text-amber-600 bg-amber-50" },
-    { label: t('stats.cancelled'), value: statsData.cancelled.toString(), icon: XCircle, accent: "text-red-600 bg-red-50" },
+    { label: t('stats.totalToday'), value: statsData.totalToday.toString(), icon: CalendarDays, accent: "text-blue-600 bg-blue-50 dark:bg-blue-900/30 dark:text-blue-400" },
+    { label: t('stats.completed'), value: statsData.completed.toString(), icon: CheckCircle2, accent: "text-emerald-600 bg-emerald-50 dark:bg-emerald-900/30 dark:text-emerald-400" },
+    { label: t('stats.inProgress'), value: statsData.inProgress.toString(), icon: Clock, accent: "text-amber-600 bg-amber-50 dark:bg-amber-900/30 dark:text-amber-400" },
+    { label: t('stats.cancelled'), value: statsData.cancelled.toString(), icon: XCircle, accent: "text-red-600 bg-red-50 dark:bg-red-900/30 dark:text-red-400" },
   ];
 
   return (

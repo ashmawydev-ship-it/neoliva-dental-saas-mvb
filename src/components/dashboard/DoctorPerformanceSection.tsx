@@ -18,9 +18,9 @@ interface DoctorPerformanceSectionProps {
 
 export function DoctorPerformanceSection({ doctors }: DoctorPerformanceSectionProps) {
   return (
-    <Card className="border-0 shadow-sm">
+    <Card className="border-0 shadow-sm dark:bg-slate-900 dark:shadow-none">
       <CardHeader>
-        <CardTitle className="text-base font-semibold flex items-center gap-2">
+        <CardTitle className="text-base font-semibold flex items-center gap-2 dark:text-white">
           <Award className="w-4 h-4 text-blue-600" />
           Doctor Performance
         </CardTitle>
@@ -30,9 +30,9 @@ export function DoctorPerformanceSection({ doctors }: DoctorPerformanceSectionPr
           <div key={doc.id} className="space-y-2">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-900">{doc.name}</p>
+                <p className="text-sm font-medium text-gray-900 dark:text-white">{doc.name}</p>
                 <div className="flex items-center gap-3 mt-0.5">
-                  <div className="flex items-center gap-1 text-[10px] text-gray-500 uppercase font-semibold">
+                  <div className="flex items-center gap-1 text-[10px] text-gray-500 dark:text-slate-400 uppercase font-semibold">
                     <Users className="w-3 h-3" /> {doc.patientsCount} patients
                   </div>
                   <div className="flex items-center gap-1 text-[10px] text-emerald-600 uppercase font-bold">
@@ -42,7 +42,7 @@ export function DoctorPerformanceSection({ doctors }: DoctorPerformanceSectionPr
               </div>
               <span className="text-xs font-bold text-blue-600">{Math.round(doc.completionRate)}%</span>
             </div>
-            <Progress value={doc.completionRate} className="h-1.5" />
+            <Progress value={doc.completionRate} className="h-1.5 dark:bg-slate-800" />
           </div>
         ))}
       </CardContent>

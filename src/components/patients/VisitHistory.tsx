@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useTransition } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from 'next-intl';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -48,23 +49,6 @@ const CATEGORY_COLORS: Record<VisitCategory, { bg: string; text: string; border:
   Other:        { bg: "bg-gray-50",    text: "text-gray-700",    border: "border-gray-200" },
 };
 
-const TREATMENT_PRESETS: { name: string; category: VisitCategory }[] = [
-  { name: "Routine Cleaning & Polishing", category: "Preventive" },
-  { name: "Dental Examination", category: "Examination" },
-  { name: "Panoramic X-Ray & Examination", category: "Examination" },
-  { name: "Composite Filling", category: "Restorative" },
-  { name: "Root Canal Treatment", category: "Endodontic" },
-  { name: "Crown Preparation", category: "Restorative" },
-  { name: "Tooth Extraction", category: "Surgical" },
-  { name: "Wisdom Tooth Extraction", category: "Surgical" },
-  { name: "Teeth Whitening Session", category: "Cosmetic" },
-  { name: "Orthodontic Adjustment", category: "Orthodontic" },
-  { name: "Dental Implant", category: "Surgical" },
-  { name: "Veneer Placement", category: "Cosmetic" },
-  { name: "Gum Treatment", category: "Preventive" },
-  { name: "Bridge Placement", category: "Restorative" },
-];
-
 const DOCTORS = ["Dr. Smith", "Dr. Adams", "Dr. Lee", "Dr. Wilson", "Dr. Garcia"];
 
 function categorizeVisit(treatment: string): VisitCategory {
@@ -80,9 +64,26 @@ function categorizeVisit(treatment: string): VisitCategory {
 }
 
 export function VisitHistory({ visits: initialVisits, patientId }: { visits: VisitInput[]; patientId: string }) {
-  // ============ STATE ============
+  const t = useTranslations('visitHistory');
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
+
+  const getTreatmentPresets = (): { name: string; category: VisitCategory }[] => [
+    { name: t('presets.routineCleaning'), category: "Preventive" },
+    { name: t('presets.dentalExam'), category: "Examination" },
+    { name: t('presets.panoramicXray'), category: "Examination" },
+    { name: t('presets.compositeFilling'), category: "Restorative" },
+    { name: t('presets.rootCanal'), category: "Endodontic" },
+    { name: t('presets.crownPrep'), category: "Restorative" },
+    { name: t('presets.extraction'), category: "Surgical" },
+    { name: t('presets.wisdomExtraction'), category: "Surgical" },
+    { name: t('presets.whitening'), category: "Cosmetic" },
+    { name: t('presets.orthodonticAdj'), category: "Orthodontic" },
+    { name: t('presets.implant'), category: "Surgical" },
+    { name: t('presets.veneer'), category: "Cosmetic" },
+    { name: t('presets.gumTreatment'), category: "Preventive" },
+    { name: t('presets.bridge'), category: "Restorative" },
+  ];
 
   const mapVisit = (v: any, i: number): Visit => ({
     id: v.id ?? `v-${i}`,
@@ -225,33 +226,33 @@ export function VisitHistory({ visits: initialVisits, patientId }: { visits: Vis
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <div className="p-4 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 text-white shadow-lg shadow-blue-500/20">
           <p className="text-2xl font-black">{totalVisits}</p>
-          <p className="text-[11px] opacity-80 mt-0.5">Total Visits</p>
+          <p className="text-[11px] opacity-80 mt-0.5">{t('totalVisits')}</p>
         </div>
-        <div className="p-4 rounded-2xl bg-white border border-gray-100 shadow-sm">
-          <p className="text-lg font-bold text-gray-900">{lastVisitDate}</p>
-          <p className="text-[11px] text-gray-400 mt-0.5">Last Visit</p>
+        <div className="p-4 rounded-2xl bg-white border border-gray-100 shadow-sm dark:bg-slate-900 dark:border-slate-800">
+          <p className="text-lg font-bold text-gray-900 dark:text-white">{lastVisitDate}</p>
+          <p className="text-[11px] text-gray-400 mt-0.5">{t('lastVisit')}</p>
         </div>
-        <div className="p-4 rounded-2xl bg-white border border-gray-100 shadow-sm">
+        <div className="p-4 rounded-2xl bg-white border border-gray-100 shadow-sm dark:bg-slate-900 dark:border-slate-800">
           <div className="flex flex-wrap gap-1">
             {Object.entries(categoryCounts).slice(0, 3).map(([cat, count]) => (
-              <Badge key={cat} variant="outline" className={`text-[9px] px-1.5 py-0 ${CATEGORY_COLORS[cat as VisitCategory]?.bg} ${CATEGORY_COLORS[cat as VisitCategory]?.text} ${CATEGORY_COLORS[cat as VisitCategory]?.border}`}>
-                {cat}: {count}
+              <Badge key={cat} variant="outline" className={`text-[9px] px-1.5 py-0 ${CATEGORY_COLORS[cat as VisitCategory]?.bg} ${CATEGORY_COLORS[cat as VisitCategory]?.text} ${CATEGORY_COLORS[cat as VisitCategory]?.border} dark:bg-slate-800 dark:text-slate-200 dark:border-slate-700`}>
+                {t(`categories.${cat}`)}: {count}
               </Badge>
             ))}
           </div>
-          <p className="text-[11px] text-gray-400 mt-1.5">By Category</p>
+          <p className="text-[11px] text-gray-400 mt-1.5">{t('byCategory')}</p>
         </div>
         <Button 
           onClick={() => setAddDialog(true)} 
           className="h-full min-h-[72px] bg-gradient-to-br from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white rounded-2xl shadow-lg shadow-emerald-500/20 font-bold flex flex-col items-center justify-center gap-1"
         >
           <Plus className="w-5 h-5" />
-          <span className="text-xs">New Visit</span>
+          <span className="text-xs">{t('newVisit')}</span>
         </Button>
       </div>
 
       {/* ========== SEARCH & FILTERS ========== */}
-      <Card className="border-0 shadow-sm">
+      <Card className="border-0 shadow-sm dark:bg-slate-900">
         <CardContent className="py-3 px-4">
           <div className="flex items-center gap-3">
             <div className="flex-1 relative">
@@ -260,8 +261,8 @@ export function VisitHistory({ visits: initialVisits, patientId }: { visits: Vis
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search visits by treatment, doctor, notes..."
-                className="w-full h-9 pl-9 pr-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 bg-gray-50/50"
+                placeholder={t('searchPlaceholder')}
+                className="w-full h-9 pl-9 pr-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 bg-gray-50/50 dark:bg-slate-800 dark:border-slate-700 dark:text-white"
               />
               {searchQuery && (
                 <button onClick={() => setSearchQuery("")} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
@@ -272,18 +273,18 @@ export function VisitHistory({ visits: initialVisits, patientId }: { visits: Vis
             <button 
               onClick={() => setShowFilters(!showFilters)} 
               className={`h-9 px-3 rounded-xl border text-xs font-semibold flex items-center gap-1.5 transition-all ${
-                showFilters ? "bg-blue-50 border-blue-200 text-blue-700" : "border-gray-200 text-gray-600 hover:bg-gray-50"
+                showFilters ? "bg-blue-50 border-blue-200 text-blue-700 dark:bg-blue-900/30 dark:border-blue-800 dark:text-blue-400" : "border-gray-200 text-gray-600 hover:bg-gray-50 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
               }`}
             >
               <SlidersHorizontal className="w-3.5 h-3.5" />
-              Filters
+              {t('filters')}
             </button>
             <button 
               onClick={() => setSortOrder(s => s === "newest" ? "oldest" : "newest")} 
-              className="h-9 px-3 rounded-xl border border-gray-200 text-xs font-semibold text-gray-600 flex items-center gap-1.5 hover:bg-gray-50 transition-colors"
+              className="h-9 px-3 rounded-xl border border-gray-200 text-xs font-semibold text-gray-600 flex items-center gap-1.5 hover:bg-gray-50 transition-colors dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
             >
               {sortOrder === "newest" ? <ChevronDown className="w-3.5 h-3.5" /> : <ChevronUp className="w-3.5 h-3.5" />}
-              {sortOrder === "newest" ? "Newest" : "Oldest"}
+              {sortOrder === "newest" ? t('newest') : t('oldest')}
             </button>
           </div>
           
@@ -295,7 +296,7 @@ export function VisitHistory({ visits: initialVisits, patientId }: { visits: Vis
                 className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${
                   categoryFilter === "All" ? "bg-gray-900 text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"
                 }`}
-              >All ({totalVisits})</button>
+              >{t('all')} ({totalVisits})</button>
               {(Object.keys(CATEGORY_COLORS) as VisitCategory[]).map(cat => {
                 const count = categoryCounts[cat] || 0;
                 if (count === 0 && categoryFilter !== cat) return null;
@@ -307,7 +308,7 @@ export function VisitHistory({ visits: initialVisits, patientId }: { visits: Vis
                     className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-all ${
                       categoryFilter === cat ? `${c.bg} ${c.text} ${c.border} ring-2 ring-offset-1 ring-blue-300` : `bg-white ${c.text} ${c.border} hover:${c.bg}`
                     }`}
-                  >{cat} ({count})</button>
+                  >{t(`categories.${cat}`)} ({count})</button>
                 );
               })}
             </div>
@@ -316,11 +317,11 @@ export function VisitHistory({ visits: initialVisits, patientId }: { visits: Vis
       </Card>
 
       {/* ========== TIMELINE ========== */}
-      <Card className="border-0 shadow-sm">
-        <CardHeader className="pb-3 border-b border-gray-100 flex flex-row items-center justify-between">
-          <CardTitle className="text-sm font-semibold text-gray-900 flex items-center gap-2">
-            <Clock className="w-4 h-4 text-blue-500" /> Visit Timeline
-            {searchQuery && <Badge variant="outline" className="text-[9px] ml-2">{filteredVisits.length} results</Badge>}
+      <Card className="border-0 shadow-sm dark:bg-slate-900">
+        <CardHeader className="pb-3 border-b border-gray-100 dark:border-slate-800 flex flex-row items-center justify-between">
+          <CardTitle className="text-sm font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+            <Clock className="w-4 h-4 text-blue-500" /> {t('timeline')}
+            {searchQuery && <Badge variant="outline" className="text-[9px] ml-2">{filteredVisits.length} {t('results')}</Badge>}
           </CardTitle>
         </CardHeader>
         <CardContent className="pt-6">
@@ -338,7 +339,7 @@ export function VisitHistory({ visits: initialVisits, patientId }: { visits: Vis
 
                     <div 
                       className={`p-4 rounded-2xl border transition-all cursor-pointer ${
-                        isExpanded ? "bg-white border-blue-200 shadow-md" : "bg-gray-50/50 border-gray-100 hover:bg-white hover:border-gray-200 hover:shadow-sm"
+                        isExpanded ? "bg-white border-blue-200 shadow-md dark:bg-slate-800 dark:border-blue-800" : "bg-gray-50/50 border-gray-100 hover:bg-white hover:border-gray-200 hover:shadow-sm dark:bg-slate-800/50 dark:border-slate-700 dark:hover:bg-slate-800"
                       }`}
                       onClick={() => setExpandedVisit(isExpanded ? null : visit.id)}
                     >
@@ -346,9 +347,9 @@ export function VisitHistory({ visits: initialVisits, patientId }: { visits: Vis
                       <div className="flex items-start justify-between gap-2 mb-2">
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 flex-wrap">
-                            <h3 className="text-sm font-bold text-gray-900">{visit.treatment}</h3>
-                            <Badge variant="outline" className={`text-[9px] px-1.5 py-0 rounded-full ${catColor.bg} ${catColor.text} ${catColor.border}`}>
-                              {visit.category}
+                            <h3 className="text-sm font-bold text-gray-900 dark:text-white">{visit.treatment}</h3>
+                            <Badge variant="outline" className={`text-[9px] px-1.5 py-0 rounded-full ${catColor.bg} ${catColor.text} ${catColor.border} dark:bg-slate-800 dark:text-slate-200 dark:border-slate-700`}>
+                              {t(`categories.${visit.category}`)}
                             </Badge>
                           </div>
                           <p className="text-xs text-gray-500 mt-1 flex items-center gap-2 flex-wrap">
@@ -358,7 +359,7 @@ export function VisitHistory({ visits: initialVisits, patientId }: { visits: Vis
                           </p>
                         </div>
                         <div className="flex items-center gap-2 flex-shrink-0">
-                          <Badge variant="outline" className="text-[10px] rounded-full flex items-center gap-1">
+                          <Badge variant="outline" className="text-[10px] rounded-full flex items-center gap-1 dark:border-slate-700 dark:text-slate-300">
                             <Hash className="w-2.5 h-2.5" />{visit.tooth}
                           </Badge>
                           {isExpanded ? <ChevronUp className="w-4 h-4 text-gray-400" /> : <ChevronDown className="w-4 h-4 text-gray-400" />}
@@ -366,23 +367,23 @@ export function VisitHistory({ visits: initialVisits, patientId }: { visits: Vis
                       </div>
 
                       {/* Notes Preview */}
-                      <p className={`text-sm text-gray-600 leading-relaxed ${isExpanded ? "" : "line-clamp-2"}`}>
+                      <p className={`text-sm text-gray-600 dark:text-gray-400 leading-relaxed ${isExpanded ? "" : "line-clamp-2"}`}>
                         {visit.notes}
                       </p>
 
                       {/* Expanded Details */}
                       {isExpanded && (
-                        <div className="mt-4 pt-3 border-t border-gray-100 space-y-3 animate-fade-in-up">
+                        <div className="mt-4 pt-3 border-t border-gray-100 dark:border-slate-700 space-y-3 animate-fade-in-up">
                           {visit.duration && (
                             <div className="flex items-center gap-2 text-xs text-gray-500">
                               <Clock className="w-3.5 h-3.5 text-gray-400" />
-                              <span>Duration: <strong className="text-gray-700">{visit.duration}</strong></span>
+                              <span>{t('visit.duration')}: <strong className="text-gray-700 dark:text-gray-300">{visit.duration}</strong></span>
                             </div>
                           )}
                           {visit.cost && (
                             <div className="flex items-center gap-2 text-xs text-gray-500">
                               <FileText className="w-3.5 h-3.5 text-gray-400" />
-                              <span>Cost: <strong className="text-gray-700">{visit.cost}</strong></span>
+                              <span>{t('visit.cost')}: <strong className="text-gray-700 dark:text-gray-300">{visit.cost}</strong></span>
                             </div>
                           )}
                           <div className="flex gap-2 pt-1">
@@ -390,25 +391,25 @@ export function VisitHistory({ visits: initialVisits, patientId }: { visits: Vis
                               size="sm" 
                               variant="outline" 
                               onClick={(e) => { e.stopPropagation(); setViewDialog(visit.id); }}
-                              className="h-8 text-xs rounded-lg gap-1"
+                              className="h-8 text-xs rounded-lg gap-1 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-700"
                             >
-                              <Eye className="w-3 h-3" /> View Details
+                              <Eye className="w-3 h-3" /> {t('viewDetails')}
                             </Button>
                             <Button 
                               size="sm" 
                               variant="outline" 
                               onClick={(e) => { e.stopPropagation(); window.print(); }}
-                              className="h-8 text-xs rounded-lg gap-1"
+                              className="h-8 text-xs rounded-lg gap-1 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-700"
                             >
-                              <Printer className="w-3 h-3" /> Print
+                              <Printer className="w-3 h-3" /> {t('print')}
                             </Button>
                             <Button 
                               size="sm" 
                               variant="ghost" 
                               onClick={(e) => { e.stopPropagation(); deleteVisit(visit.id); }}
-                              className="h-8 text-xs rounded-lg gap-1 text-red-500 hover:text-red-700 hover:bg-red-50 ml-auto"
+                              className="h-8 text-xs rounded-lg gap-1 text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/30 ml-auto"
                             >
-                              <Trash2 className="w-3 h-3" /> Delete
+                              <Trash2 className="w-3 h-3" /> {t('delete')}
                             </Button>
                           </div>
                         </div>
@@ -420,12 +421,12 @@ export function VisitHistory({ visits: initialVisits, patientId }: { visits: Vis
             </div>
           ) : (
             <div className="text-center py-12">
-              <Stethoscope className="w-12 h-12 text-gray-200 mx-auto mb-3" />
+              <Stethoscope className="w-12 h-12 text-gray-200 dark:text-slate-700 mx-auto mb-3" />
               <p className="text-sm font-medium text-gray-400">
-                {searchQuery ? "No visits match your search" : "No visit history yet"}
+                {searchQuery ? t('noResults') : t('emptyHistory')}
               </p>
               {searchQuery && (
-                <Button size="sm" variant="link" onClick={() => { setSearchQuery(""); setCategoryFilter("All"); }} className="text-blue-600 text-xs mt-1">Clear filters</Button>
+                <Button size="sm" variant="link" onClick={() => { setSearchQuery(""); setCategoryFilter("All"); }} className="text-blue-600 text-xs mt-1">{t('clearFilters')}</Button>
               )}
             </div>
           )}
@@ -439,15 +440,15 @@ export function VisitHistory({ visits: initialVisits, patientId }: { visits: Vis
         <DialogContent className="sm:max-w-lg p-0 overflow-hidden bg-white border-0 shadow-2xl rounded-2xl">
           <DialogHeader className="px-6 py-4 border-b border-gray-100 bg-gradient-to-r from-blue-50 to-indigo-50 m-0">
             <DialogTitle className="text-lg font-bold text-gray-800 flex items-center gap-2">
-              <Stethoscope className="w-5 h-5 text-blue-600" /> Record New Visit
+              <Stethoscope className="w-5 h-5 text-blue-600" /> {t('dialog.title')}
             </DialogTitle>
           </DialogHeader>
           <div className="p-6 space-y-4 max-h-[65vh] overflow-y-auto">
             {/* Treatment presets */}
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Quick Select Treatment</label>
+              <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">{t('quickSelect')}</label>
               <div className="flex flex-wrap gap-1.5 max-h-[100px] overflow-y-auto p-2 rounded-xl border border-gray-100 bg-gray-50/50">
-                {TREATMENT_PRESETS.map(p => (
+                {getTreatmentPresets().map(p => (
                   <button
                     key={p.name}
                     onClick={() => selectPreset(p)}
@@ -463,7 +464,7 @@ export function VisitHistory({ visits: initialVisits, patientId }: { visits: Vis
 
             {/* Treatment Name */}
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Treatment / Procedure *</label>
+              <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">{t('treatmentProcedure')}</label>
               <input
                 type="text"
                 value={newVisit.treatment}
@@ -476,7 +477,7 @@ export function VisitHistory({ visits: initialVisits, patientId }: { visits: Vis
             <div className="grid grid-cols-2 gap-3">
               {/* Date */}
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Date</label>
+                <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">{t('dialog.date')}</label>
                 <input
                   type="text"
                   value={newVisit.date}
@@ -487,7 +488,7 @@ export function VisitHistory({ visits: initialVisits, patientId }: { visits: Vis
               </div>
               {/* Doctor */}
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Doctor</label>
+                <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">{t('dialog.doctor')}</label>
                 <select
                   value={newVisit.doctor}
                   onChange={(e) => setNewVisit(p => ({ ...p, doctor: e.target.value }))}
@@ -501,24 +502,24 @@ export function VisitHistory({ visits: initialVisits, patientId }: { visits: Vis
             <div className="grid grid-cols-3 gap-3">
               {/* Tooth */}
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Tooth</label>
+                <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">{t('dialog.toothNumber')}</label>
                 <input type="text" value={newVisit.tooth} onChange={(e) => setNewVisit(p => ({ ...p, tooth: e.target.value }))} placeholder="#14, All..." className="w-full h-10 px-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300" />
               </div>
               {/* Duration */}
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Duration</label>
+                <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">{t('visit.duration')}</label>
                 <input type="text" value={newVisit.duration} onChange={(e) => setNewVisit(p => ({ ...p, duration: e.target.value }))} placeholder="45 min" className="w-full h-10 px-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300" />
               </div>
               {/* Cost */}
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Cost</label>
+                <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">{t('visit.cost')}</label>
                 <input type="text" value={newVisit.cost} onChange={(e) => setNewVisit(p => ({ ...p, cost: e.target.value }))} placeholder="$300" className="w-full h-10 px-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300" />
               </div>
             </div>
 
             {/* Category */}
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Category</label>
+              <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">{t('category')}</label>
               <div className="flex flex-wrap gap-1.5">
                 {(Object.keys(CATEGORY_COLORS) as VisitCategory[]).map(cat => {
                   const c = CATEGORY_COLORS[cat];
@@ -529,7 +530,7 @@ export function VisitHistory({ visits: initialVisits, patientId }: { visits: Vis
                       className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all ${
                         newVisit.category === cat ? `${c.bg} ${c.text} ${c.border} ring-2 ring-offset-1 ring-blue-300` : `bg-white border-gray-200 text-gray-500 hover:bg-gray-50`
                       }`}
-                    >{cat}</button>
+                    >{t(`categories.${cat}`)}</button>
                   );
                 })}
               </div>
@@ -537,7 +538,7 @@ export function VisitHistory({ visits: initialVisits, patientId }: { visits: Vis
 
             {/* Notes */}
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Clinical Notes</label>
+              <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">{t('dialog.notes')}</label>
               <textarea
                 value={newVisit.notes}
                 onChange={(e) => setNewVisit(p => ({ ...p, notes: e.target.value }))}
@@ -551,7 +552,7 @@ export function VisitHistory({ visits: initialVisits, patientId }: { visits: Vis
               disabled={!newVisit.treatment.trim()}
               className="w-full bg-blue-600 hover:bg-blue-700 text-white rounded-xl h-11 text-sm font-semibold shadow-md shadow-blue-500/20"
             >
-              <Save className="w-4 h-4 mr-2" /> Save Visit Record
+              <Save className="w-4 h-4 mr-2" /> {t('save')}
             </Button>
           </div>
         </DialogContent>
@@ -567,32 +568,32 @@ export function VisitHistory({ visits: initialVisits, patientId }: { visits: Vis
                   {viewingVisit.treatment}
                 </DialogTitle>
                 <Badge variant="outline" className={`w-fit text-[10px] mt-1 ${CATEGORY_COLORS[viewingVisit.category].text} ${CATEGORY_COLORS[viewingVisit.category].border}`}>
-                  {viewingVisit.category}
+                  {t(`categories.${viewingVisit.category}`)}
                 </Badge>
               </DialogHeader>
               <div className="p-6 space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="p-3 rounded-xl bg-gray-50 border border-gray-100">
-                    <p className="text-[10px] text-gray-400 uppercase font-bold">Date</p>
+                    <p className="text-[10px] text-gray-400 uppercase font-bold">{t('dialog.date')}</p>
                     <p className="text-sm font-semibold text-gray-800 flex items-center gap-1.5 mt-1"><Calendar className="w-3.5 h-3.5 text-blue-500" />{viewingVisit.date}</p>
                   </div>
                   <div className="p-3 rounded-xl bg-gray-50 border border-gray-100">
-                    <p className="text-[10px] text-gray-400 uppercase font-bold">Doctor</p>
+                    <p className="text-[10px] text-gray-400 uppercase font-bold">{t('dialog.doctor')}</p>
                     <p className="text-sm font-semibold text-gray-800 flex items-center gap-1.5 mt-1"><User className="w-3.5 h-3.5 text-blue-500" />{viewingVisit.doctor}</p>
                   </div>
                   <div className="p-3 rounded-xl bg-gray-50 border border-gray-100">
-                    <p className="text-[10px] text-gray-400 uppercase font-bold">Tooth</p>
+                    <p className="text-[10px] text-gray-400 uppercase font-bold">{t('visit.tooth')}</p>
                     <p className="text-sm font-semibold text-gray-800 flex items-center gap-1.5 mt-1"><Hash className="w-3.5 h-3.5 text-blue-500" />{viewingVisit.tooth}</p>
                   </div>
                   <div className="p-3 rounded-xl bg-gray-50 border border-gray-100">
-                    <p className="text-[10px] text-gray-400 uppercase font-bold">Duration</p>
+                    <p className="text-[10px] text-gray-400 uppercase font-bold">{t('visit.duration')}</p>
                     <p className="text-sm font-semibold text-gray-800 flex items-center gap-1.5 mt-1"><Clock className="w-3.5 h-3.5 text-blue-500" />{viewingVisit.duration}</p>
                   </div>
                 </div>
 
                 <div className="p-4 rounded-xl bg-blue-50/50 border border-blue-100">
-                  <p className="text-[10px] text-blue-500 uppercase font-bold mb-2">Clinical Notes</p>
-                  <p className="text-sm text-gray-700 leading-relaxed">{viewingVisit.notes || "No notes recorded"}</p>
+                  <p className="text-[10px] text-blue-500 uppercase font-bold mb-2">{t('clinicalNotes')}</p>
+                  <p className="text-sm text-gray-700 leading-relaxed">{viewingVisit.notes || t('noNotes')}</p>
                 </div>
 
                 <Button 
@@ -600,7 +601,7 @@ export function VisitHistory({ visits: initialVisits, patientId }: { visits: Vis
                   variant="outline"
                   className="w-full rounded-xl h-10 text-sm font-semibold"
                 >
-                  <Printer className="w-4 h-4 mr-2" /> Print Visit Record
+                  <Printer className="w-4 h-4 mr-2" /> {t('print')}
                 </Button>
               </div>
             </>

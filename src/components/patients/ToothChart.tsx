@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition, useEffect, useRef } from "react";
+import { useState, useTransition, useEffect, useRef, useMemo } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -49,11 +49,29 @@ import {
   SurfacesPopover
 } from "@/components/shared/dental";
 import { cn } from "@/lib/utils";
+import { useTranslations } from "next-intl";
 
 export function ToothChart({ patient, onRefresh }: { patient: any; onRefresh?: () => void }) {
+  const t = useTranslations('toothChart');
   const [isPending, startTransition] = useTransition();
   const [isUpdating, setIsUpdating] = useState(false);
   const isUpdatingRef = useRef(false);
+
+  const conditionLabels = useMemo(() => ({
+    healthy: t('conditions.healthy'),
+    caries: t('conditions.caries'),
+    filled: t('conditions.filled'),
+    crown: t('conditions.crown'),
+    extracted: t('conditions.extracted'),
+  }), [t]);
+
+  const tooltipLabels = useMemo(() => ({
+    healthy: t('tooltips.healthy'),
+    caries: t('tooltips.caries'),
+    filled: t('tooltips.filled'),
+    crown: t('tooltips.crown'),
+    extracted: t('tooltips.extracted'),
+  }), [t]);
 
   // Core Chart State
   const [toothConditions, setToothConditions] = useState<Record<number, ToothCondType>>({});
@@ -290,7 +308,7 @@ export function ToothChart({ patient, onRefresh }: { patient: any; onRefresh?: (
       >
         <Popover>
           <PopoverTrigger asChild>
-            <button className="cursor-pointer group flex items-center justify-center focus:outline-none bg-transparent border-0 p-1 w-full hover:bg-gray-100 rounded-xl transition-colors relative">
+            <button className="cursor-pointer group flex items-center justify-center focus:outline-none bg-transparent border-0 p-1 w-full hover:bg-gray-100 dark:hover:bg-slate-800 rounded-xl transition-colors relative">
               <ToothVisual
                 toothId={tooth}
                 isTop={isTop}
@@ -300,20 +318,20 @@ export function ToothChart({ patient, onRefresh }: { patient: any; onRefresh?: (
                 isExtracted={isMissing}
                 className="group-hover:scale-110 drop-shadow-sm group-hover:drop-shadow-md mx-auto"
               />
-              {isUpdating && <div className="absolute inset-0 flex items-center justify-center bg-white/40 rounded-xl"><RefreshCw className="w-4 h-4 animate-spin text-blue-500" /></div>}
+              {isUpdating && <div className="absolute inset-0 flex items-center justify-center bg-white/40 dark:bg-slate-900/40 rounded-xl"><RefreshCw className="w-4 h-4 animate-spin text-blue-500" /></div>}
             </button>
           </PopoverTrigger>
 
-          <PopoverContent className="w-80 p-4 rounded-2xl shadow-xl border-gray-100 flex flex-col gap-4">
-            <div className="text-center pb-3 border-b border-gray-100">
-               <p className="text-lg font-bold text-gray-900">Tooth #{tooth}</p>
-               <p className="text-xs text-gray-500 mt-0.5">Select condition or add findings</p>
+          <PopoverContent className="w-80 p-4 rounded-2xl shadow-xl border-gray-100 dark:border-slate-800 dark:bg-slate-900 flex flex-col gap-4">
+            <div className="text-center pb-3 border-b border-gray-100 dark:border-slate-800">
+               <p className="text-lg font-bold text-foreground dark:text-white">Tooth #{tooth}</p>
+               <p className="text-xs text-muted-foreground mt-0.5">{t('toothDialog.selectCondition')}</p>
                {type === "primary" && (
-                 <Badge className="mt-1.5 bg-purple-50 text-purple-700 border-purple-200 text-[10px]">Primary (Deciduous)</Badge>
+                 <Badge className="mt-1.5 bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-400 border-purple-200 dark:border-purple-800 text-[10px]">{t('primaryDeciduous')}</Badge>
                )}
             </div>
             
-            <div className="flex justify-between items-center bg-gray-50/80 p-2 rounded-xl border border-gray-100">
+            <div className="flex justify-between items-center bg-gray-50/80 dark:bg-slate-800/80 p-2 rounded-xl border border-gray-100 dark:border-slate-800">
               {Object.entries(TOOTH_CONDITIONS).map(([key, val]) => (
                 <button
                   key={key}
@@ -321,7 +339,7 @@ export function ToothChart({ patient, onRefresh }: { patient: any; onRefresh?: (
                   onClick={() => handleConditionChange(tooth, key as ToothCondType)}
                   className={cn(
                     "flex flex-col items-center justify-center p-2 rounded-lg transition-all",
-                    key === cond ? 'bg-white shadow-sm ring-1 ring-gray-200' : 'hover:bg-gray-100/50'
+                    key === cond ? 'bg-white dark:bg-slate-700 shadow-sm ring-1 ring-gray-200 dark:ring-slate-600' : 'hover:bg-gray-100/50 dark:hover:bg-slate-700/50'
                   )}
                 >
                   <div className={cn("w-4 h-4 rounded-full border", val.color)} />
@@ -334,19 +352,19 @@ export function ToothChart({ patient, onRefresh }: { patient: any; onRefresh?: (
                   variant="outline" 
                   onClick={() => handleToggleMissing(tooth)}
                   className={cn(
-                    "h-auto py-2.5 flex items-center justify-center gap-2 text-xs font-semibold rounded-xl border-gray-200 transition-all",
-                    isMissing ? "bg-gray-800 text-white hover:bg-gray-900 border-gray-900" : "text-gray-700 hover:bg-gray-50"
+                    "h-auto py-2.5 flex items-center justify-center gap-2 text-xs font-semibold rounded-xl border-gray-200 dark:border-slate-700 transition-all",
+                    isMissing ? "bg-gray-800 dark:bg-slate-100 text-white dark:text-slate-900 hover:bg-gray-900 dark:hover:bg-white border-gray-900 dark:border-slate-100" : "text-gray-700 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-800"
                   )}
                >
-                  <span className={cn("text-lg font-black leading-none mb-0.5", isMissing ? "text-white" : "text-gray-400")}>X</span> 
-                  {isMissing ? "Unmark missing" : "Mark as missing"}
+                  <span className={cn("text-lg font-black leading-none mb-0.5", isMissing ? "text-white dark:text-slate-900" : "text-gray-400 dark:text-slate-500")}>X</span> 
+                  {isMissing ? t('toothDialog.unmarkMissing') : t('toothDialog.markMissing')}
                </Button>
               <Button 
                  variant="outline" 
                  onClick={() => setExtractionDialog(tooth)}
-                 className="h-auto py-2.5 flex items-center justify-center gap-2 text-xs font-semibold rounded-xl text-red-600 border-red-100 hover:bg-red-50"
+                 className="h-auto py-2.5 flex items-center justify-center gap-2 text-xs font-semibold rounded-xl text-red-600 dark:text-red-400 border-red-100 dark:border-red-900/50 hover:bg-red-50 dark:hover:bg-red-900/20"
               >
-                 <span className="text-red-500 text-lg font-black leading-none mb-0.5">!</span> Extraction
+                 <span className="text-red-500 text-lg font-black leading-none mb-0.5">!</span> {t('extractionDialog.title')}
               </Button>
             </div>
             
@@ -354,17 +372,17 @@ export function ToothChart({ patient, onRefresh }: { patient: any; onRefresh?: (
               <Button 
                 variant="secondary" 
                 onClick={() => handleToggleToothType(tooth)}
-                className="w-full justify-start text-xs rounded-xl bg-gray-100/80 hover:bg-gray-200 text-gray-700 h-10"
+                className="w-full justify-start text-xs rounded-xl bg-gray-100/80 dark:bg-slate-800/80 hover:bg-gray-200 dark:hover:bg-slate-700 text-gray-700 dark:text-slate-300 h-10 border-0"
               >
                 <RefreshCw className="w-4 h-4 mr-2.5 text-gray-500" /> 
-                Switch to {type === "permanent" ? "primary (deciduous)" : "permanent"}
+                {t('toothDialog.switchTo')} {type === "permanent" ? t('primaryDeciduous') : t('toothDialog.permanent')}
               </Button>
               <Button 
                 variant="secondary" 
                 onClick={() => setFindingsDialog(tooth)}
-                className="w-full justify-start text-xs rounded-xl bg-gray-100/80 hover:bg-gray-200 text-gray-700 h-10"
+                className="w-full justify-start text-xs rounded-xl bg-gray-100/80 dark:bg-slate-800/80 hover:bg-gray-200 dark:hover:bg-slate-700 text-gray-700 dark:text-slate-300 h-10 border-0"
               >
-                <Stethoscope className="w-4 h-4 mr-2.5 text-gray-500" /> Clinical findings & Parameters
+                <Stethoscope className="w-4 h-4 mr-2.5 text-muted-foreground" /> {t('findingsDialog.title')}
                 {(meta.findings?.length ?? 0) > 0 && (
                   <Badge className="ml-auto bg-blue-100 text-blue-700 text-[10px] px-1.5">{meta.findings.length}</Badge>
                 )}
@@ -372,9 +390,9 @@ export function ToothChart({ patient, onRefresh }: { patient: any; onRefresh?: (
               <Button 
                 variant="secondary" 
                 onClick={() => setPhotosDialog(tooth)}
-                className="w-full justify-start text-xs rounded-xl bg-gray-100/80 hover:bg-gray-200 text-gray-700 h-10"
+                className="w-full justify-start text-xs rounded-xl bg-gray-100/80 dark:bg-slate-800/80 hover:bg-gray-200 dark:hover:bg-slate-700 text-gray-700 dark:text-slate-300 h-10 border-0"
               >
-                <ImageIcon className="w-4 h-4 mr-2.5 text-gray-500" /> Photos containing this tooth
+                <ImageIcon className="w-4 h-4 mr-2.5 text-muted-foreground" /> {t('photosDialog.title')}
                 {photos.filter(p => p.tooth === tooth).length > 0 && (
                   <Badge className="ml-auto bg-emerald-100 text-emerald-700 text-[10px] px-1.5">{photos.filter(p => p.tooth === tooth).length}</Badge>
                 )}
@@ -390,30 +408,30 @@ export function ToothChart({ patient, onRefresh }: { patient: any; onRefresh?: (
     <div className="space-y-6 animate-fade-in-up">
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h3 className="text-lg font-bold text-gray-900">Adult Odontogram (FDI)</h3>
-          <p className="text-sm text-gray-500">Interactive 32-tooth chart for mapping conditions.</p>
+          <h3 className="text-lg font-bold text-foreground dark:text-white">{t('title')}</h3>
+          <p className="text-sm text-muted-foreground">{t('subtitle')}</p>
         </div>
-        <div className="flex items-center gap-3 bg-white p-2.5 rounded-xl border border-gray-200 shadow-sm cursor-help" onClick={() => setColorCodeDialog(true)}>
+        <div className="flex items-center gap-3 bg-white dark:bg-slate-900 p-2.5 rounded-xl border border-gray-200 dark:border-slate-800 shadow-sm cursor-help" onClick={() => setColorCodeDialog(true)}>
           {Object.entries(TOOTH_CONDITIONS).map(([key, val]) => (
             <div key={key} className="flex items-center gap-1.5">
               <span className={`w-3 h-3 rounded-full border ${val.color}`} />
-              <span className="text-[10px] uppercase font-bold text-gray-600 tracking-wider">
-                {val.label}
+              <span className="text-[10px] uppercase font-bold text-gray-600 dark:text-slate-400 tracking-wider">
+                {conditionLabels[key as keyof typeof conditionLabels]}
               </span>
             </div>
           ))}
-          <div className="w-px h-4 bg-gray-200 mx-1" />
+          <div className="w-px h-4 bg-gray-200 dark:bg-slate-700 mx-1" />
           <InfoIcon className="w-4 h-4 text-gray-400" />
         </div>
       </div>
 
-      <Card className="border-0 shadow-sm bg-white">
+      <Card className="border-0 shadow-sm bg-white dark:bg-slate-900">
         <CardContent className="p-8 relative">
           {isUpdating && (
-            <div className="absolute inset-0 z-10 bg-white/40 backdrop-blur-[1px] flex items-center justify-center">
-              <div className="bg-white px-4 py-2 rounded-full shadow-lg border border-gray-100 flex items-center gap-2">
+            <div className="absolute inset-0 z-10 bg-white/40 dark:bg-slate-900/40 backdrop-blur-[1px] flex items-center justify-center">
+              <div className="bg-white dark:bg-slate-800 px-4 py-2 rounded-full shadow-lg border border-gray-100 dark:border-slate-700 flex items-center gap-2">
                 <RefreshCw className="w-4 h-4 animate-spin text-blue-500" />
-                <span className="text-xs font-bold text-gray-600">Updating Chart...</span>
+                <span className="text-xs font-bold text-gray-600 dark:text-slate-300">{t('chartNote.updating')}</span>
               </div>
             </div>
           )}
@@ -426,17 +444,17 @@ export function ToothChart({ patient, onRefresh }: { patient: any; onRefresh?: (
       </Card>
 
       {/* Doctor's Chart Note */}
-      <div className="mt-6 rounded-2xl border border-gray-100 bg-white shadow-sm p-5">
+      <div className="mt-6 rounded-2xl border border-gray-100 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm p-5">
         <div className="flex items-center justify-between mb-3">
-          <h3 className="text-sm font-bold text-gray-700 flex items-center gap-2">
-            <FileText className="w-4 h-4 text-blue-500" /> Doctor&apos;s Chart Note
+          <h3 className="text-sm font-bold text-gray-700 dark:text-slate-300 flex items-center gap-2">
+            <FileText className="w-4 h-4 text-blue-500" /> {t('chartNote.title')}
           </h3>
           {!isEditingNote ? (
             <button
               onClick={() => setIsEditingNote(true)}
               className="flex items-center gap-1.5 text-xs text-blue-600 hover:text-blue-700 font-medium"
             >
-              <Edit3 className="w-3.5 h-3.5" /> Edit
+              <Edit3 className="w-3.5 h-3.5" /> {t('chartNote.edit')}
             </button>
           ) : (
             <div className="flex gap-2">
@@ -444,7 +462,7 @@ export function ToothChart({ patient, onRefresh }: { patient: any; onRefresh?: (
                 onClick={() => { setChartNote(patient?.notes || ''); setIsEditingNote(false); }}
                 className="text-xs text-gray-400 hover:text-gray-600"
               >
-                Cancel
+                {t('chartNote.cancel')}
               </button>
               <button
                 onClick={() => {
@@ -457,7 +475,7 @@ export function ToothChart({ patient, onRefresh }: { patient: any; onRefresh?: (
                 disabled={isSavingNote}
                 className="flex items-center gap-1.5 text-xs bg-blue-600 text-white px-3 py-1 rounded-lg font-medium hover:bg-blue-700 disabled:opacity-50"
               >
-                {isSavingNote ? <RefreshCw className="w-3 h-3 animate-spin" /> : <Check className="w-3 h-3" />} Save
+                {isSavingNote ? <RefreshCw className="w-3 h-3 animate-spin" /> : <Check className="w-3 h-3" />} {t('chartNote.save')}
               </button>
             </div>
           )}
@@ -467,11 +485,11 @@ export function ToothChart({ patient, onRefresh }: { patient: any; onRefresh?: (
             value={chartNote}
             onChange={e => setChartNote(e.target.value)}
             placeholder="Add clinical notes about this patient's dental chart…"
-            className="w-full h-28 rounded-xl border border-blue-200 bg-blue-50/30 p-3 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300"
+            className="w-full h-28 rounded-xl border border-blue-200 dark:border-blue-900/50 bg-blue-50/30 dark:bg-blue-900/10 p-3 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 dark:text-slate-300"
           />
         ) : (
-          <p className="text-sm text-gray-600 min-h-[2.5rem] whitespace-pre-wrap leading-relaxed">
-            {chartNote || <span className="text-gray-400 italic">No notes recorded. Click Edit to add a note.</span>}
+          <p className="text-sm text-gray-600 dark:text-slate-400 min-h-[2.5rem] whitespace-pre-wrap leading-relaxed">
+            {chartNote || <span className="text-gray-400 dark:text-slate-500 italic">{t('chartNote.empty')}</span>}
           </p>
         )}
       </div>
@@ -480,10 +498,10 @@ export function ToothChart({ patient, onRefresh }: { patient: any; onRefresh?: (
 
       {/* Clinical Findings Dialog */}
       <Dialog open={findingsDialog !== null} onOpenChange={(open) => !open && setFindingsDialog(null)}>
-        <DialogContent className="sm:max-w-lg p-0 overflow-hidden bg-white border-0 shadow-2xl rounded-2xl">
-          <DialogHeader className="px-6 py-4 border-b border-gray-100 bg-gray-50 m-0">
-            <DialogTitle className="text-lg font-bold text-gray-800 flex items-center gap-2">
-              <Stethoscope className="w-5 h-5 text-blue-600" /> Tooth #{findingsDialog} — Clinical Findings
+        <DialogContent className="sm:max-w-lg p-0 overflow-hidden bg-white dark:bg-slate-900 border-0 shadow-2xl rounded-2xl dark:text-white">
+          <DialogHeader className="px-6 py-4 border-b border-gray-100 dark:border-slate-800 bg-gray-50 dark:bg-slate-800 m-0">
+            <DialogTitle className="text-lg font-bold text-gray-800 dark:text-white flex items-center gap-2">
+              <Stethoscope className="w-5 h-5 text-blue-600" /> {t('findingsDialog.dialogTitle', { tooth: findingsDialog ?? '' })}
             </DialogTitle>
           </DialogHeader>
           <div className="p-6 space-y-5 max-h-[60vh] overflow-y-auto">
@@ -493,26 +511,26 @@ export function ToothChart({ patient, onRefresh }: { patient: any; onRefresh?: (
                   onClick={() => setFindingType("finding")}
                   className={cn(
                     "px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors",
-                    findingType === "finding" ? "bg-blue-600 text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                    findingType === "finding" ? "bg-blue-600 text-white" : "bg-gray-100 dark:bg-slate-800 text-gray-600 dark:text-slate-300 hover:bg-gray-200 dark:hover:bg-slate-700"
                   )}
                 >
-                  Finding
+                  {t('findingsDialog.finding')}
                 </button>
                 <button
                   onClick={() => setFindingType("parameter")}
                   className={cn(
                     "px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors",
-                    findingType === "parameter" ? "bg-blue-600 text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                    findingType === "parameter" ? "bg-blue-600 text-white" : "bg-gray-100 dark:bg-slate-800 text-gray-600 dark:text-slate-300 hover:bg-gray-200 dark:hover:bg-slate-700"
                   )}
                 >
-                  Parameter
+                  {t('findingsDialog.parameter')}
                 </button>
               </div>
               <textarea
                 value={newFinding}
                 onChange={(e) => setNewFinding(e.target.value)}
-                placeholder="Describe the clinical finding or parameter..."
-                className="w-full h-20 rounded-xl border border-gray-200 bg-gray-50/50 p-3 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300"
+                placeholder={t('findingsDialog.placeholder')}
+                className="w-full h-20 rounded-xl border border-gray-200 bg-gray-50/50 p-3 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 dark:bg-slate-800 dark:border-slate-700 dark:text-white"
               />
               <Button 
                 onClick={() => findingsDialog && handleAddFinding(findingsDialog)}
@@ -520,24 +538,24 @@ export function ToothChart({ patient, onRefresh }: { patient: any; onRefresh?: (
                 className="bg-blue-600 hover:bg-blue-700 text-white rounded-xl h-10 text-sm font-semibold w-full shadow-md shadow-blue-500/20"
               >
                 {isUpdating ? <RefreshCw className="w-4 h-4 mr-2 animate-spin" /> : <Plus className="w-4 h-4 mr-2" />} 
-                Add to Chart
+                {t('findingsDialog.addToChart')}
               </Button>
             </div>
 
             <div className="space-y-3 pt-2">
-              <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">Previous Findings</p>
+              <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">{t('toothDialog.previousFindings')}</p>
               {findingsDialog !== null && (currentMeta(findingsDialog).findings ?? []).length > 0 ? (
                 currentMeta(findingsDialog!).findings.map(f => (
-                  <div key={f.id} className="p-3 rounded-xl border border-gray-100 bg-gray-50/50 flex gap-3 group">
+                  <div key={f.id} className="p-3 rounded-xl border border-gray-100 bg-gray-50/50 flex gap-3 group dark:bg-slate-800/50 dark:border-slate-800">
                     <div className={cn(
                       "w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0",
-                      f.type === 'finding' ? 'bg-blue-100 text-blue-600' : 'bg-purple-100 text-purple-600'
+                      f.type === 'finding' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400' : 'bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400'
                     )}>
                       {f.type === 'finding' ? <FileText className="w-4 h-4" /> : <Stethoscope className="w-4 h-4" />}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm text-gray-800">{f.note}</p>
-                      <p className="text-[10px] text-gray-400 mt-1">{f.date} · {f.type === 'finding' ? 'Clinical Finding' : 'Parameter'}</p>
+                      <p className="text-sm text-gray-800 dark:text-slate-300">{f.note}</p>
+                      <p className="text-[10px] text-gray-400 mt-1">{f.date} · {f.type === 'finding' ? t('findingsDialog.finding') : t('findingsDialog.parameter')}</p>
                     </div>
                     <button
                       onClick={() => findingsDialog !== null && handleDeleteFinding(findingsDialog, f.id)}
@@ -549,7 +567,7 @@ export function ToothChart({ patient, onRefresh }: { patient: any; onRefresh?: (
                   </div>
                 ))
               ) : (
-                <p className="text-sm text-gray-400 text-center py-4">No findings recorded yet</p>
+                <p className="text-sm text-gray-400 text-center py-4">{t('toothDialog.noFindings')}</p>
               )}
             </div>
           </div>
@@ -558,10 +576,10 @@ export function ToothChart({ patient, onRefresh }: { patient: any; onRefresh?: (
 
       {/* Photos Dialog */}
       <Dialog open={photosDialog !== null} onOpenChange={(open) => !open && setPhotosDialog(null)}>
-        <DialogContent className="sm:max-w-lg p-0 overflow-hidden bg-white border-0 shadow-2xl rounded-2xl">
-          <DialogHeader className="px-6 py-4 border-b border-gray-100 bg-gray-50 m-0">
-            <DialogTitle className="text-lg font-bold text-gray-800 flex items-center gap-2">
-              <Camera className="w-5 h-5 text-emerald-600" /> Tooth #{photosDialog} — Photos
+        <DialogContent className="sm:max-w-lg p-0 overflow-hidden bg-white dark:bg-slate-900 border-0 shadow-2xl rounded-2xl dark:text-white">
+          <DialogHeader className="px-6 py-4 border-b border-gray-100 dark:border-slate-800 bg-gray-50 dark:bg-slate-800 m-0">
+            <DialogTitle className="text-lg font-bold text-gray-800 dark:text-white flex items-center gap-2">
+              <Camera className="w-5 h-5 text-emerald-600" /> {t('photosDialog.dialogTitle', { tooth: photosDialog ?? '' })}
             </DialogTitle>
           </DialogHeader>
           <div className="p-6 space-y-5">
@@ -571,21 +589,21 @@ export function ToothChart({ patient, onRefresh }: { patient: any; onRefresh?: (
               className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl h-10 text-sm font-semibold w-full shadow-md shadow-emerald-500/20"
             >
               {photoUploading ? <RefreshCw className="w-4 h-4 mr-2 animate-spin" /> : <Camera className="w-4 h-4 mr-2" />}
-              {photoUploading ? 'Uploading…' : 'Upload Photo'}
+              {photoUploading ? t('photosDialog.uploading') : t('photosDialog.upload')}
             </Button>
             {photoError && (
               <p className="text-xs text-red-500 bg-red-50 rounded-xl px-3 py-2">{photoError}</p>
             )}
             <div className="space-y-3">
-              <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">Attached Photos</p>
+              <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">{t('toothDialog.attachedPhotos')}</p>
               {photos.filter(p => p.tooth === photosDialog).length > 0 ? (
                 photos.filter(p => p.tooth === photosDialog).map(p => (
-                  <div key={p.id} className="p-3 rounded-xl border border-gray-100 bg-gray-50/50 flex items-center gap-3 group">
-                    <a href={p.url} target="_blank" rel="noreferrer" className="w-10 h-10 rounded-lg bg-emerald-50 flex items-center justify-center flex-shrink-0 hover:bg-emerald-100 transition-colors">
-                      <ImageIcon className="w-5 h-5 text-emerald-600" />
+                  <div key={p.id} className="p-3 rounded-xl border border-gray-100 bg-gray-50/50 flex items-center gap-3 group dark:bg-slate-800/50 dark:border-slate-800">
+                    <a href={p.url} target="_blank" rel="noreferrer" className="w-10 h-10 rounded-lg bg-emerald-50 dark:bg-emerald-900/30 flex items-center justify-center flex-shrink-0 hover:bg-emerald-100 dark:hover:bg-emerald-900/50 transition-colors">
+                      <ImageIcon className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
                     </a>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-gray-800 truncate">{p.name}</p>
+                      <p className="text-sm font-medium text-gray-800 dark:text-slate-300 truncate">{p.name}</p>
                       <p className="text-[10px] text-gray-400">{p.date}</p>
                     </div>
                     <button
@@ -597,7 +615,7 @@ export function ToothChart({ patient, onRefresh }: { patient: any; onRefresh?: (
                   </div>
                 ))
               ) : (
-                <p className="text-sm text-gray-400 text-center py-4">No photos attached yet</p>
+                <p className="text-sm text-gray-400 text-center py-4">{t('toothDialog.noPhotos')}</p>
               )}
             </div>
           </div>
@@ -606,30 +624,29 @@ export function ToothChart({ patient, onRefresh }: { patient: any; onRefresh?: (
 
       {/* Extraction Confirmation Dialog */}
       <Dialog open={extractionDialog !== null} onOpenChange={(open) => !open && setExtractionDialog(null)}>
-        <DialogContent className="sm:max-w-sm p-0 overflow-hidden bg-white border-0 shadow-2xl rounded-2xl">
-          <DialogHeader className="px-6 py-4 border-b border-red-100 bg-red-50 m-0">
-            <DialogTitle className="text-lg font-bold text-red-800 flex items-center gap-2">
-              <AlertTriangle className="w-5 h-5 text-red-600" /> Confirm Extraction
+        <DialogContent className="sm:max-w-sm p-0 overflow-hidden bg-white dark:bg-slate-900 border-0 shadow-2xl rounded-2xl dark:text-white">
+          <DialogHeader className="px-6 py-4 border-b border-red-100 dark:border-red-900/50 bg-red-50 dark:bg-red-900/20 m-0">
+            <DialogTitle className="text-lg font-bold text-red-800 dark:text-red-400 flex items-center gap-2">
+              <AlertTriangle className="w-5 h-5 text-red-600" /> {t('extractionDialog.title')}
             </DialogTitle>
           </DialogHeader>
           <div className="p-6 space-y-5">
-            <p className="text-sm text-gray-700">
-              Are you sure you want to mark <strong>Tooth #{extractionDialog}</strong> as <strong className="text-red-600">extracted</strong>?
-              This will record the tooth as extracted and update the chart accordingly.
+            <p className="text-sm text-gray-700 dark:text-slate-300">
+              {t('extractionDialog.body', { tooth: extractionDialog ?? '' })}
             </p>
             <div className="flex gap-3">
               <Button 
                 variant="outline" 
                 onClick={() => setExtractionDialog(null)} 
-                className="flex-1 rounded-xl border-gray-200"
+                className="flex-1 rounded-xl border-gray-200 dark:border-slate-700 dark:hover:bg-slate-800 dark:text-slate-300"
               >
-                Cancel
+                {t('extractionDialog.cancel')}
               </Button>
               <Button 
                 onClick={() => extractionDialog && handleExtraction(extractionDialog)}
                 className="flex-1 bg-red-600 hover:bg-red-700 text-white rounded-xl shadow-md"
               >
-                Confirm Extraction
+                {t('extractionDialog.confirm')}
               </Button>
             </div>
           </div>
@@ -638,19 +655,19 @@ export function ToothChart({ patient, onRefresh }: { patient: any; onRefresh?: (
 
       {/* Color Code Interpretation Dialog */}
       <Dialog open={colorCodeDialog} onOpenChange={setColorCodeDialog}>
-        <DialogContent className="sm:max-w-md p-0 overflow-hidden bg-white border-0 shadow-2xl rounded-2xl">
-          <DialogHeader className="px-6 py-4 border-b border-gray-100 bg-gray-50 m-0">
-            <DialogTitle className="text-lg font-bold text-gray-800 flex items-center gap-2">
-              <PenTool className="w-5 h-5 text-blue-600" /> Condition Key
+        <DialogContent className="sm:max-w-md p-0 overflow-hidden bg-white dark:bg-slate-900 border-0 shadow-2xl rounded-2xl dark:text-white">
+          <DialogHeader className="px-6 py-4 border-b border-gray-100 dark:border-slate-800 bg-gray-50 dark:bg-slate-800 m-0">
+            <DialogTitle className="text-lg font-bold text-gray-800 dark:text-white flex items-center gap-2">
+              <PenTool className="w-5 h-5 text-blue-600" /> {t('conditionKey')}
             </DialogTitle>
           </DialogHeader>
           <div className="p-6 space-y-3">
             {Object.entries(TOOTH_CONDITIONS).map(([key, val]) => (
-              <div key={key} className="flex items-center gap-4 p-2.5 rounded-xl border border-gray-100 bg-gray-50/30">
+              <div key={key} className="flex items-center gap-4 p-2.5 rounded-xl border border-gray-100 bg-gray-50/30 dark:bg-slate-800/50 dark:border-slate-800">
                 <div className={cn("w-8 h-8 rounded-lg shadow-sm border border-black/10 flex-shrink-0", val.color)} />
                 <div>
-                  <p className="text-sm font-semibold text-gray-800">{val.label}</p>
-                  <p className="text-xs text-gray-500">{val.tooltip}</p>
+                  <p className="text-sm font-semibold text-gray-800 dark:text-slate-300">{conditionLabels[key as keyof typeof conditionLabels]}</p>
+                  <p className="text-xs text-muted-foreground">{tooltipLabels[key as keyof typeof tooltipLabels]}</p>
                 </div>
               </div>
             ))}
