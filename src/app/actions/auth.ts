@@ -535,7 +535,7 @@ export async function activateStaffAccount(userId: string, tenantId?: string) {
   }
 
   try {
-    await staffRepository.acceptInvitation(user.id, invitation);
+    const { user: dbUser } = await staffRepository.acceptInvitation(user.id, invitation);
     
     // Set active_tenant_id cookie
     const cookieStore = await cookies();
@@ -546,6 +546,33 @@ export async function activateStaffAccount(userId: string, tenantId?: string) {
       sameSite: 'lax',
       secure: process.env.NODE_ENV === 'production',
     });
+
+    // --- PERSISTENT SESSION ARCHITECTURE ---
+    // Create a DB-backed session to overwrite any existing owner session
+    try {
+      const { SessionService } = await import('@/lib/auth/session-service');
+      const { headers: getHeaders } = await import('next/headers');
+      const headerList = await getHeaders();
+
+      const { data: sessionData } = await supabase.auth.getSession();
+
+      const { appRefreshToken } = await SessionService.createSession({
+        userId: dbUser.id,
+        tenantId: invitation.tenantId,
+        ipAddress: headerList.get('x-forwarded-for') || undefined,
+        userAgent: headerList.get('user-agent') || undefined
+      }, sessionData.session?.refresh_token || '');
+
+      cookieStore.set('app_refresh_token', appRefreshToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        maxAge: 60 * 60 * 24 * 90,
+        path: '/'
+      });
+    } catch (sessionError) {
+      console.error("[AUTH][INVITE_ACTIVATE] Failed to create persistent session:", sessionError);
+    }
 
     revalidatePath('/', 'layout');
     return { success: true };
