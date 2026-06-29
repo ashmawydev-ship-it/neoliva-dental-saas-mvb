@@ -176,6 +176,7 @@ function AcceptInvitationForm() {
                 placeholder="At least 8 characters"
                 required
                 minLength={8}
+                autoComplete="new-password"
               />
             </div>
 
@@ -191,6 +192,7 @@ function AcceptInvitationForm() {
                 placeholder="Re-enter your password"
                 required
                 minLength={8}
+                autoComplete="new-password"
               />
             </div>
           </div>
