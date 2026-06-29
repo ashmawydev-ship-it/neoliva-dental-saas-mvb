@@ -46,7 +46,7 @@ export class StaffRepository {
 
   async findInvitations(tenantId: string): Promise<any[]> {
     return prisma.staffInvitation.findMany({
-      where: { tenantId },
+      where: { tenantId, status: 'PENDING' },
       orderBy: { createdAt: 'desc' }
     });
   }
