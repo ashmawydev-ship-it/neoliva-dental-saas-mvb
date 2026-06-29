@@ -76,7 +76,8 @@ export async function createClinicRequest(formData: FormData) {
   }
 
   const supabase = await createClient();
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+  const rawSiteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+  const siteUrl = rawSiteUrl.startsWith('http') ? rawSiteUrl : `https://${rawSiteUrl}`;
 
   // Track the Supabase user we create so we can roll back if Prisma fails
   let newSupabaseUserId: string | null = null;

@@ -32,6 +32,13 @@ function AcceptInvitationForm() {
         const accessToken = hashParams.get('access_token');
         const refreshToken = hashParams.get('refresh_token');
         const type = hashParams.get('type');
+        const errorHash = hashParams.get('error') || queryParams.get('error');
+        const errorDesc = hashParams.get('error_description') || queryParams.get('error_description');
+        const errorCode = hashParams.get('error_code') || queryParams.get('error_code');
+
+        if (errorHash || errorCode === 'otp_expired') {
+          throw new Error(errorDesc?.replace(/\+/g, ' ') || 'The invitation link has expired or is invalid. Please request a new invitation.');
+        }
 
         if (code) {
           const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);

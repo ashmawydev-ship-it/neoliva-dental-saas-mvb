@@ -254,7 +254,8 @@ export async function forgotPassword(formData: FormData) {
   const email = formData.get('email') as string;
   const supabase = await createClient();
   
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+  const rawSiteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+  const siteUrl = rawSiteUrl.startsWith('http') ? rawSiteUrl : `https://${rawSiteUrl}`;
 
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
     redirectTo: `${siteUrl}/auth/callback?next=/auth/reset-password`,
@@ -433,7 +434,8 @@ export async function createStaffInvitation(data: { email: string; fullName: str
     process.env.SUPABASE_SERVICE_ROLE_KEY!
   );
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+  const rawSiteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+  const siteUrl = rawSiteUrl.startsWith('http') ? rawSiteUrl : `https://${rawSiteUrl}`;
   const inviteUrlBase = `${siteUrl}/staff/accept-invitation`;
   
   try {
@@ -441,7 +443,7 @@ export async function createStaffInvitation(data: { email: string; fullName: str
       type: 'invite',
       email: email,
       options: {
-        redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/staff/accept-invitation`,
+        redirectTo: inviteUrlBase,
         data: {
           tenantId: tenantId,
           role: role,
@@ -457,7 +459,7 @@ export async function createStaffInvitation(data: { email: string; fullName: str
         type: 'magiclink',
         email: email,
         options: {
-          redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/staff/accept-invitation`,
+          redirectTo: inviteUrlBase,
           data: {
             tenantId: tenantId,
             role: role,

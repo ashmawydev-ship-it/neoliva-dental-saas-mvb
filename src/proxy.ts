@@ -12,11 +12,8 @@ import { randomUUID } from "crypto";
 export async function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
   const requestId = request.headers.get("x-request-id") || randomUUID();
-  console.log(`[DIAGNOSTIC][PROXY] Path: ${pathname}`);
   const allCookies = request.cookies.getAll();
-  console.log(`[DIAGNOSTIC][PROXY] All cookies received:`, JSON.stringify(allCookies.map(c => c.name)));
   const hasAppRefreshToken = !!request.cookies.get('app_refresh_token');
-  console.log(`[DIAGNOSTIC][PROXY] Has app_refresh_token cookie: ${hasAppRefreshToken}`);
 
   // --- 1. Static & Asset Bypass (Fast-Path) ---
   const isAsset = pathname.startsWith('/_next/') || 
@@ -35,6 +32,9 @@ export async function proxy(request: NextRequest) {
     '/staff/sign-in',
     '/register',
     '/auth/callback',
+    '/auth/confirm',
+    '/auth/reset-password',
+    '/reset-password',
     '/unauthorized',
     '/admin/login',
     '/staff/accept-invitation',
