@@ -1,0 +1,1 @@
+require("dotenv").config({ path: ".env.local" }); const { Client } = require("pg"); async function main() { const client = new Client({ connectionString: process.env.DATABASE_URL }); await client.connect(); const res = await client.query("SELECT id, email, confirmed_at FROM auth.users"); console.log("AUTH USERS:", res.rows); await client.end(); } main();

@@ -1,4 +1,4 @@
-import { prisma } from "@/lib/prisma";
+import { prisma, rawPrisma } from "@/lib/prisma";
 import { Staff, Prisma } from "@/generated/client";
 
 export class StaffRepository {
@@ -147,7 +147,7 @@ export class StaffRepository {
   }
 
   async acceptInvitation(supabaseUserId: string, invite: { id: string, email: string, tenantId: string, role: any, fullName: string }) {
-    return prisma.$transaction(async (tx) => {
+    return rawPrisma.$transaction(async (tx) => {
       const user = await tx.user.upsert({
         where: { email: invite.email },
         update: { supabaseId: supabaseUserId },
