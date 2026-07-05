@@ -73,7 +73,12 @@ export default async function FinancePage({
       <FinanceDashboardHeader period={period} />
 
       {/* KPI Cards */}
-      <FinanceKPIs data={data.kpis} />
+      <FinanceKPIs data={{
+        ...data.kpis,
+        cashBalance: Number(data.kpis.cashBalance),
+        receivables: Number(data.kpis.receivables),
+        payables: Number(data.kpis.payables)
+      }} />
 
       {/* Main Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-6 gap-6">
