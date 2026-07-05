@@ -72,7 +72,21 @@ export class AppointmentService {
     try {
       this.validateTenant(tenantId);
       console.log(`[AppointmentService] Fetching appointments for tenant: ${tenantId}`);
-      const appointments = await this.appointmentRepository.findMany(tenantId);
+      
+      const thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+      
+      const ninetyDaysFuture = new Date();
+      ninetyDaysFuture.setDate(ninetyDaysFuture.getDate() + 90);
+
+      const appointments = await this.appointmentRepository.findMany(tenantId, {
+        where: {
+          date: {
+            gte: thirtyDaysAgo,
+            lte: ninetyDaysFuture
+          }
+        }
+      });
 
       return (appointments || []).map(apt => {
         try {

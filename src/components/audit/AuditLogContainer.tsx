@@ -16,19 +16,28 @@ import {
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 
-export const AuditLogContainer = () => {
-  const [logs, setLogs] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+export interface AuditLogContainerProps {
+  initialLogs: any[];
+  initialTotal: number;
+  initialHasMore: boolean;
+  initialMetadata: { actions: string[], entityTypes: string[] };
+}
+
+export const AuditLogContainer = ({
+  initialLogs,
+  initialTotal,
+  initialHasMore,
+  initialMetadata
+}: AuditLogContainerProps) => {
+  const [logs, setLogs] = useState<any[]>(initialLogs);
+  const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
-  const [total, setTotal] = useState(0);
-  const [hasMore, setHasMore] = useState(false);
+  const [total, setTotal] = useState(initialTotal);
+  const [hasMore, setHasMore] = useState(initialHasMore);
   const [offset, setOffset] = useState(0);
   
   // Metadata for filters
-  const [metadata, setMetadata] = useState<{ actions: string[], entityTypes: string[] }>({
-    actions: [],
-    entityTypes: []
-  });
+  const [metadata, setMetadata] = useState<{ actions: string[], entityTypes: string[] }>(initialMetadata);
 
   // Filters state
   const [filters, setFilters] = useState<AuditFilterOptions>({
@@ -38,14 +47,7 @@ export const AuditLogContainer = () => {
 
   const [showFilters, setShowFilters] = useState(false);
 
-  const fetchMetadata = async () => {
-    try {
-      const data = await getAuditMetadata();
-      setMetadata(data);
-    } catch (error) {
-      console.error('Failed to fetch audit metadata:', error);
-    }
-  };
+
 
   const fetchLogs = useCallback(async (currentFilters: AuditFilterOptions, isLoadMore = false) => {
     if (isLoadMore) {
@@ -80,10 +82,7 @@ export const AuditLogContainer = () => {
     }
   }, [offset]);
 
-  useEffect(() => {
-    fetchMetadata();
-    fetchLogs(filters);
-  }, []);
+
 
   const handleFilterChange = (key: keyof AuditFilterOptions, value: any) => {
     const newFilters = { ...filters, [key]: value, offset: 0 };

@@ -105,6 +105,7 @@ export function ServiceCombobox({
                 <CommandItem
                   key={service.id}
                   value={`${service.name} ${service.category}`}
+                  data-testid={`inventory-item-${service.id}`}
                   onSelect={() => {
                     onSelect(service);
                     setOpen(false);

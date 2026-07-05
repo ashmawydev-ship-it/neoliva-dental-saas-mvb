@@ -239,6 +239,7 @@ export function AppointmentsView({ initialAppointments }: { initialAppointments:
                       type="button"
                       disabled={isUpdating === editingApt?.id}
                       onClick={() => handleStatusUpdate(editingApt.id, s)}
+                      data-testid={`status-update-${s}`}
                       className={`p-3 border rounded-xl flex items-center gap-2 font-semibold text-xs capitalize transition-all shadow-sm ${editingApt?.status === s
                           ? 'ring-2 ring-blue-500 border-transparent bg-blue-50 shadow-blue-500/20 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'
                           : 'border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50 dark:border-slate-700 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:border-slate-600'

@@ -14,6 +14,26 @@ import { EventService } from "@/services/event.service";
 
 import { wrapAction } from "@/lib/observability/wrap-action";
 
+import { Prisma } from '@/generated/client';
+
+const parseDecimalToNumber = (val: any): number => {
+  if (val === null || val === undefined) return 0;
+  if (typeof val === 'number') return val;
+  if (typeof val === 'string') return Number(val) || 0;
+  if (typeof val === 'object') {
+    if (typeof val.toNumber === 'function') return val.toNumber();
+    if (val.toString && typeof val.toString === 'function' && val.toString() !== '[object Object]') {
+      return Number(val.toString()) || 0;
+    }
+    try {
+      return Number(new Prisma.Decimal(val)) || 0;
+    } catch {
+      return 0;
+    }
+  }
+  return 0;
+};
+
 const treatmentPlanService = new TreatmentPlanService();
 
 /**
@@ -41,7 +61,7 @@ export async function getTreatmentPlans(patientId: string) {
                 toothList: item.toothList ? item.toothList.split(',') : [],
                 status: item.status || 'Planned',
                 date: item.scheduledDate ? new Date(item.scheduledDate).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }) : 'TBD',
-                price: Number(item.price) || 0,
+                price: parseDecimalToNumber(item.price),
                 notes: item.notes || ''
               }));
       

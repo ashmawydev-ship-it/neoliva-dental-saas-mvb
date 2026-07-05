@@ -13,7 +13,8 @@ import {
   Search,
   Loader2,
   DoorOpen,
-  Armchair
+  Armchair,
+  AlertCircle
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -53,6 +54,7 @@ interface NewAppointmentDialogProps {
 export function NewAppointmentDialog({ doctors, services, rooms = [] }: NewAppointmentDialogProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
   const t = useTranslations("appointments");
 
   const {
@@ -142,6 +144,7 @@ export function NewAppointmentDialog({ doctors, services, rooms = [] }: NewAppoi
 
   const onSubmit = async (data: AppointmentFormValues) => {
     setIsSubmitting(true);
+    setFormError(null);
     try {
       const selectedService = services.find(s => s.id === data.serviceId);
       const res = await createAppointment({
@@ -155,9 +158,11 @@ export function NewAppointmentDialog({ doctors, services, rooms = [] }: NewAppoi
         setIsOpen(false);
         resetForm();
       } else {
+        setFormError(res.error || "Failed to create appointment. Please check resource availability.");
         toast.error(res.error || "Failed to create appointment");
       }
-    } catch (error) {
+    } catch (error: any) {
+      setFormError(error.message || "An error occurred while creating appointment");
       toast.error("An error occurred while creating appointment");
     } finally {
       setIsSubmitting(false);
@@ -205,6 +210,14 @@ export function NewAppointmentDialog({ doctors, services, rooms = [] }: NewAppoi
 
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="p-6 md:p-8 space-y-4 md:space-y-6 max-h-[70vh] overflow-y-auto custom-scrollbar">
+            
+            {formError && (
+              <div className="p-4 rounded-xl bg-rose-50 border border-rose-200 flex items-start gap-3 text-rose-800 dark:bg-rose-900/30 dark:border-rose-800 dark:text-rose-300">
+                <AlertCircle className="w-5 h-5 text-rose-500 shrink-0 mt-0.5" />
+                <div className="text-sm font-medium">{formError}</div>
+              </div>
+            )}
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
               {/* Patient Selection (Async Combobox Search) */}
               <div className="space-y-2 relative">
@@ -282,7 +295,7 @@ export function NewAppointmentDialog({ doctors, services, rooms = [] }: NewAppoi
                 <Label className="text-xs md:text-sm font-bold text-gray-700 uppercase tracking-wider flex items-center gap-2 dark:text-slate-300">
                   <Stethoscope className="w-4 h-4 text-blue-500" /> {t('form.doctor')}
                 </Label>
-                <Select value={watchedDoctorId} onValueChange={(val) => setValue("doctorId", val ?? "", { shouldValidate: true })}>
+                <Select value={watchedDoctorId || ""} onValueChange={(val) => setValue("doctorId", val ?? "", { shouldValidate: true })}>
                   <SelectTrigger className="h-10 md:h-12 border-gray-200 focus:ring-blue-500/20 rounded-xl md:rounded-2xl bg-gray-50/50 dark:bg-slate-800 dark:border-slate-700 dark:text-white">
                     <SelectValue placeholder={t('form.selectDoctor')} />
                   </SelectTrigger>
@@ -300,7 +313,7 @@ export function NewAppointmentDialog({ doctors, services, rooms = [] }: NewAppoi
                 <Label className="text-xs md:text-sm font-bold text-gray-700 uppercase tracking-wider flex items-center gap-2 dark:text-slate-300">
                   <ClipboardList className="w-4 h-4 text-blue-500" /> {t('form.service')}
                 </Label>
-                <Select value={watchedServiceId} onValueChange={(val) => handleServiceChange(val ?? "")}>
+                <Select value={watchedServiceId || ""} onValueChange={(val) => handleServiceChange(val ?? "")}>
                   <SelectTrigger className="h-10 md:h-12 border-gray-200 focus:ring-blue-500/20 rounded-xl md:rounded-2xl bg-gray-50/50 dark:bg-slate-800 dark:border-slate-700 dark:text-white">
                     <SelectValue placeholder={t('form.selectService')} />
                   </SelectTrigger>
@@ -318,8 +331,8 @@ export function NewAppointmentDialog({ doctors, services, rooms = [] }: NewAppoi
                 <Label className="text-xs md:text-sm font-bold text-gray-700 uppercase tracking-wider flex items-center gap-2 dark:text-slate-300">
                   <DoorOpen className="w-4 h-4 text-blue-500" /> Room
                 </Label>
-                <Select value={watchedRoomId} onValueChange={(val) => {
-                  setValue("roomId", val ?? undefined, { shouldValidate: true });
+                <Select value={watchedRoomId || ""} onValueChange={(val) => {
+                  setValue("roomId", val || undefined, { shouldValidate: true });
                   setValue("chairId", undefined, { shouldValidate: true });
                 }}>
                   <SelectTrigger className="h-10 md:h-12 border-gray-200 focus:ring-blue-500/20 rounded-xl md:rounded-2xl bg-gray-50/50 dark:bg-slate-800 dark:border-slate-700 dark:text-white">
@@ -339,7 +352,7 @@ export function NewAppointmentDialog({ doctors, services, rooms = [] }: NewAppoi
                 <Label className="text-xs md:text-sm font-bold text-gray-700 uppercase tracking-wider flex items-center gap-2 dark:text-slate-300">
                   <Armchair className="w-4 h-4 text-blue-500" /> Chair
                 </Label>
-                <Select disabled={!watchedRoomId || availableChairs.length === 0} value={watchedChairId} onValueChange={(val) => setValue("chairId", val ?? undefined, { shouldValidate: true })}>
+                <Select disabled={!watchedRoomId || availableChairs.length === 0} value={watchedChairId || ""} onValueChange={(val) => setValue("chairId", val || undefined, { shouldValidate: true })}>
                   <SelectTrigger className="h-10 md:h-12 border-gray-200 focus:ring-blue-500/20 rounded-xl md:rounded-2xl bg-gray-50/50 dark:bg-slate-800 dark:border-slate-700 dark:text-white disabled:opacity-50">
                     <SelectValue placeholder="Select Chair" />
                   </SelectTrigger>

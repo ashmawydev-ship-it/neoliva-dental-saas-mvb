@@ -1,9 +1,10 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Download, Printer } from "lucide-react";
+import { Download, Printer, CreditCard } from "lucide-react";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
+import Link from "next/link";
 
 interface Transaction {
   id: string;
@@ -112,6 +113,19 @@ Paid Amount: $${invoice.paidAmount}
 
   return (
     <div className="flex gap-1 justify-end opacity-60 group-hover:opacity-100 transition-opacity">
+      {invoice.status !== 'PAID' && (
+        <Link href={`/billing/invoices/${invoice.id}`}>
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className="h-7 w-7 text-gray-500 hover:text-emerald-600 rounded-lg hover:bg-emerald-50"
+            title="Record Payment"
+            data-testid={`record-payment-${invoice.displayId}`}
+          >
+            <CreditCard className="h-3.5 w-3.5" />
+          </Button>
+        </Link>
+      )}
       <Button 
         variant="ghost" 
         size="icon" 

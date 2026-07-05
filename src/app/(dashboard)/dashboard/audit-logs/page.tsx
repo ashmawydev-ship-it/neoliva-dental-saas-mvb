@@ -3,6 +3,7 @@ import { AuditLogContainer } from '@/components/audit/AuditLogContainer';
 import { Shield, Lock, FileSearch, Download } from 'lucide-react';
 import { requirePermission } from '@/lib/rbac';
 import { PermissionCode } from '@/types/permissions';
+import { getAuditLogs, getAuditMetadata } from '@/app/actions/audit';
 
 export const metadata: Metadata = {
   title: 'Forensic Audit Logs | Dental Dashboard',
@@ -14,6 +15,9 @@ export const dynamic = 'force-dynamic';
 export default async function AuditLogsPage() {
   // Ensure the user has the required permission at the page level
   await requirePermission(PermissionCode.AUDIT_VIEW);
+
+  const initialLogsResult = await getAuditLogs({ limit: 50, offset: 0 });
+  const metadataResult = await getAuditMetadata();
 
   return (
     <div className="space-y-8 pb-10">
@@ -74,7 +78,15 @@ export default async function AuditLogsPage() {
       </div>
 
       {/* Main Audit Container */}
-      <AuditLogContainer />
+      <AuditLogContainer 
+        initialLogs={initialLogsResult.logs || []}
+        initialTotal={initialLogsResult.total || 0}
+        initialHasMore={initialLogsResult.hasMore || false}
+        initialMetadata={{
+          actions: metadataResult.actions || [],
+          entityTypes: metadataResult.entityTypes || []
+        }}
+      />
     </div>
   );
 }
