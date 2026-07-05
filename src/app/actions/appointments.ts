@@ -27,7 +27,7 @@ export async function getAppointmentsData() {
   }
 }
 
-}
+
 
 export async function getAppointmentFormData() {
   try {
