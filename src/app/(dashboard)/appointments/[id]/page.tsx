@@ -10,13 +10,13 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { appointmentService } from "@/config/di";
-import { getTenantId } from "@/lib/auth/utils";
+import { resolveTenantContextOrRedirect } from "@/lib/auth/resolve-tenant-context";
 
 export const dynamic = 'force-dynamic';
 
 export default async function AppointmentDetailPage({ params }: { params: { id: string } }) {
   const t = await getTranslations('appointments');
-  const tenantId = await getTenantId();
+  const { tenantId } = await resolveTenantContextOrRedirect();
 
   if (!tenantId) {
     return notFound();
