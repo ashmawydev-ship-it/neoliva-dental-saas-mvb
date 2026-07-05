@@ -30,7 +30,7 @@ export async function getServices() {
     return await withPermission('settings', 'read', async (session) => {
       const tenantId = session.tenantId!;
       const data = await getCachedServices(tenantId);
-          return data;
+          return data.map(service => ({ ...service, price: Number(service.price) }));
     });
   } catch (error) {
     console.error('[Actions] Error fetching services:', error);
@@ -57,7 +57,7 @@ export const createServiceAction = wrapAction(
           revalidatePath('/services');
           revalidatePath('/appointments'); 
           revalidateTag('services', 'default');
-          return result;
+          return { ...result, price: Number(result.price) };
     });
   },
   { module: 'settings', entityType: 'SERVICE' }
@@ -81,7 +81,7 @@ export const updateServiceAction = wrapAction(
       const result = await serviceService.updateService(tenantId, id, data);
           revalidatePath('/services');
           revalidateTag('services', 'default');
-          return result;
+          return { ...result, price: Number(result.price) };
     });
   },
   { module: 'settings', entityType: 'SERVICE' }

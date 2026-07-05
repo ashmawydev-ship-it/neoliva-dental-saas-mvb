@@ -56,7 +56,7 @@ export default async function ServicesPage() {
         ))}
       </div>
 
-      <ServicesView initialServices={services} />
+      <ServicesView initialServices={services.map(s => ({ ...s, price: Number(s.price) }))} />
     </div>
   );
 }

@@ -36,7 +36,7 @@ export const PERMISSIONS: PermissionMatrix = {
     expenses:     ['create', 'read', 'update', 'delete'],
     staff:        ['create', 'read', 'update', 'delete'],
     reports:      ['read'],
-    settings:     ['read', 'update'],
+    settings:     ['create', 'read', 'update', 'delete'],
   },
   MANAGER: {
     patients:     ['create', 'read', 'update', 'delete'],
@@ -48,7 +48,7 @@ export const PERMISSIONS: PermissionMatrix = {
     expenses:     ['create', 'read', 'update', 'delete'],
     staff:        ['create', 'read', 'update'],
     reports:      ['read'],
-    settings:     ['read', 'update'],
+    settings:     ['create', 'read', 'update', 'delete'],
   },
   ADMIN: {
     patients:     ['create', 'read', 'update'],
