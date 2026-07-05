@@ -27,6 +27,8 @@ export async function getAppointmentsData() {
   }
 }
 
+}
+
 export async function getAppointmentFormData() {
   try {
     return await withPermission('appointments', 'read', async (session) => {
@@ -35,7 +37,7 @@ export async function getAppointmentFormData() {
     });
   } catch (error) {
     console.error('Error fetching appointment form data:', error);
-        return { doctors: [], services: [] };
+        return { doctors: [], services: [], rooms: [] };
   }
 }
 
