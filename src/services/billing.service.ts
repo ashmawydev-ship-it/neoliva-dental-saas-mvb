@@ -1,5 +1,5 @@
 import "server-only";
-import { Prisma } from "@prisma/client";
+import { Prisma } from "@/generated/client";
 import { BillingRepository } from "@/repositories/billing.repository";
 import { AppointmentRepository } from "@/repositories/appointment.repository";
 import { PaymentMethod } from "@/generated/client";
