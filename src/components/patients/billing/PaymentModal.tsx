@@ -23,6 +23,7 @@ import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { recordPayment } from "@/app/actions/billing";
 import { PaymentMethod } from "@/generated/client";
+import { Decimal } from "decimal.js-light";
 
 interface PaymentModalProps {
   isOpen: boolean;
@@ -45,7 +46,7 @@ export function PaymentModal({ isOpen, onClose, invoice, patientId, onRefresh }:
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const remainingBalance = invoice ? (Number(invoice.totalAmount) - Number(invoice.paidAmount)) : 0;
+  const remainingBalance = invoice ? new Decimal(invoice.totalAmount || 0).minus(invoice.paidAmount || 0).toNumber() : 0;
 
   useEffect(() => {
     if (invoice) {
@@ -62,7 +63,7 @@ export function PaymentModal({ isOpen, onClose, invoice, patientId, onRefresh }:
 
     try {
       const result = await recordPayment(invoice.id, {
-        amount: Number(amount), 
+        amount: new Decimal(amount).toNumber(), 
         method: method, 
         notes, 
         paidAt: new Date(date)

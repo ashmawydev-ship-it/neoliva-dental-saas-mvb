@@ -1,3 +1,5 @@
+const DEFAULT_PAGE_SIZE = 50;
+const MAX_PAGE_SIZE = 100;
 /**
  * CENTRALIZED TENANT RESOLUTION LAYER
  *
@@ -329,7 +331,8 @@ async function fetchPrimaryMembership(supabaseUserId: string) {
     },
     include: MEMBERSHIP_INCLUDE,
     orderBy: { joinedAt: 'desc' },
-  });
+      take: DEFAULT_PAGE_SIZE
+});
 
   if (process.env.AUTH_DEBUG === 'true') {
     console.log("[AUTH_DEBUG][ALL_MEMBERSHIPS] " + JSON.stringify(memberships, null, 2));
@@ -354,7 +357,8 @@ async function fetchAllMemberships(supabaseUserId: string) {
     include: {
       tenant: { select: { name: true, status: true } },
     },
-  });
+      take: DEFAULT_PAGE_SIZE
+});
 }
 
 // ─── UI Redirect Wrapper ──────────────────────────────────────────────────────

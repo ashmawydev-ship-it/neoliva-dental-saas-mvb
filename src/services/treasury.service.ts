@@ -157,16 +157,16 @@ export class TreasuryService {
 
     const report = accounts.map(acc => {
       const bal = balances.find(b => b.accountId === acc.id);
-      const debit = Number(bal?._sum?.debit || 0);
-      const credit = Number(bal?._sum?.credit || 0);
+      const debit = new Prisma.Decimal(bal?._sum?.debit || 0);
+      const credit = new Prisma.Decimal(bal?._sum?.credit || 0);
       
       return {
         id: acc.id,
         name: acc.name,
         type: acc.type,
-        debit,
-        credit,
-        balance: debit - credit
+        debit: debit,
+        credit: credit,
+        balance: (acc.type === 'ASSET' || acc.type === 'EXPENSE' ? debit.minus(credit) : credit.minus(debit))
       };
     });
 

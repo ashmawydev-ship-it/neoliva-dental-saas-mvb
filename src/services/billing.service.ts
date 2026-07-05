@@ -1,4 +1,5 @@
 import "server-only";
+import { Prisma } from "@prisma/client";
 import { BillingRepository } from "@/repositories/billing.repository";
 import { AppointmentRepository } from "@/repositories/appointment.repository";
 import { PaymentMethod } from "@/generated/client";
@@ -50,7 +51,7 @@ export class BillingService {
         email: "contact@neoliva.com"
       }
     };
-    return JSON.parse(JSON.stringify(fallback));
+    return fallback;
   }
 
   private validateTenant(tenantId: string) {
@@ -92,7 +93,7 @@ export class BillingService {
         items.push({
           description: apt.service.name,
           quantity: 1,
-          price: Number(apt.service.price),
+          price: (+(apt.service.price)),
           serviceId: apt.serviceId || undefined
         });
       } else if (apt.treatment) {
@@ -153,7 +154,7 @@ export class BillingService {
       const items = plan.items.map(item => ({
         description: item.serviceName,
         quantity: 1,
-        price: Number(item.price),
+        price: (+(item.price)),
         serviceId: item.serviceId || undefined
       }));
 
@@ -177,7 +178,7 @@ export class BillingService {
       this.validateTenant(tenantId);
       const invoices = await this.billingRepository.findMany(tenantId);
       const rawSettings = await this.settingsService.getClinicSettings(tenantId);
-      const settings = rawSettings ? { ...rawSettings, taxRate: Number(rawSettings.taxRate || 0) } : null;
+      const settings = rawSettings ? { ...rawSettings, taxRate: (+(rawSettings.taxRate || 0)) } : null;
       const now = new Date();
 
       return (invoices || []).map(inv => {
@@ -191,8 +192,8 @@ export class BillingService {
           return {
             id: inv.id,
             patientName: this.normalizeString(inv.patient?.name, "Unknown Patient"),
-            totalAmount: Number(inv.totalAmount || 0),
-            paidAmount: Number(inv.paidAmount || 0),
+            totalAmount: (+(inv.totalAmount || 0)),
+            paidAmount: (+(inv.paidAmount || 0)),
             status: currentStatus,
             createdAt: inv.createdAt || new Date(),
             dueDate: inv.dueDate || null,
@@ -217,10 +218,20 @@ export class BillingService {
     try {
       this.validateTenant(tenantId);
       const stats = await this.billingRepository.getFinancialStats(tenantId);
-      return JSON.parse(JSON.stringify(stats || { totalRevenue: 0, totalPaid: 0, totalOutstanding: 0, collectionRate: 0 }));
+      return stats || { 
+        totalRevenue: new Prisma.Decimal(0), 
+        pendingAmount: new Prisma.Decimal(0), 
+        overdueAmount: new Prisma.Decimal(0), 
+        overdueCount: 0 
+      };
     } catch (error) {
-      console.error("[BillingService] Failed to get billing stats:", error);
-      return { totalRevenue: 0, totalPaid: 0, totalOutstanding: 0, collectionRate: 0 };
+      console.error("[BillingService.getStats] Error:", error);
+      return { 
+        totalRevenue: new Prisma.Decimal(0), 
+        pendingAmount: new Prisma.Decimal(0), 
+        overdueAmount: new Prisma.Decimal(0), 
+        overdueCount: 0 
+      };
     }
   }
 
@@ -265,7 +276,7 @@ export class BillingService {
 
       // Calculate total with tax
       const subtotal = data.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-      const taxRate = Number(settings.taxRate || 0);
+      const taxRate = (+(settings.taxRate || 0));
       const totalAmount = subtotal + (subtotal * (taxRate / 100));
 
       const { result, serialized } = await prisma.$transaction(async (tx) => {
@@ -351,7 +362,7 @@ export class BillingService {
           .catch((err) => console.error("[BillingService] Commission calculation failed:", err));
       }
 
-      return JSON.parse(JSON.stringify(result));
+      return result;
     } catch (error) {
       console.error(`[BillingService] Failed to record payment for invoice ${invoiceId}:`, error);
       throw error;
@@ -379,22 +390,22 @@ export class BillingService {
       const result = {
         ...inv,
         patientName: this.normalizeString(inv.patient?.name, "Unknown Patient"),
-        totalAmount: inv.totalAmount ? Number(inv.totalAmount) : 0,
-        paidAmount: inv.paidAmount ? Number(inv.paidAmount) : 0,
+        totalAmount: inv.totalAmount ? (+(inv.totalAmount)) : 0,
+        paidAmount: inv.paidAmount ? (+(inv.paidAmount)) : 0,
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         items: (inv.items || []).map((item: any) => ({
           ...item,
-          price: Number(item.unitPrice || item.price || 0)
+          price: (+(item.unitPrice || item.price || 0))
         })),
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         payments: (inv.payments || []).map((p: any) => ({
           ...p,
-          amount: Number(p.amount || 0)
+          amount: (+(p.amount || 0))
         })),
         settings
       };
 
-      return JSON.parse(JSON.stringify(result));
+      return result;
     } catch (error) {
       console.error("[BillingService] Serialization failed:", error);
       return this.getSafeInvoiceFallback(inv.id, settings);

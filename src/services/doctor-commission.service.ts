@@ -40,7 +40,7 @@ export class DoctorCommissionService {
     paidAmount: number | Prisma.Decimal
   ) {
     try {
-      const amount = Number(paidAmount);
+      const amount = (+(paidAmount));
       if (!amount || amount <= 0) return;
 
       // 1. Get invoice to find doctorId
@@ -59,7 +59,7 @@ export class DoctorCommissionService {
 
       if (!doctor) return;
 
-      const rate = Number(doctor.commissionRate || 0);
+      const rate = (+(doctor.commissionRate || 0));
       if (rate <= 0) return; // No commission rate → skip
 
       // 3. Calculate
@@ -138,7 +138,7 @@ export class DoctorCommissionService {
     }
 
     const totalAmount = pendingRecords.reduce(
-      (sum, r) => sum + Number(r.commissionAmount),
+      (sum, r) => sum + (+(r.commissionAmount)),
       0
     );
 
@@ -216,15 +216,15 @@ export class DoctorCommissionService {
         JSON.stringify({
           doctorId,
           doctorName: doctor?.name || "Unknown",
-          commissionRate: Number(doctor?.commissionRate || 0),
+          commissionRate: (+(doctor?.commissionRate || 0)),
           ...summary,
           commissions: commissions.map((c) => ({
             id: c.id,
             invoiceId: c.invoiceId,
             invoiceDisplayId: c.invoice?.displayId || null,
-            invoiceAmount: Number(c.invoiceAmount),
-            commissionRate: Number(c.commissionRate),
-            commissionAmount: Number(c.commissionAmount),
+            invoiceAmount: (+(c.invoiceAmount)),
+            commissionRate: (+(c.commissionRate)),
+            commissionAmount: (+(c.commissionAmount)),
             status: c.status,
             paidAt: c.paidAt,
             createdAt: c.createdAt,
@@ -251,7 +251,7 @@ export class DoctorCommissionService {
   async getAllDoctorsCommissionSummary(tenantId: string) {
     try {
       const results = await this.commissionRepository.getAllDoctorsSummary(tenantId);
-      return JSON.parse(JSON.stringify(results));
+      return results;
     } catch (error) {
       console.error("[DoctorCommissionService] getAllDoctorsCommissionSummary failed:", error);
       return [];

@@ -1,3 +1,5 @@
+const DEFAULT_PAGE_SIZE = 50;
+const MAX_PAGE_SIZE = 100;
 import { prisma } from "@/lib/prisma";
 import { Prisma } from "@/generated/client";
 
@@ -16,7 +18,8 @@ export class SmsTemplateRepository {
   async findMany(tenantId: string) {
     return await this.model.findMany({
       where: { tenantId },
-      orderBy: { createdAt: 'desc' }
+      orderBy: { createdAt: 'desc' },
+        take: DEFAULT_PAGE_SIZE
     });
   }
 

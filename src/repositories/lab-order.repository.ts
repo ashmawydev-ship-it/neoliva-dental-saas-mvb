@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { LabOrder, LabOrderStatus, Prisma } from "@/generated/client";
+import { getPagination } from "@/lib/pagination";
 
 export class LabOrderRepository {
   async findMany(tenantId: string, params?: {
@@ -9,8 +10,12 @@ export class LabOrderRepository {
     orderBy?: Prisma.LabOrderOrderByWithRelationInput;
     where?: Prisma.LabOrderWhereInput;
   }): Promise<any[]> {
+    const { take, skip } = getPagination(params);
+
     return prisma.labOrder.findMany({
       ...params,
+      take,
+      skip,
       where: {
         ...params?.where,
         tenantId,
@@ -41,8 +46,8 @@ export class LabOrderRepository {
         tenantId,
       },
       include: {
-        patient: true,
-        appointment: true
+        patient: { select: { name: true, displayId: true } },
+        appointment: { select: { id: true, date: true } }
       }
     });
   }
@@ -136,7 +141,7 @@ export class LabOrderRepository {
       activeCases: activeCount,
       dueThisWeek: dueThisWeekCount,
       received: receivedCount,
-      monthlyCost: Number(costSum._sum.cost || 0)
+      monthlyCost: (+(costSum._sum.cost || 0))
     };
   }
 }

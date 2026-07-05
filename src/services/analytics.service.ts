@@ -1,3 +1,5 @@
+const DEFAULT_PAGE_SIZE = 50;
+const MAX_PAGE_SIZE = 100;
 import { prisma } from '@/lib/prisma';
 import { startOfMonth } from 'date-fns';
 
@@ -103,7 +105,8 @@ export class AnalyticsService {
       this.prismaClient.staff.findMany({
         where: { tenantId, role: 'DOCTOR' },
         select: { id: true, name: true },
-      }),
+          take: DEFAULT_PAGE_SIZE
+    }),
     ]);
 
     const noShowByDoctor = new Map((noShowEvents as any[]).map(e => [e.userId!, e._count.id]));
@@ -316,7 +319,7 @@ export class AnalyticsService {
     for (const row of rows) {
       const slot = SLOTS.includes(row.slot) ? row.slot : null;
       if (!slot) continue;
-      const cnt = Number(row.cnt);
+      const cnt = (+(row.cnt));
       bySlot[slot].total += cnt;
       if (row.status === 'NO_SHOW')   bySlot[slot].noShow    += cnt;
       if (row.status === 'COMPLETED') bySlot[slot].completed += cnt;
@@ -423,7 +426,8 @@ export class AnalyticsService {
       ? await this.prismaClient.patient.findMany({
           where: { id: { in: patientIds }, tenantId },
           select: { id: true, name: true },
-        })
+          take: DEFAULT_PAGE_SIZE
+    })
       : [];
 
     const patientNameById = new Map(patients.map(p => [p.id, p.name]));
@@ -483,7 +487,7 @@ export class AnalyticsService {
         _sum: { totalAmount: true },
       });
       const raw = result._sum.totalAmount;
-      return raw ? Number(raw) : 0;
+      return raw ? (+(raw)) : 0;
     }
 
     const { counts, total } = await this.fetchWindowAppointmentCounts(tenantId, window);

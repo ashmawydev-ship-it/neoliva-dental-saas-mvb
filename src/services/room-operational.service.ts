@@ -1,3 +1,5 @@
+const DEFAULT_PAGE_SIZE = 50;
+const MAX_PAGE_SIZE = 100;
 import { prisma } from "@/lib/prisma";
 import { AppointmentStatus, RoomStatus } from "@/generated/client";
 
@@ -64,7 +66,8 @@ export class RoomOperationalService {
           orderBy: { time: 'asc' }
         },
         roomChairs: true
-      }
+      },
+        take: DEFAULT_PAGE_SIZE
     });
 
     return rooms.map(room => {
@@ -162,7 +165,8 @@ export class RoomOperationalService {
     // starting from the earliest time in the queue for that room today.
     const appointments = await this.prismaClient.appointment.findMany({
       where: { id: { in: appointmentIds }, tenantId, roomId },
-      orderBy: { time: 'asc' }
+      orderBy: { time: 'asc' },
+        take: DEFAULT_PAGE_SIZE
     });
 
     if (appointments.length === 0) return { success: true };

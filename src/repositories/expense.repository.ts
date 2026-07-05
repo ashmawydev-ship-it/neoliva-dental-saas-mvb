@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { Expense, Prisma } from "@/generated/client";
+import { getPagination } from "@/lib/pagination";
 
 export class ExpenseRepository {
   async findMany(tenantId: string, params?: {
@@ -8,8 +9,12 @@ export class ExpenseRepository {
     orderBy?: Prisma.ExpenseOrderByWithRelationInput;
     where?: Prisma.ExpenseWhereInput;
   }): Promise<Expense[]> {
+    const { take, skip } = getPagination(params);
+
     return prisma.expense.findMany({
       ...params,
+      take,
+      skip,
       where: {
         ...params?.where,
         tenantId,

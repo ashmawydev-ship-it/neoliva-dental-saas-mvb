@@ -104,7 +104,7 @@ export class ExpenseService {
         await this.treasuryService.recordExpense(tenantId, {
           id: result.id,
           title: result.title,
-          amount: Number(result.amount),
+          amount: (+(result.amount)),
           method: result.method || 'CASH'
         }).catch(err => console.error("[ExpenseService] Treasury record failed:", err));
       }
@@ -158,10 +158,10 @@ export class ExpenseService {
   private mapToUI(expense: any) {
     if (!expense) return this.getSafeExpenseFallback();
     try {
-      return JSON.parse(JSON.stringify({
+      return {
         id: expense.id,
         title: expense.title,
-        amount: Number(expense.amount) || 0,
+        amount: (+(expense.amount)) || 0,
         amountFormatted: this.formatCurrency(expense.amount),
         category: expense.category,
         description: expense.description,
@@ -170,7 +170,7 @@ export class ExpenseService {
         status: expense.status,
         notes: expense.notes,
         tenantId: expense.tenantId,
-      }));
+      };
     } catch (error) {
       console.error("[ExpenseService.mapToUI] Mapping error:", error);
       return this.getSafeExpenseFallback(expense?.id);
@@ -182,7 +182,7 @@ export class ExpenseService {
       return new Intl.NumberFormat('en-US', {
         style: 'currency',
         currency: 'USD',
-      }).format(Number(amount) || 0);
+      }).format((+(amount)) || 0);
     } catch {
       return "$0.00";
     }

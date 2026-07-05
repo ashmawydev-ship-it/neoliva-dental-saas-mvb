@@ -95,14 +95,14 @@ export class PatientService {
   private mapSafePatient(patient: any): any {
     if (!patient) return this.getSafeFallback();
     try {
-      return JSON.parse(JSON.stringify({
+      return {
         ...patient,
         name: this.normalizeString(patient.name, "Unknown Patient"),
         phone: this.normalizeString(patient.phone, "-"),
         email: this.normalizeString(patient.email, "-"),
         status: patient.status || "Active",
         createdAt: patient.createdAt || new Date(),
-      }));
+      };
     } catch (error) {
       console.error("[PatientService.mapSafePatient] Error:", error);
       return this.getSafeFallback(patient?.id, patient?.tenantId);
@@ -176,7 +176,7 @@ export class PatientService {
         name: this.normalizeString(p.name, "Unknown Patient"),
       }));
 
-      return JSON.parse(JSON.stringify(safeData));
+      return safeData;
     } catch (error) {
       console.error("[PatientService.getPatientsForSelection] Error:", error);
       return [];
@@ -273,11 +273,11 @@ export class PatientService {
         }
       });
 
-      return JSON.parse(JSON.stringify({
+      return {
         patients,
         total,
         totalPages: Math.ceil(total / safeLimit),
-      }));
+      };
     } catch (error) {
       console.error('[PatientService.getPatientsPaginated] Error:', error);
       return { patients: [], total: 0, totalPages: 0 };
@@ -349,8 +349,8 @@ export class PatientService {
             registeredSince: patient.createdAt ? new Date(patient.createdAt).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) : '—',
             outstanding: (patient.invoices || [])
               .reduce((sum: number, i: any) => {
-                const paid = Number(i.paidAmount || 0);
-                const total = Number(i.totalAmount || 0);
+                const paid = (+(i.paidAmount || 0));
+                const total = (+(i.totalAmount || 0));
                 return sum + (total - paid);
               }, 0)
           }
@@ -360,7 +360,7 @@ export class PatientService {
         }
       });
 
-      return JSON.parse(JSON.stringify(result));
+      return result;
     } catch (error) {
       console.error("[PatientService.getPatientsList] Error:", error);
       return [];
@@ -474,7 +474,7 @@ export class PatientService {
         patientDocuments: data.patientDocuments ?? [],
       };
 
-      return JSON.parse(JSON.stringify(result));
+      return result;
     } catch (error) {
       console.error(`[PatientService.getPatientById] Error fetching patient ${id}:`, error);
       return this.getSafeFallback(id);
@@ -544,8 +544,8 @@ export class PatientService {
 
       const invoices = data.invoices || []
       const totalOutstanding = invoices.reduce((sum: number, inv: any) => {
-        const actualPaidAmount = (inv.payments || []).reduce((acc: number, p: any) => acc + Number(p.amount), 0);
-        return sum + Math.max(0, Number(inv.totalAmount) - actualPaidAmount);
+        const actualPaidAmount = (inv.payments || []).reduce((acc: number, p: any) => acc + (+(p.amount)), 0);
+        return sum + Math.max(0, (+(inv.totalAmount)) - actualPaidAmount);
       }, 0)
 
       const getInitials = (name: string) => {
@@ -638,8 +638,8 @@ export class PatientService {
         oralConditions: (data.oralConditions || []).map((oc: any) => ({ ...oc })),
         visitHistory,
         invoiceHistory: (invoices || []).map((i: any) => {
-          const totalAmount = Number(i.totalAmount || 0)
-          const actualPaidAmount = (i.payments || []).reduce((acc: number, p: any) => acc + Number(p.amount), 0)
+          const totalAmount = (+(i.totalAmount || 0))
+          const actualPaidAmount = (i.payments || []).reduce((acc: number, p: any) => acc + (+(p.amount)), 0)
           const remainingAmount = Math.max(0, totalAmount - actualPaidAmount)
           
           let derivedStatus = i.status
@@ -664,14 +664,14 @@ export class PatientService {
               id: item.id,
               description: item.description,
               quantity: item.quantity,
-              price: Number(item.unitPrice || item.price || 0),
-              discount: Number(item.discount || 0),
-              total: Number(item.total || 0),
+              price: (+(item.unitPrice || item.price || 0)),
+              discount: (+(item.discount || 0)),
+              total: (+(item.total || 0)),
               createdAt: item.createdAt
             })),
             payments: (i.payments || []).map((p: any) => ({
               id: p.id,
-              amount: Number(p.amount),
+              amount: (+(p.amount)),
               paidAt: p.paidAt,
               method: p.method,
               createdAt: p.createdAt
@@ -686,7 +686,7 @@ export class PatientService {
         tenantId: data.tenantId, // CRITICAL FIX: Ensure tenantId is propagated for authorization checks
       };
 
-      return JSON.parse(JSON.stringify(result));
+      return result;
     } catch (error) {
       console.error('[PatientService.getPatientProfile] Error:', error);
       return this.getSafeFallback(id);
@@ -698,7 +698,7 @@ export class PatientService {
     try {
       if (!tenantId || !patientId) return null;
       const result = await this.patientRepository.upsertOralCondition(tenantId, patientId, name, active);
-      return JSON.parse(JSON.stringify(result));
+      return result;
     } catch (error) {
       console.error("[PatientService.updateOralCondition] Error:", error);
       return null;
@@ -709,7 +709,7 @@ export class PatientService {
     try {
       if (!tenantId || !patientId) return null;
       const result = await this.patientRepository.upsertOralTissue(tenantId, patientId, name, status, notes);
-      return JSON.parse(JSON.stringify(result));
+      return result;
     } catch (error) {
       console.error("[PatientService.updateOralTissue] Error:", error);
       return null;
@@ -720,7 +720,7 @@ export class PatientService {
     try {
       if (!tenantId || !patientId) return null;
       const result = await this.patientRepository.createVisitRecord(tenantId, patientId, data);
-      return JSON.parse(JSON.stringify(result));
+      return result;
     } catch (error) {
       console.error("[PatientService.addVisitRecord] Error:", error);
       return null;
@@ -741,7 +741,7 @@ export class PatientService {
     try {
       if (!tenantId || !patientId) return null;
       const result = await this.patientRepository.upsertToothCondition(tenantId, patientId, toothNumber, condition, isMissing, notes);
-      return JSON.parse(JSON.stringify(result));
+      return result;
     } catch (error) {
       console.error("[PatientService.updateToothCondition] Error:", error);
       return null;
@@ -752,7 +752,7 @@ export class PatientService {
     try {
       if (!tenantId || !patientId) return [];
       const result = await this.patientRepository.getPeriodontalSessionsByPatient(tenantId, patientId);
-      return JSON.parse(JSON.stringify(result));
+      return result;
     } catch (error) {
       console.error("[PatientService.getPeriodontalSessions] Error:", error);
       return [];
@@ -763,7 +763,7 @@ export class PatientService {
     try {
       if (!tenantId || !patientId) return null;
       const result = await this.patientRepository.createPeriodontalSession(tenantId, patientId, examinerId);
-      return JSON.parse(JSON.stringify(result));
+      return result;
     } catch (error) {
       console.error("[PatientService.createPeriodontalSession] Error:", error);
       return null;
@@ -774,7 +774,7 @@ export class PatientService {
     try {
       if (!tenantId || !sessionId) return null;
       const result = await this.patientRepository.updatePeriodontalSession(tenantId, sessionId, data);
-      return JSON.parse(JSON.stringify(result));
+      return result;
     } catch (error) {
       console.error("[PatientService.updatePeriodontalSession] Error:", error);
       return null;
@@ -800,7 +800,7 @@ export class PatientService {
       // Calculate session metrics in the background (or we could await it)
       this.calculateSessionMetrics(tenantId, sessionId).catch(console.error);
       
-      return JSON.parse(JSON.stringify(result));
+      return result;
     } catch (error) {
       console.error("[PatientService.updatePeriodontalMeasurement] Error:", error);
       return null;
@@ -870,7 +870,7 @@ export class PatientService {
     try {
       if (!tenantId || !patientId) return null;
       const result = await this.patientRepository.createMedicalCondition(tenantId, patientId, data);
-      return JSON.parse(JSON.stringify(result));
+      return result;
     } catch (error) {
       console.error("[PatientService.addMedicalCondition] Error:", error);
       return null;
@@ -891,7 +891,7 @@ export class PatientService {
     try {
       if (!tenantId || !patientId) return null;
       const result = await this.patientRepository.createAllergy(tenantId, patientId, data);
-      return JSON.parse(JSON.stringify(result));
+      return result;
     } catch (error) {
       console.error("[PatientService.addAllergy] Error:", error);
       return null;
@@ -912,7 +912,7 @@ export class PatientService {
     try {
       if (!tenantId || !patientId) return null;
       const result = await this.patientRepository.createMedication(tenantId, patientId, data);
-      return JSON.parse(JSON.stringify(result));
+      return result;
     } catch (error) {
       console.error("[PatientService.addMedication] Error:", error);
       return null;
@@ -933,7 +933,7 @@ export class PatientService {
     try {
       if (!tenantId || !patientId) return null;
       const result = await this.patientRepository.createSurgery(tenantId, patientId, data);
-      return JSON.parse(JSON.stringify(result));
+      return result;
     } catch (error) {
       console.error("[PatientService.addSurgery] Error:", error);
       return null;
@@ -954,7 +954,7 @@ export class PatientService {
     try {
       if (!tenantId || !patientId) return null;
       const result = await this.patientRepository.createFamilyHistory(tenantId, patientId, data);
-      return JSON.parse(JSON.stringify(result));
+      return result;
     } catch (error) {
       console.error("[PatientService.addFamilyHistory] Error:", error);
       return null;
@@ -975,7 +975,7 @@ export class PatientService {
     try {
       if (!tenantId || !patientId) return null;
       const result = await this.patientRepository.createPrescription(tenantId, patientId, data);
-      return JSON.parse(JSON.stringify(result));
+      return result;
     } catch (error) {
       console.error("[PatientService.addPrescription] Error:", error);
       return null;
@@ -996,7 +996,7 @@ export class PatientService {
     try {
       if (!tenantId || !patientId) return null;
       const result = await this.patientRepository.createDocument(tenantId, patientId, data);
-      return JSON.parse(JSON.stringify(result));
+      return result;
     } catch (error) {
       console.error("[PatientService.addDocument] Error:", error);
       return null;
@@ -1017,7 +1017,7 @@ export class PatientService {
     try {
       if (!tenantId || !id) return null;
       const result = await this.patientRepository.updateInvoice(tenantId, id, { status });
-      return JSON.parse(JSON.stringify(result));
+      return result;
     } catch (error) {
       console.error("[PatientService.updateInvoiceStatus] Error:", error);
       return null;
@@ -1028,7 +1028,7 @@ export class PatientService {
     try {
       if (!tenantId || !patientId) return null;
       const result = await this.patientRepository.createInvoice(tenantId, patientId, data);
-      return JSON.parse(JSON.stringify(result));
+      return result;
     } catch (error) {
       console.error("[PatientService.createInvoice] Error:", error);
       return null;
@@ -1039,7 +1039,7 @@ export class PatientService {
     try {
       if (!tenantId || !invoiceId) return null;
       const result = await this.patientRepository.addPayment(tenantId, invoiceId, data);
-      return JSON.parse(JSON.stringify(result));
+      return result;
     } catch (error) {
       console.error("[PatientService.addPayment] Error:", error);
       return null;
@@ -1075,7 +1075,7 @@ export class PatientService {
         take: 10,
         orderBy: { name: 'asc' }
       });
-      return JSON.parse(JSON.stringify(data));
+      return data;
     } catch (error) {
       console.error("[PatientService.searchPatients] Error:", error);
       return [];

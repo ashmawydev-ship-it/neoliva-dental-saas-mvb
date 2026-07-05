@@ -1,3 +1,5 @@
+const DEFAULT_PAGE_SIZE = 50;
+const MAX_PAGE_SIZE = 100;
 import { prisma } from "@/lib/prisma";
 import { Prisma } from "@/generated/client";
 
@@ -13,7 +15,23 @@ export class FinanceRepository {
         paidAt: true,
       },
       orderBy: { paidAt: "asc" },
+        take: DEFAULT_PAGE_SIZE
     });
+  }
+
+  async getAggregateRevenue(tenantId: string, fromDate: Date, toDate?: Date) {
+    const whereClause: any = {
+      tenantId,
+      paidAt: { gte: fromDate },
+    };
+    if (toDate) {
+      whereClause.paidAt.lte = toDate;
+    }
+    const result = await prisma.payment.aggregate({
+      where: whereClause,
+      _sum: { amount: true },
+    });
+    return (+(result._sum.amount || 0));
   }
 
   async getExpenseData(tenantId: string, fromDate: Date) {
@@ -28,7 +46,50 @@ export class FinanceRepository {
         date: true,
       },
       orderBy: { date: "asc" },
+        take: DEFAULT_PAGE_SIZE
     });
+  }
+
+  async getAggregateExpenses(tenantId: string, fromDate: Date, toDate?: Date) {
+    const whereClause: any = {
+      tenantId,
+      date: { gte: fromDate },
+      status: "PAID",
+    };
+    if (toDate) {
+      whereClause.date.lte = toDate;
+    }
+    const result = await prisma.expense.aggregate({
+      where: whereClause,
+      _sum: { amount: true },
+    });
+    return (+(result._sum.amount || 0));
+  }
+
+  async getDailyTrends(tenantId: string, fromDate: Date) {
+    // 1. Get daily revenue using raw SQL date_trunc
+    const revenueQuery = await prisma.$queryRaw<
+      { date: Date; total: number }[]
+    >`
+      SELECT DATE("paidAt") as date, SUM(amount) as total
+      FROM "Payment"
+      WHERE "tenantId" = ${tenantId} AND "paidAt" >= ${fromDate}
+      GROUP BY DATE("paidAt")
+      ORDER BY DATE("paidAt") ASC
+    `;
+
+    // 2. Get daily expenses using raw SQL date_trunc
+    const expenseQuery = await prisma.$queryRaw<
+      { date: Date; total: number }[]
+    >`
+      SELECT DATE("date") as date, SUM(amount) as total
+      FROM "Expense"
+      WHERE "tenantId" = ${tenantId} AND "date" >= ${fromDate} AND "status" = 'PAID'
+      GROUP BY DATE("date")
+      ORDER BY DATE("date") ASC
+    `;
+
+    return { revenue: revenueQuery, expenses: expenseQuery };
   }
 
   async getInvoiceSummary(tenantId: string) {
@@ -145,6 +206,7 @@ export class FinanceRepository {
           },
         },
       },
+        take: DEFAULT_PAGE_SIZE
     });
   }
 }

@@ -1,3 +1,5 @@
+const DEFAULT_PAGE_SIZE = 50;
+const MAX_PAGE_SIZE = 100;
 import { prisma } from "@/lib/prisma";
 import type { Prisma } from "@/generated/client";
 
@@ -10,11 +12,12 @@ export class PrescriptionRepository {
       },
       include: {
         items: true,
-        doctor: true,
+        doctor: { select: { id: true, name: true } },
       },
       orderBy: {
         createdAt: 'desc',
       },
+        take: DEFAULT_PAGE_SIZE
     });
   }
 

@@ -99,7 +99,7 @@ export class AppointmentService {
             notes: apt.notes || "",
             hasInvoice: !!apt.invoice,
             invoiceStatus: apt.invoice?.status || null,
-            invoiceAmount: apt.invoice?.totalAmount ? Number(apt.invoice.totalAmount) : 0,
+            invoiceAmount: apt.invoice?.totalAmount ? (+(apt.invoice.totalAmount)) : 0,
             avatar: this.getInitials(patientName),
             color: apt.color || 'from-blue-500 to-indigo-600'
           };
@@ -114,28 +114,39 @@ export class AppointmentService {
     }
   }
 
-  /**
-   * Get summary stats and list in one call
-   */
   async getAppointmentsData(tenantId: string) {
     try {
       this.validateTenant(tenantId);
-      const list = await this.getAppointmentsList(tenantId);
       
-      const today = new Date().toDateString();
-      const todayApts = list.filter(a => a.startTime && new Date(a.startTime).toDateString() === today);
+      const todayStart = new Date();
+      todayStart.setHours(0, 0, 0, 0);
+      const todayEnd = new Date();
+      todayEnd.setHours(23, 59, 59, 999);
+
+      // Fetch today's appointments efficiently for accurate daily stats
+      const todayAptsRaw = await this.appointmentRepository.findMany(tenantId, {
+        where: {
+          date: {
+            gte: todayStart,
+            lte: todayEnd
+          }
+        },
+        take: 1000
+      });
+      
+      const list = await this.getAppointmentsList(tenantId);
 
       const stats = {
-        totalToday: todayApts.length,
-        completed: todayApts.filter(a => a.status === 'COMPLETED').length,
-        inProgress: todayApts.filter(a => a.status === 'IN_PROGRESS').length,
-        cancelled: todayApts.filter(a => a.status === 'CANCELLED').length
+        totalToday: todayAptsRaw.length,
+        completed: todayAptsRaw.filter(a => a.status === 'COMPLETED').length,
+        inProgress: todayAptsRaw.filter(a => a.status === 'IN_PROGRESS').length,
+        cancelled: todayAptsRaw.filter(a => a.status === 'CANCELLED').length
       };
 
-      return JSON.parse(JSON.stringify({
+      return {
         list,
         stats
-      }));
+      };
     } catch (error) {
       console.error("[AppointmentService] Failed to get appointments data:", error);
       return { list: [], stats: { totalToday: 0, completed: 0, inProgress: 0, cancelled: 0 } };
@@ -153,13 +164,13 @@ export class AppointmentService {
 
       const services = (servicesRaw || []).map(s => ({
         ...s,
-        price: s.price ? Number(s.price) : 0
+        price: s.price ? (+(s.price)) : 0
       }));
 
-      return JSON.parse(JSON.stringify({
+      return {
         doctors: doctors || [],
         services: services || []
-      }));
+      };
     } catch (error) {
       console.error("[AppointmentService] Failed to get form data:", error);
       return { doctors: [], services: [] };
@@ -201,7 +212,7 @@ export class AppointmentService {
       
       const timeDate = new Date();
       const [hours, minutes] = (data.time || "09:00").split(':');
-      timeDate.setHours(parseInt(hours || "9"), parseInt(minutes || "0"), 0, 0);
+      timeDate.setHours((+(hours || "9")), (+(minutes || "0")), 0, 0);
 
       // --- Room Scheduling Engine Validation ---
       if (data.roomId) {
@@ -301,14 +312,14 @@ export class AppointmentService {
       if (serialized.service) {
         serialized.service = {
           ...serialized.service,
-          price: serialized.service.price ? Number(serialized.service.price) : 0
+          price: serialized.service.price ? (+(serialized.service.price)) : 0
         };
       }
       
       if (serialized.invoice) {
         serialized.invoice = {
           ...serialized.invoice,
-          totalAmount: serialized.invoice.totalAmount ? Number(serialized.invoice.totalAmount) : 0
+          totalAmount: serialized.invoice.totalAmount ? (+(serialized.invoice.totalAmount)) : 0
         };
       }
 
@@ -317,7 +328,7 @@ export class AppointmentService {
       if (serialized.createdAt instanceof Date) serialized.createdAt = serialized.createdAt.toISOString();
       if (serialized.updatedAt instanceof Date) serialized.updatedAt = serialized.updatedAt.toISOString();
 
-      return JSON.parse(JSON.stringify(serialized));
+      return serialized;
     } catch (error) {
       console.error("[AppointmentService] Serialization failed:", error);
       return this.getSafeFallback(apt.id);

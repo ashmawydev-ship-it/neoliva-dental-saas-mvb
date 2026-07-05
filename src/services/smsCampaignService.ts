@@ -1,3 +1,5 @@
+const DEFAULT_PAGE_SIZE = 50;
+const MAX_PAGE_SIZE = 100;
 import { prisma } from '@/lib/prisma';
 import { smsService } from './smsService';
 import { EventService } from './event.service';
@@ -114,7 +116,8 @@ export class SmsCampaignService {
         tenantId,
         createdAt: { gte: today },
         status: { in: ['COMPLETED', 'PROCESSING'] }
-      }
+      },
+        take: DEFAULT_PAGE_SIZE
     });
 
     const sentToday = campaignsToday.reduce((acc, c) => acc + c.sentCount, 0);
@@ -169,8 +172,9 @@ export class SmsCampaignService {
             take: 1,
             select: { date: true }
           }
-        }
-      });
+        },
+          take: DEFAULT_PAGE_SIZE
+    });
 
       // Enforce rate limit per campaign explicitly as safety catch
       if (patients.length > 1000) {
@@ -239,7 +243,8 @@ export class SmsCampaignService {
   async getCampaigns(tenantId: string) {
     return this.prismaClient.smsCampaign.findMany({
       where: { tenantId },
-      orderBy: { createdAt: 'desc' }
+      orderBy: { createdAt: 'desc' },
+        take: DEFAULT_PAGE_SIZE
     });
   }
 }

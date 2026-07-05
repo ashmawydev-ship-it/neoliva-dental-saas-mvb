@@ -23,6 +23,7 @@ import {
 import { toast } from "sonner";
 import { createInvoice } from "@/app/actions/billing";
 import { useTranslations } from "next-intl";
+import { Decimal } from "decimal.js-light";
 
 interface InvoiceFormProps {
   isOpen: boolean;
@@ -52,7 +53,7 @@ export function InvoiceForm({ isOpen, onClose, patientId, onRefresh }: InvoiceFo
     setItems(newItems);
   };
 
-  const totalAmount = items.reduce((sum, item) => sum + (Number(item.price) * item.quantity || 0), 0);
+  const totalAmount = items.reduce((sum, item) => sum.plus(new Decimal(item.price || 0).mul(item.quantity)), new Decimal(0)).toNumber();
 
   const handleSubmit = async () => {
     if (items.some(i => !i.description || !i.price)) return toast.error("Please fill all item details");
@@ -68,7 +69,7 @@ export function InvoiceForm({ isOpen, onClose, patientId, onRefresh }: InvoiceFo
         items: items.map(i => ({ 
           description: i.description, 
           quantity: Number(i.quantity),
-          price: Number(i.price) 
+          price: new Decimal(i.price || 0).toNumber() 
         }))
       });
 

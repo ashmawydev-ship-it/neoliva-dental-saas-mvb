@@ -17,18 +17,25 @@ export class FinanceService {
     else if (period === '12m') fromDate = startOfMonth(subMonths(new Date(), 12));
     else fromDate = startOfMonth(subMonths(new Date(), 1)); // Default 30d/1m
 
+    const startOfToday = startOfDay(new Date());
+    const startOfCurrentMonth = startOfMonth(new Date());
+
     // 1. Fetch Data in Parallel
     const [
-      revenueRaw,
-      expensesRaw,
+      revenueToday,
+      revenueMonth,
+      expensesMonth,
+      dailyTrends,
       invoiceSummary,
       activityRaw,
       topServicesRaw,
       doctorRevenueRaw,
       balances
     ] = await Promise.all([
-      this.financeRepository.getRevenueData(tenantId, fromDate),
-      this.financeRepository.getExpenseData(tenantId, fromDate),
+      this.financeRepository.getAggregateRevenue(tenantId, startOfToday),
+      this.financeRepository.getAggregateRevenue(tenantId, startOfCurrentMonth),
+      this.financeRepository.getAggregateExpenses(tenantId, startOfCurrentMonth),
+      this.financeRepository.getDailyTrends(tenantId, fromDate),
       this.financeRepository.getInvoiceSummary(tenantId),
       this.financeRepository.getRecentFinancialActivity(tenantId),
       this.financeRepository.getTopServices(tenantId),
@@ -37,18 +44,6 @@ export class FinanceService {
     ]);
 
     // 2. Process KPIs
-    const revenueToday = revenueRaw
-      .filter(p => p.paidAt && isSameDay(new Date(p.paidAt), new Date()))
-      .reduce((sum, p) => sum + Number(p.amount || 0), 0);
-
-    const revenueMonth = revenueRaw
-      .filter(p => p.paidAt && isSameMonth(new Date(p.paidAt), new Date()))
-      .reduce((sum, p) => sum + Number(p.amount || 0), 0);
-
-    const expensesMonth = expensesRaw
-      .filter(e => e.date && isSameMonth(new Date(e.date), new Date()))
-      .reduce((sum, e) => sum + Number(e.amount || 0), 0);
-
     const netProfit = revenueMonth - expensesMonth;
 
     // From Treasury Balances
@@ -57,20 +52,19 @@ export class FinanceService {
     const payables = balances.find(b => b.name.toLowerCase().includes('payable'))?.balance || 0;
 
     // 3. Trends (Revenue vs Expenses)
-    // We'll group by date
     const trendMap = new Map<string, { date: string, revenue: number, expenses: number }>();
     
-    revenueRaw.forEach(p => {
-      const day = format(new Date(p.paidAt), "MMM dd");
+    dailyTrends.revenue.forEach(r => {
+      const day = format(new Date(r.date), "MMM dd");
       const current = trendMap.get(day) || { date: day, revenue: 0, expenses: 0 };
-      current.revenue += Number(p.amount || 0);
+      current.revenue += (+(r.total || 0));
       trendMap.set(day, current);
     });
 
-    expensesRaw.forEach(e => {
+    dailyTrends.expenses.forEach(e => {
       const day = format(new Date(e.date), "MMM dd");
       const current = trendMap.get(day) || { date: day, revenue: 0, expenses: 0 };
-      current.expenses += Number(e.amount || 0);
+      current.expenses += (+(e.total || 0));
       trendMap.set(day, current);
     });
 
@@ -78,16 +72,16 @@ export class FinanceService {
 
     // 4. Activity Feed
     const recentActivity = [
-      ...activityRaw.invoices.map(i => ({ type: 'INVOICE', title: `Invoice ${i.displayId}`, amount: Number(i.totalAmount), date: i.createdAt, status: i.status, patient: i.patient?.name })),
-      ...activityRaw.payments.map((p: any) => ({ type: 'PAYMENT', title: `Payment Received`, amount: Number(p.amount), date: p.paidAt, method: p.method, patient: p.invoice?.patient?.name })),
-      ...activityRaw.expenses.map(e => ({ type: 'EXPENSE', title: e.title, amount: Number(e.amount), date: e.date, category: e.category }))
+      ...activityRaw.invoices.map(i => ({ type: 'INVOICE', title: `Invoice ${i.displayId}`, amount: (+(i.totalAmount)), date: i.createdAt, status: i.status, patient: i.patient?.name })),
+      ...activityRaw.payments.map((p: any) => ({ type: 'PAYMENT', title: `Payment Received`, amount: (+(p.amount)), date: p.paidAt, method: p.method, patient: p.invoice?.patient?.name })),
+      ...activityRaw.expenses.map(e => ({ type: 'EXPENSE', title: e.title, amount: (+(e.amount)), date: e.date, category: e.category }))
     ].sort((a, b) => new Date(b.date as any).getTime() - new Date(a.date as any).getTime()).slice(0, 15);
 
     // 5. Top Services
     // `total` column doesn't exist in DB; we use unitPrice × count as revenue proxy
     const topServices = topServicesRaw.map(s => ({
       name: s.description,
-      value: Number(s._sum.unitPrice || 0) * s._count.id,
+      value: (+(s._sum.unitPrice || 0)) * s._count.id,
       count: s._count.id
     }));
 
@@ -96,7 +90,7 @@ export class FinanceService {
     const doctorMap = new Map<string, number>();
     doctorRevenueRaw.forEach(r => {
       const name = r.appointment?.doctor?.name || "Unknown";
-      doctorMap.set(name, (doctorMap.get(name) || 0) + Number(r.totalAmount || 0));
+      doctorMap.set(name, (doctorMap.get(name) || 0) + (+(r.totalAmount || 0)));
     });
     const revenueByDoctor = Array.from(doctorMap.entries()).map(([name, value]) => ({ name, value }));
 

@@ -1,5 +1,8 @@
+const DEFAULT_PAGE_SIZE = 50;
+const MAX_PAGE_SIZE = 100;
 import { prisma } from "@/lib/prisma";
 import { Prisma } from "@/generated/client";
+import { getPagination } from "@/lib/pagination";
 
 export class DoctorCommissionRepository {
   private getClient(tx?: Prisma.TransactionClient) {
@@ -36,9 +39,12 @@ export class DoctorCommissionRepository {
     });
   }
 
-  async findByDoctor(tenantId: string, doctorId: string) {
+  async findByDoctor(tenantId: string, doctorId: string, params?: { skip?: number; take?: number }) {
+    const { take, skip } = getPagination(params);
     return prisma.doctorCommission.findMany({
       where: { tenantId, doctorId },
+      take,
+      skip,
       include: {
         invoice: { select: { id: true, displayId: true, totalAmount: true } },
         doctor: { select: { id: true, name: true } },
@@ -47,9 +53,12 @@ export class DoctorCommissionRepository {
     });
   }
 
-  async findPendingByDoctor(tenantId: string, doctorId: string) {
+  async findPendingByDoctor(tenantId: string, doctorId: string, params?: { skip?: number; take?: number }) {
+    const { take, skip } = getPagination(params);
     return prisma.doctorCommission.findMany({
       where: { tenantId, doctorId, status: "pending" },
+      take,
+      skip,
       include: {
         invoice: { select: { id: true, displayId: true, totalAmount: true } },
       },
@@ -58,26 +67,29 @@ export class DoctorCommissionRepository {
   }
 
   async getSummary(tenantId: string, doctorId: string) {
-    const [earned, paid, pending] = await Promise.all([
-      prisma.doctorCommission.aggregate({
-        where: { tenantId, doctorId },
-        _sum: { commissionAmount: true },
-      }),
-      prisma.doctorCommission.aggregate({
-        where: { tenantId, doctorId, status: "paid" },
-        _sum: { commissionAmount: true },
-      }),
-      prisma.doctorCommission.aggregate({
-        where: { tenantId, doctorId, status: "pending" },
-        _sum: { commissionAmount: true },
-      }),
-    ]);
+    const rawGroupings = await prisma.doctorCommission.groupBy({
+      by: ["status"],
+      where: { tenantId, doctorId },
+      _sum: { commissionAmount: true },
+    });
+
+    const earned = rawGroupings.reduce((sum, g) => sum + (+(g._sum.commissionAmount || 0)), 0);
+    const paid = rawGroupings.find(g => g.status === "paid")?._sum.commissionAmount || 0;
+    const pending = rawGroupings.find(g => g.status === "pending")?._sum.commissionAmount || 0;
 
     return {
-      earned: Number(earned._sum.commissionAmount || 0),
-      paid: Number(paid._sum.commissionAmount || 0),
-      pending: Number(pending._sum.commissionAmount || 0),
+      earned: (+(earned)),
+      paid: (+(paid)),
+      pending: (+(pending)),
     };
+  }
+
+  async getAllSummaries(tenantId: string) {
+    return prisma.doctorCommission.groupBy({
+      by: ["doctorId", "status"],
+      where: { tenantId },
+      _sum: { commissionAmount: true },
+    });
   }
 
   async markAsPaid(
@@ -107,48 +119,40 @@ export class DoctorCommissionRepository {
         id: { in: ids },
         tenantId,
       },
+        take: DEFAULT_PAGE_SIZE
     });
   }
 
   async getAllDoctorsSummary(tenantId: string) {
-    const results = await prisma.doctorCommission.groupBy({
-      by: ["doctorId"],
+    const rawGroupings = await prisma.doctorCommission.groupBy({
+      by: ["doctorId", "status"],
       where: { tenantId },
       _sum: { commissionAmount: true },
     });
 
-    // Also get pending amounts
-    const pendingResults = await prisma.doctorCommission.groupBy({
-      by: ["doctorId"],
-      where: { tenantId, status: "pending" },
-      _sum: { commissionAmount: true },
-    });
+    const doctorIds = Array.from(new Set(rawGroupings.map(g => g.doctorId)));
 
-    const paidResults = await prisma.doctorCommission.groupBy({
-      by: ["doctorId"],
-      where: { tenantId, status: "paid" },
-      _sum: { commissionAmount: true },
-    });
-
-    // Get doctor names
-    const doctorIds = results.map((r) => r.doctorId);
     const doctors = await prisma.staff.findMany({
       where: { id: { in: doctorIds }, tenantId },
       select: { id: true, name: true, commissionRate: true },
+        take: DEFAULT_PAGE_SIZE
     });
 
     return doctors.map((doc) => {
-      const total = results.find((r) => r.doctorId === doc.id);
-      const pending = pendingResults.find((r) => r.doctorId === doc.id);
-      const paid = paidResults.find((r) => r.doctorId === doc.id);
+      // Find grouping for this doctor
+      const allForDoc = rawGroupings.filter(g => g.doctorId === doc.id);
+      
+      const earned = allForDoc.reduce((sum, g) => sum + (+(g._sum.commissionAmount || 0)), 0);
+      const paid = allForDoc.find(g => g.status === "paid")?._sum.commissionAmount || 0;
+      const pending = allForDoc.find(g => g.status === "pending")?._sum.commissionAmount || 0;
 
       return {
         doctorId: doc.id,
         doctorName: doc.name,
-        commissionRate: Number(doc.commissionRate || 0),
-        earned: Number(total?._sum.commissionAmount || 0),
-        paid: Number(paid?._sum.commissionAmount || 0),
-        pending: Number(pending?._sum.commissionAmount || 0),
+        commissionRate: (+(doc.commissionRate || 0)),
+        earned: (+(earned)),
+        paid: (+(paid)),
+        pending: (+(pending)),
       };
     });
   }

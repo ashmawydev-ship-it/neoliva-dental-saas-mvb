@@ -1,3 +1,5 @@
+const DEFAULT_PAGE_SIZE = 50;
+const MAX_PAGE_SIZE = 100;
 import { prisma } from "@/lib/prisma";
 import { AccountType, Prisma } from "@/generated/client";
 
@@ -112,6 +114,7 @@ export class TreasuryRepository {
           createdAt: "desc",
         },
       },
+        take: DEFAULT_PAGE_SIZE
     });
   }
 
@@ -145,7 +148,7 @@ export class TreasuryRepository {
   /**
    * Find many payments with relations
    */
-  async findPayments(tenantId: string, filters?: { invoiceId?: string; patientId?: string }) {
+  async findPayments(tenantId: string, filters?: { invoiceId?: string; patientId?: string; take?: number }) {
     const client = this.getClient();
     
     // Construct where clause
@@ -163,6 +166,7 @@ export class TreasuryRepository {
       orderBy: {
         paidAt: "desc",
       },
+        take: Math.min(filters?.take ?? DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE)
     });
   }
 }

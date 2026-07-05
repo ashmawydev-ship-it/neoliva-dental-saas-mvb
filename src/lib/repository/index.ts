@@ -1,5 +1,0 @@
-export { patientRepository }     from './patient.repository'
-export { appointmentRepository } from './appointment.repository'
-export { billingRepository }     from './billing.repository'
-export { staffRepository }       from './staff.repository'
-export { BaseRepository }        from './base.repository'

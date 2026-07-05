@@ -22,6 +22,7 @@
     "@supabase/ssr": "^0.10.2",
     "@supabase/supabase-js": "^2.105.1",
     "@tanstack/react-table": "^8.21.3",
+    "caveman-installer": "github:JuliusBrussee/caveman",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
@@ -58,6 +59,7 @@
     "eslint": "^9",
     "eslint-config-next": "16.2.1",
     "tailwindcss": "^4",
+    "ts-morph": "^28.0.0",
     "tsx": "^4.21.0",
     "typescript": "^5"
   }

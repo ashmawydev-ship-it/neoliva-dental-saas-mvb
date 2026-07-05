@@ -25,6 +25,7 @@ import { deleteInvoice } from "@/app/actions/billing";
 import { InvoiceForm } from "./InvoiceForm";
 import { PaymentModal } from "./PaymentModal";
 import { useTranslations } from "next-intl";
+import { Decimal } from "decimal.js-light";
 
 interface BillingListProps {
   patientId: string;
@@ -123,8 +124,8 @@ export function BillingList({
                   <tr>
                     <td>${item.description}</td>
                     <td>${item.quantity}</td>
-                    <td class="amount-col">$${Number(item.price).toFixed(2)}</td>
-                    <td class="amount-col">$${(Number(item.price) * item.quantity).toFixed(2)}</td>
+                    <td class="amount-col">$${new Decimal(item.price || 0).toFixed(2)}</td>
+                    <td class="amount-col">$${new Decimal(item.price || 0).mul(item.quantity).toFixed(2)}</td>
                   </tr>
                 `).join('')}
               </tbody>
@@ -133,15 +134,15 @@ export function BillingList({
             <div class="totals">
               <div class="total-row">
                 <span>${t('print.totalAmount')}</span>
-                <span>$${Number(invoice.totalAmount).toFixed(2)}</span>
+                <span>$${new Decimal(invoice.totalAmount || 0).toFixed(2)}</span>
               </div>
               <div class="total-row">
                 <span>Total Paid</span>
-                <span>$${Number(invoice.paidAmount).toFixed(2)}</span>
+                <span>$${new Decimal(invoice.paidAmount || 0).toFixed(2)}</span>
               </div>
               <div class="total-row grand-total">
                 <span>${t('print.balanceDue')}</span>
-                <span>$${(Number(invoice.totalAmount) - Number(invoice.paidAmount)).toFixed(2)}</span>
+                <span>$${new Decimal(invoice.totalAmount || 0).minus(invoice.paidAmount || 0).toFixed(2)}</span>
               </div>
             </div>
 
@@ -223,7 +224,7 @@ export function BillingList({
               <div>
                 <p className="text-gray-500 text-sm font-medium">{t('kpis.totalBilled')}</p>
                 <h3 className="text-3xl font-black mt-1 text-gray-900 dark:text-white">
-                  ${invoiceHistory.reduce((sum, inv) => sum + Number(inv.totalAmount), 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                  ${invoiceHistory.reduce((sum, inv) => sum.plus(inv.totalAmount || 0), new Decimal(0)).toNumber().toLocaleString(undefined, { minimumFractionDigits: 2 })}
                 </h3>
               </div>
               <div className="w-12 h-12 bg-gray-50 dark:bg-slate-800 rounded-2xl flex items-center justify-center">
@@ -243,7 +244,7 @@ export function BillingList({
               <div>
                 <p className="text-gray-500 text-sm font-medium">{t('kpis.totalPaid')}</p>
                 <h3 className="text-3xl font-black mt-1 text-emerald-600">
-                  ${invoiceHistory.reduce((sum, inv) => sum + Number(inv.paidAmount), 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                  ${invoiceHistory.reduce((sum, inv) => sum.plus(inv.paidAmount || 0), new Decimal(0)).toNumber().toLocaleString(undefined, { minimumFractionDigits: 2 })}
                 </h3>
               </div>
               <div className="w-12 h-12 bg-emerald-50 dark:bg-emerald-900/30 rounded-2xl flex items-center justify-center">
@@ -323,15 +324,15 @@ export function BillingList({
                   <div className="flex items-center justify-between md:justify-end gap-6">
                     <div className="text-right">
                       <p className="text-xs text-gray-400 font-bold uppercase tracking-tighter">{t('card.amount')}</p>
-                      <p className="text-lg font-black text-gray-900 dark:text-white">${Number(invoice.totalAmount).toLocaleString()}</p>
+                      <p className="text-lg font-black text-gray-900 dark:text-white">${new Decimal(invoice.totalAmount || 0).toNumber().toLocaleString()}</p>
                     </div>
                     
                     <div className="text-right">
                       <p className="text-xs text-gray-400 font-bold uppercase tracking-tighter">{t('card.balance')}</p>
                       <p className={cn(
                         "text-lg font-black",
-                        (Number(invoice.totalAmount) - Number(invoice.paidAmount)) > 0 ? "text-rose-500" : "text-emerald-500"
-                      )}>${(Number(invoice.totalAmount) - Number(invoice.paidAmount)).toLocaleString()}</p>
+                        new Decimal(invoice.totalAmount || 0).minus(invoice.paidAmount || 0).greaterThan(0) ? "text-rose-500" : "text-emerald-500"
+                      )}>${new Decimal(invoice.totalAmount || 0).minus(invoice.paidAmount || 0).toNumber().toLocaleString()}</p>
                     </div>
 
                     <div className="flex items-center gap-2">
@@ -373,14 +374,14 @@ export function BillingList({
                             )}>
                               <div className="flex flex-col">
                                 <span className="text-gray-700 dark:text-gray-300">{item.description}</span>
-                                <span className="text-[10px] text-gray-400">Qty: {item.quantity} × ${Number(item.price).toFixed(2)}</span>
+                                <span className="text-[10px] text-gray-400">Qty: {item.quantity} × ${new Decimal(item.price || 0).toFixed(2)}</span>
                               </div>
-                              <span className="font-bold text-gray-900 dark:text-white">${(Number(item.price) * item.quantity).toFixed(2)}</span>
+                              <span className="font-bold text-gray-900 dark:text-white">${new Decimal(item.price || 0).mul(item.quantity).toFixed(2)}</span>
                             </div>
                           ))}
                           <div className="bg-gray-50/50 dark:bg-slate-900/50 p-3 flex justify-between items-center text-sm font-black border-t border-gray-100 dark:border-slate-700">
                             <span className="text-gray-500">{t('print.totalAmount')}</span>
-                            <span className="text-indigo-600 dark:text-indigo-400">${Number(invoice.totalAmount).toFixed(2)}</span>
+                            <span className="text-indigo-600 dark:text-indigo-400">${new Decimal(invoice.totalAmount || 0).toFixed(2)}</span>
                           </div>
                         </div>
                       </div>
@@ -407,7 +408,7 @@ export function BillingList({
                                     <CheckCircle2 className="w-4 h-4" />
                                   </div>
                                   <div>
-                                    <p className="font-bold text-gray-900 dark:text-white">${Number(payment.amount).toFixed(2)}</p>
+                                    <p className="font-bold text-gray-900 dark:text-white">${new Decimal(payment.amount || 0).toFixed(2)}</p>
                                     <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">{payment.method} · {new Date(payment.paidAt).toLocaleDateString()}</p>
                                   </div>
                                 </div>
@@ -419,7 +420,7 @@ export function BillingList({
                           )}
                           <div className="bg-gray-50/50 dark:bg-slate-900/50 p-3 flex justify-between items-center text-sm font-black border-t border-gray-100 dark:border-slate-700">
                             <span className="text-gray-500">Total Paid</span>
-                            <span className="text-emerald-600 dark:text-emerald-400">${Number(invoice.paidAmount).toFixed(2)}</span>
+                            <span className="text-emerald-600 dark:text-emerald-400">${new Decimal(invoice.paidAmount || 0).toFixed(2)}</span>
                           </div>
                         </div>
                       </div>

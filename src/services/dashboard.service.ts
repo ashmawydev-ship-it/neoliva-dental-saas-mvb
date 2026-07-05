@@ -21,8 +21,8 @@ export class DashboardService {
     const activityFeedRaw = await this.dashboardRepo.getActivityFeed(tenantId);
     const patientQueueRaw = await this.dashboardRepo.getPatientQueue(tenantId);
 
-    const revenueToday = Number(revenueTodayRaw || 0);
-    const revenueYesterday = Number(revenueYesterdayRaw || 0);
+    const revenueToday = (+(revenueTodayRaw || 0));
+    const revenueYesterday = (+(revenueYesterdayRaw || 0));
     const revenueChange = revenueYesterday > 0 
       ? ((revenueToday - revenueYesterday) / revenueYesterday) * 100 
       : 0;
@@ -32,22 +32,22 @@ export class DashboardService {
     const prevMonth = startOfMonth(subMonths(new Date(), 1));
     const currentMonthRevenue = financialStats.invoices
       .filter(i => i.createdAt >= currentMonth && i.status === "PAID")
-      .reduce((acc, i) => acc + Number(i.totalAmount), 0);
+      .reduce((acc, i) => acc + (+(i.totalAmount)), 0);
     const prevMonthRevenue = financialStats.invoices
       .filter(i => i.createdAt >= prevMonth && i.createdAt < currentMonth && i.status === "PAID")
-      .reduce((acc, i) => acc + Number(i.totalAmount), 0);
+      .reduce((acc, i) => acc + (+(i.totalAmount)), 0);
     const monthlyGrowth = prevMonthRevenue > 0 
       ? ((currentMonthRevenue - prevMonthRevenue) / prevMonthRevenue) * 100 
       : 0;
 
     // Profit Margin & Collection Rate (Unified 12-month window)
     const totalRevenue = revenueVsExpensesRaw.invoices
-      .reduce((acc, i) => acc + Number(i.totalAmount), 0);
+      .reduce((acc, i) => acc + (+(i.totalAmount)), 0);
     const totalExpenses = revenueVsExpensesRaw.expenses
-      .reduce((acc, i) => acc + Number(i.amount), 0);
+      .reduce((acc, i) => acc + (+(i.amount)), 0);
     const profitMargin = totalRevenue > 0 ? ((totalRevenue - totalExpenses) / totalRevenue) * 100 : 0;
 
-    const totalInvoiced = financialStats.invoices.reduce((acc, i) => acc + Number(i.totalAmount), 0);
+    const totalInvoiced = financialStats.invoices.reduce((acc, i) => acc + (+(i.totalAmount)), 0);
     const collectionRate = totalInvoiced > 0 ? (totalRevenue / totalInvoiced) * 100 : 0;
 
     // Insights Engine
@@ -67,7 +67,7 @@ export class DashboardService {
     // Doctor Performance
     const doctorPerformance = doctorPerformanceRaw.map(doc => {
       const docAppointments = doc.appointments;
-      const docRevenue = docAppointments.reduce((acc, a) => acc + (Number(a.invoice?.totalAmount) || 0), 0);
+      const docRevenue = docAppointments.reduce((acc, a) => acc + ((+(a.invoice?.totalAmount)) || 0), 0);
       const completionRate = docAppointments.length > 0 
         ? (docAppointments.filter(a => a.status === 'COMPLETED').length / docAppointments.length) * 100 
         : 0;
@@ -104,10 +104,10 @@ export class DashboardService {
 
     // Financial Flow
     const cashIn = revenueToday;
-    const cashOut = financialStats.expenses.reduce((acc, e) => acc + Number(e.amount), 0);
+    const cashOut = financialStats.expenses.reduce((acc, e) => acc + (+(e.amount)), 0);
     const outstandingInvoices = financialStats.invoices
       .filter(i => i.status === "PENDING")
-      .reduce((acc, i) => acc + Number(i.totalAmount), 0);
+      .reduce((acc, i) => acc + (+(i.totalAmount)), 0);
 
     // Activity Feed
     const activityFeed = [
@@ -169,12 +169,12 @@ export class DashboardService {
 
     raw.invoices.forEach((inv: any) => {
       const monthKey = new Date(inv.createdAt!).toLocaleString('en-US', { month: 'short' });
-      if (monthlyData[monthKey]) monthlyData[monthKey].revenue += Number(inv.totalAmount || 0);
+      if (monthlyData[monthKey]) monthlyData[monthKey].revenue += (+(inv.totalAmount || 0));
     });
 
     raw.expenses.forEach((exp: any) => {
       const monthKey = new Date(exp.date).toLocaleString('en-US', { month: 'short' });
-      if (monthlyData[monthKey]) monthlyData[monthKey].expenses += Number(exp.amount || 0);
+      if (monthlyData[monthKey]) monthlyData[monthKey].expenses += (+(exp.amount || 0));
     });
 
     return Object.entries(monthlyData).map(([month, data]) => ({

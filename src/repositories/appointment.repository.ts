@@ -1,3 +1,5 @@
+const DEFAULT_PAGE_SIZE = 50;
+const MAX_PAGE_SIZE = 100;
 import { prisma } from "@/lib/prisma";
 import type { Prisma } from "@/generated/client";
 
@@ -51,7 +53,8 @@ export class AppointmentRepository {
       orderBy: params?.orderBy || [
         { date: 'asc' },
         { time: 'asc' }
-      ]
+      ],
+        take: Math.min(params?.take ?? DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE)
     });
   }
 

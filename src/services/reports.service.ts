@@ -1,6 +1,7 @@
 import { ReportsRepository } from "@/repositories/reports.repository";
 import { subMonths, format, startOfMonth } from "date-fns";
 import { cache } from "react";
+import { Prisma } from "@/generated/client";
 import { 
   FinancialTrend, 
   AppointmentAnalytics, 
@@ -34,10 +35,10 @@ export class ReportsService {
     MEMO_CACHE.set(key, { data, expiry: Date.now() + CACHE_TTL });
   }
 
-  async getFinancialAnalytics(tenantId: string, monthsCount: number = 12): Promise<FinancialTrend[]> {
+  async getFinancialAnalytics(tenantId: string, monthsCount: number = 12) {
     try {
       const cacheKey = `financial_${tenantId}_${monthsCount}`;
-      const cached = this.getCachedData<FinancialTrend[]>(cacheKey);
+      const cached = this.getCachedData<any>(cacheKey);
       if (cached) return cached;
 
       const fromDate = startOfMonth(subMonths(new Date(), monthsCount - 1));
@@ -51,24 +52,24 @@ export class ReportsService {
         return format(date, 'MMM yyyy');
       });
 
-      const revenueMap: Record<string, number> = {};
-      const expenseMap: Record<string, number> = {};
+      const revenueMap: Record<string, Prisma.Decimal> = {};
+      const expenseMap: Record<string, Prisma.Decimal> = {};
 
       invoices.forEach(inv => {
         const key = format(new Date(inv.createdAt!), 'MMM yyyy');
-        revenueMap[key] = (revenueMap[key] || 0) + Number(inv.totalAmount || 0);
+        revenueMap[key] = (revenueMap[key] || new Prisma.Decimal(0)).plus(new Prisma.Decimal(inv.totalAmount || 0));
       });
 
       expenses.forEach(exp => {
         const key = format(new Date(exp.date), 'MMM yyyy');
-        expenseMap[key] = (expenseMap[key] || 0) + Number(exp.amount || 0);
+        expenseMap[key] = (expenseMap[key] || new Prisma.Decimal(0)).plus(new Prisma.Decimal(exp.amount || 0));
       });
 
       const trendData = months.map(month => ({
         month,
-        revenue: revenueMap[month] || 0,
-        expenses: expenseMap[month] || 0,
-        profit: (revenueMap[month] || 0) - (expenseMap[month] || 0)
+        revenue: (revenueMap[month] || new Prisma.Decimal(0)),
+        expenses: (expenseMap[month] || new Prisma.Decimal(0)),
+        profit: (revenueMap[month] || new Prisma.Decimal(0)).minus(expenseMap[month] || new Prisma.Decimal(0))
       }));
 
       this.setCachedData(cacheKey, trendData);
@@ -170,7 +171,7 @@ export class ReportsService {
     }
   }
 
-  async getKPIs(tenantId: string): Promise<ReportsKPIData> {
+  async getKPIs(tenantId: string) {
     try {
       const [invoices, expenses, patients] = await Promise.all([
         this.repo.getInvoices(tenantId),
@@ -178,18 +179,18 @@ export class ReportsService {
         this.repo.getPatients(tenantId)
       ]);
 
-      const totalRevenue = invoices.reduce((acc, inv) => acc + Number(inv.totalAmount || 0), 0);
-      const totalExpenses = expenses.reduce((acc, exp) => acc + Number(exp.amount || 0), 0);
+      const totalRevenue = invoices.reduce((acc, inv) => acc.plus(new Prisma.Decimal(inv.totalAmount || 0)), new Prisma.Decimal(0));
+      const totalExpenses = expenses.reduce((acc, exp) => acc.plus(new Prisma.Decimal(exp.amount || 0)), new Prisma.Decimal(0));
       
       return {
-        totalRevenue,
-        totalExpenses,
-        netProfit: totalRevenue - totalExpenses,
+        totalRevenue: totalRevenue,
+        totalExpenses: totalExpenses,
+        netProfit: totalRevenue.minus(totalExpenses),
         totalPatients: patients.length
       };
     } catch (error) {
       console.error('[ReportsService.getKPIs]', error);
-      return { totalRevenue: 0, totalExpenses: 0, netProfit: 0, totalPatients: 0 };
+      return { totalRevenue: new Prisma.Decimal(0), totalExpenses: new Prisma.Decimal(0), netProfit: new Prisma.Decimal(0), totalPatients: 0 };
     }
   }
 

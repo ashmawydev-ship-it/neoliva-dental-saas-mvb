@@ -1,3 +1,5 @@
+const DEFAULT_PAGE_SIZE = 50;
+const MAX_PAGE_SIZE = 100;
 import { prisma } from "@/lib/prisma";
 import { Prisma, InvoiceStatus, PaymentMethod } from "@/generated/client";
 
@@ -35,7 +37,8 @@ export class BillingRepository {
           }
         }
       },
-      orderBy: params?.orderBy || { createdAt: 'desc' }
+      orderBy: params?.orderBy || { createdAt: 'desc' },
+        take: Math.min(params?.take ?? DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE)
     });
   }
 
@@ -69,13 +72,13 @@ export class BillingRepository {
       })
     ]);
 
-    const totalRevenue = Number(general._sum.paidAmount || 0);
-    const totalInvoiced = Number(general._sum.totalAmount || 0);
-    const pendingAmount = totalInvoiced - totalRevenue;
+    const totalRevenue = new Prisma.Decimal(general._sum.paidAmount || 0);
+    const totalInvoiced = new Prisma.Decimal(general._sum.totalAmount || 0);
+    const pendingAmount = totalInvoiced.minus(totalRevenue);
 
-    const overdueTotal = Number(overdue._sum.totalAmount || 0);
-    const overduePaid = Number(overdue._sum.paidAmount || 0);
-    const overdueAmount = overdueTotal - overduePaid;
+    const overdueTotal = new Prisma.Decimal(overdue._sum.totalAmount || 0);
+    const overduePaid = new Prisma.Decimal(overdue._sum.paidAmount || 0);
+    const overdueAmount = overdueTotal.minus(overduePaid);
     const overdueCount = overdue._count.id || 0;
 
     return {
@@ -127,13 +130,17 @@ export class BillingRepository {
   /**
    * Creates an invoice with items atomically
    */
-  async create(tenantId: string, data: Omit<Prisma.InvoiceUncheckedCreateInput, 'tenantId' | 'totalAmount'> & { totalAmount?: number | any }, tx?: Prisma.TransactionClient) {
+  async create(tenantId: string, data: Omit<Prisma.InvoiceUncheckedCreateInput, 'tenantId' | 'totalAmount'> & { totalAmount?: any }, tx?: Prisma.TransactionClient) {
     // Calculate total amount if items are provided in the create-input style
-    let totalAmount = 0;
+    let totalAmount = new Prisma.Decimal(0);
     if (data.items && typeof data.items === 'object' && 'create' in data.items) {
       const items = (data.items as any).create;
       if (Array.isArray(items)) {
-        totalAmount = items.reduce((sum: number, item: any) => sum + (Number(item.unitPrice || item.price || 0) * Number(item.quantity || 1)), 0);
+        totalAmount = items.reduce((sum: Prisma.Decimal, item: any) => {
+          const unitPrice = new Prisma.Decimal(item.unitPrice || item.price || 0);
+          const quantity = new Prisma.Decimal(item.quantity || 1);
+          return sum.plus(unitPrice.times(quantity));
+        }, new Prisma.Decimal(0));
       }
     }
 
@@ -141,7 +148,7 @@ export class BillingRepository {
     return await client.invoice.create({
       data: {
         ...data,
-        totalAmount: data.totalAmount || totalAmount,
+        totalAmount: data.totalAmount ? new Prisma.Decimal(data.totalAmount) : totalAmount,
         tenantId
       },
       select: {
@@ -193,12 +200,13 @@ export class BillingRepository {
         throw new Error("This invoice is already fully paid.");
       }
 
-      const totalAmount = Number(invoice.totalAmount);
-      const currentPaid = Number(invoice.paidAmount);
-      const remainingBalance = totalAmount - currentPaid;
+      const totalAmount = new Prisma.Decimal(invoice.totalAmount as Prisma.Decimal);
+      const currentPaid = new Prisma.Decimal(invoice.paidAmount as Prisma.Decimal);
+      const remainingBalance = totalAmount.minus(currentPaid);
+      const paymentAmount = new Prisma.Decimal(data.amount);
 
       // 2. Validate payment amount
-      if (data.amount > (remainingBalance + 0.01)) {
+      if (paymentAmount.greaterThan(remainingBalance)) {
         throw new Error(`Payment amount exceeds the remaining balance ($${remainingBalance.toFixed(2)}).`);
       }
 
@@ -206,7 +214,7 @@ export class BillingRepository {
       const payment = await client.payment.create({
         data: {
           invoiceId,
-          amount: data.amount,
+          amount: paymentAmount,
           method: data.method,
           notes: data.notes,
           paidAt: data.paidAt || new Date(),
@@ -215,11 +223,13 @@ export class BillingRepository {
       });
 
       // 4. Calculate new state
-      const newPaidAmount = currentPaid + Number(data.amount);
+      const newPaidAmount = currentPaid.plus(paymentAmount);
       let newStatus: InvoiceStatus = 'PENDING';
       
-      if (newPaidAmount >= totalAmount - 0.01) {
+      if (newPaidAmount.greaterThanOrEqualTo(totalAmount)) {
         newStatus = 'PAID';
+      } else if (newPaidAmount.greaterThan(0)) {
+        newStatus = 'PARTIAL';
       }
 
       // 5. Update the Invoice record

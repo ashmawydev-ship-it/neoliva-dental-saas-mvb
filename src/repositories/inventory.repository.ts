@@ -1,5 +1,8 @@
+const DEFAULT_PAGE_SIZE = 50;
+const MAX_PAGE_SIZE = 100;
 import { prisma } from "@/lib/prisma";
 import { Prisma, StockType } from "@/generated/client";
+import { getPagination } from "@/lib/pagination";
 
 export class InventoryRepository {
   async createItem(tenantId: string, data: Omit<Prisma.InventoryItemUncheckedCreateInput, 'tenantId'> & { initialStock?: number }) {
@@ -32,6 +35,8 @@ export class InventoryRepository {
   async getItems(tenantId: string, filters?: {
     search?: string;
     category?: string;
+    take?: number;
+    skip?: number;
   }) {
     const where: Prisma.InventoryItemWhereInput = {
       tenantId,
@@ -44,8 +49,12 @@ export class InventoryRepository {
       } : {}),
     };
 
+    const { take, skip } = getPagination(filters);
+
     const items = await prisma.inventoryItem.findMany({
       where,
+      take,
+      skip,
       orderBy: { name: 'asc' },
     });
 
@@ -72,7 +81,7 @@ export class InventoryRepository {
       if (!stockMap[group.itemId]) {
         stockMap[group.itemId] = { IN: 0, OUT: 0, lastCreated: new Date(0) };
       }
-      const qty = Number(group._sum.quantity || 0);
+      const qty = (+(group._sum.quantity || 0));
       const createdAt = group._max.createdAt || new Date(0);
       
       if (group.type === 'IN') {
@@ -174,6 +183,7 @@ export class InventoryRepository {
         tenantId,
       },
       orderBy: { createdAt: 'desc' },
+        take: DEFAULT_PAGE_SIZE
     });
   }
   

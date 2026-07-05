@@ -28,7 +28,13 @@ async function getTenant() {
 export async function getFinancialTrendsAction(): Promise<ActionResponse<FinancialTrend[]>> {
   try {
     const tenantId = await getTenant();
-    const data = await reportsService.getFinancialAnalytics(tenantId);
+    const rawData = await reportsService.getFinancialAnalytics(tenantId);
+    const data: FinancialTrend[] = rawData.map((item: any) => ({
+      ...item,
+      revenue: typeof item.revenue === 'object' && 'toNumber' in item.revenue ? item.revenue.toNumber() : Number(item.revenue),
+      expenses: typeof item.expenses === 'object' && 'toNumber' in item.expenses ? item.expenses.toNumber() : Number(item.expenses),
+      profit: typeof item.profit === 'object' && 'toNumber' in item.profit ? item.profit.toNumber() : Number(item.profit),
+    }));
     return { success: true, error: undefined, data };
   } catch (error: any) {
     return { success: false, data: undefined, error: error.message || "Failed to fetch financial trends" };
@@ -78,7 +84,13 @@ export async function getInventoryInsightsAction(): Promise<ActionResponse<Inven
 export async function getReportsKPIsAction(): Promise<ActionResponse<ReportsKPIData>> {
   try {
     const tenantId = await getTenant();
-    const data = await reportsService.getKPIs(tenantId);
+    const rawData = await reportsService.getKPIs(tenantId);
+    const data: ReportsKPIData = {
+      ...rawData,
+      totalRevenue: typeof rawData.totalRevenue === 'object' && 'toNumber' in rawData.totalRevenue ? rawData.totalRevenue.toNumber() : Number(rawData.totalRevenue),
+      totalExpenses: typeof rawData.totalExpenses === 'object' && 'toNumber' in rawData.totalExpenses ? rawData.totalExpenses.toNumber() : Number(rawData.totalExpenses),
+      netProfit: typeof rawData.netProfit === 'object' && 'toNumber' in rawData.netProfit ? rawData.netProfit.toNumber() : Number(rawData.netProfit),
+    };
     return { success: true, error: undefined, data };
   } catch (error: any) {
     return { success: false, data: undefined, error: error.message || "Failed to fetch reports KPIs" };

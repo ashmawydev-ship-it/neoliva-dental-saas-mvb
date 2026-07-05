@@ -1,3 +1,5 @@
+const DEFAULT_PAGE_SIZE = 50;
+const MAX_PAGE_SIZE = 100;
 
 import { prisma } from '@/lib/prisma';
 import { createHash, createCipheriv, createDecipheriv, randomBytes, randomUUID } from 'crypto';
@@ -172,7 +174,8 @@ export class SessionService {
         lastUsedAt: true,
         createdAt: true,
         userId: true
-      }
+      },
+        take: DEFAULT_PAGE_SIZE
     });
   }
 

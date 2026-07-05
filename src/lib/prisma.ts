@@ -192,7 +192,7 @@ const createTenantPrisma = (rawClient: PrismaClient) => {
               return rlsStorage.run({ inTx: true, tenantId }, () => {
                 return (tx as any)[model][operation](args);
               });
-            }, { maxWait: 10000, timeout: 15000 });
+            }, { maxWait: 10000, timeout: 30000 });
           }
 
           // We are already inside an RLS transaction block, proceed with query execution

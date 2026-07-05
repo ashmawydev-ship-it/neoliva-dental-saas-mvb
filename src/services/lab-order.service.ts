@@ -50,11 +50,11 @@ export class LabOrderService {
     try {
       const result = {
         ...order,
-        cost: order.cost ? Number(order.cost) : 0,
+        cost: order.cost ? (+(order.cost)) : 0,
         patientName: order.patient?.name || "—",
         patientDisplayId: order.patient?.displayId || "",
       };
-      return JSON.parse(JSON.stringify(result));
+      return result;
     } catch (error) {
       console.error("[LabOrderService.serialize] Serialization error:", error);
       return this.getSafeOrderFallback(order?.id);
@@ -84,10 +84,10 @@ export class LabOrderService {
     try {
       this.validateTenant(tenantId);
       const stats = await this.repository.getStats(tenantId);
-      return JSON.parse(JSON.stringify(stats || { pending: 0, sent: 0, received: 0, totalCost: 0 }));
+      return stats || { activeCases: 0, dueThisWeek: 0, received: 0, monthlyCost: 0 };
     } catch (error) {
       console.error("[LabOrderService.getLabOrdersStats] Error:", error);
-      return { pending: 0, sent: 0, received: 0, totalCost: 0 };
+      return { activeCases: 0, dueThisWeek: 0, received: 0, monthlyCost: 0 };
     }
   }
 
@@ -116,7 +116,7 @@ export class LabOrderService {
         labName: this.normalizeString(data.labName, "Unknown Lab"),
         itemType: this.normalizeString(data.itemType, "General"),
         toothNumber: data.toothNumber ? this.normalizeString(data.toothNumber) : null,
-        cost: data.cost ? Number(data.cost) : 0,
+        cost: data.cost ? (+(data.cost)) : 0,
         dueDate: data.dueDate ? new Date(data.dueDate) : null,
         notes: data.notes ? this.normalizeString(data.notes) : null,
         status: 'PENDING',

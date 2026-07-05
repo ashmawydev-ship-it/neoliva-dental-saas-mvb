@@ -1,10 +1,16 @@
+const DEFAULT_PAGE_SIZE = 50;
+const MAX_PAGE_SIZE = 100;
 import { prisma, rawPrisma } from "@/lib/prisma";
 import { Staff, Prisma } from "@/generated/client";
+import { getPagination } from "@/lib/pagination";
 
 export class StaffRepository {
-  async findMembers(tenantId: string): Promise<any[]> {
+  async findMembers(tenantId: string, params?: { skip?: number; take?: number }): Promise<any[]> {
+    const { take, skip } = getPagination(params, 1000);
     return prisma.tenantMembership.findMany({
       where: { tenantId, isActive: true },
+      take,
+      skip,
       include: {
         user: {
           select: {
@@ -32,8 +38,11 @@ export class StaffRepository {
     user: { id: string; email: string };
     staffProfile: { name: string } | null;
   }>> {
+    const { take, skip } = getPagination(undefined, 1000); // Higher default for staff list
     return prisma.tenantMembership.findMany({
       where: { tenantId, isActive: true },
+      take,
+      skip,
       select: {
         userId:  true,
         role:    true,
@@ -47,7 +56,8 @@ export class StaffRepository {
   async findInvitations(tenantId: string): Promise<any[]> {
     return prisma.staffInvitation.findMany({
       where: { tenantId, status: 'PENDING' },
-      orderBy: { createdAt: 'desc' }
+      orderBy: { createdAt: 'desc' },
+        take: DEFAULT_PAGE_SIZE
     });
   }
 
@@ -196,6 +206,7 @@ export class StaffRepository {
         ...(role ? { role } : {}),
       },
       select,
+        take: DEFAULT_PAGE_SIZE
     });
   }
 }

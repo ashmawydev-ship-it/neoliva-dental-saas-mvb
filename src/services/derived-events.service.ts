@@ -1,3 +1,5 @@
+const DEFAULT_PAGE_SIZE = 50;
+const MAX_PAGE_SIZE = 100;
 import { BusinessEvent } from '@/generated/client';
 import { prisma } from '@/lib/prisma';
 import { logger } from '@/lib/logger';
@@ -160,7 +162,8 @@ export class DerivedEventsService {
           status:    'Planned',
         },
         orderBy: { step: 'asc' },
-      });
+          take: DEFAULT_PAGE_SIZE
+    });
 
       if (pendingItems.length === 0) return;
 
@@ -208,7 +211,8 @@ export class DerivedEventsService {
           status:        'Planned',
           scheduledDate: { not: null },
         },
-      });
+          take: DEFAULT_PAGE_SIZE
+    });
 
       for (const item of items) {
         if (!item.scheduledDate) continue;

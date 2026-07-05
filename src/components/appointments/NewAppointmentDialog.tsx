@@ -64,15 +64,15 @@ export function NewAppointmentDialog({ doctors, services }: NewAppointmentDialog
     defaultValues: {
       patientId: "",
       doctorId: "",
-      serviceId: "",
+      serviceId: undefined,
       date: new Date(),
       time: "09:00",
       duration: 30,
       treatment: "",
       notes: "",
       color: "from-blue-500 to-indigo-600",
-      roomId: "",
-      chairId: ""
+      roomId: undefined,
+      chairId: undefined
     }
   });
 

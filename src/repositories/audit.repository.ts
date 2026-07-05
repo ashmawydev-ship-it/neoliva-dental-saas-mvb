@@ -1,3 +1,5 @@
+const DEFAULT_PAGE_SIZE = 50;
+const MAX_PAGE_SIZE = 100;
 import { prisma } from "@/lib/prisma";
 import type { Prisma } from "@/generated/client";
 
@@ -68,7 +70,8 @@ export class AuditRepository {
     const records = await prisma.auditLog.findMany({
       where: { tenantId },
       distinct: ['action'],
-      select: { action: true }
+      select: { action: true },
+        take: DEFAULT_PAGE_SIZE
     });
     return records.map(r => r.action);
   }
@@ -77,7 +80,8 @@ export class AuditRepository {
     const records = await prisma.auditLog.findMany({
       where: { tenantId },
       distinct: ['entityType'],
-      select: { entityType: true }
+      select: { entityType: true },
+        take: DEFAULT_PAGE_SIZE
     });
     return records.map(r => r.entityType);
   }

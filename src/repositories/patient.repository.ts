@@ -1,5 +1,8 @@
+const DEFAULT_PAGE_SIZE = 50;
+const MAX_PAGE_SIZE = 100;
 import { prisma, rawPrisma } from "@/lib/prisma";
 import { Patient, Prisma } from "@/generated/client";
+import { getPagination } from "@/lib/pagination";
 
 export class PatientRepository {
   /**
@@ -12,8 +15,12 @@ export class PatientRepository {
     orderBy?: Prisma.PatientOrderByWithRelationInput;
     select?: Prisma.PatientSelect;
   }): Promise<any[]> {
+    const { take, skip } = getPagination(params);
+
     return prisma.patient.findMany({
       ...params,
+      take,
+      skip,
       where: {
         ...params?.where,
         tenantId,
@@ -124,7 +131,8 @@ export class PatientRepository {
       orderBy: { date: 'desc' },
       include: {
         measurements: true
-      }
+      },
+        take: DEFAULT_PAGE_SIZE
     });
   }
 
@@ -316,13 +324,13 @@ export class PatientRepository {
         status: data.status || 'PENDING',
         items: {
           create: data.items.map((item: any) => {
-            const unitPrice = item.unitPrice || item.price || item.amount || 0;
-            const quantity = item.quantity || 1;
+            const unitPrice = new Prisma.Decimal(item.unitPrice || item.price || item.amount || 0);
+            const quantity = new Prisma.Decimal(item.quantity || 1);
             return {
               description: item.description || item.name || "Service",
               unitPrice,
-              quantity,
-              total: unitPrice * quantity,
+              quantity: item.quantity || 1,
+              total: unitPrice.times(quantity),
               serviceId: item.serviceId || null,
               tenantId
             };
@@ -367,12 +375,13 @@ export class PatientRepository {
         throw new Error("This invoice is already fully paid.");
       }
 
-      const totalAmount = Number(invoice.totalAmount);
-      const currentPaid = Number(invoice.paidAmount);
-      const remainingBalance = totalAmount - currentPaid;
+      const totalAmount = new Prisma.Decimal(invoice.totalAmount as Prisma.Decimal);
+      const currentPaid = new Prisma.Decimal(invoice.paidAmount as Prisma.Decimal);
+      const remainingBalance = totalAmount.minus(currentPaid);
+      const paymentAmount = new Prisma.Decimal(data.amount);
 
       // 2. Validate payment amount
-      if (data.amount > (remainingBalance + 0.001)) {
+      if (paymentAmount.greaterThan(remainingBalance)) {
         throw new Error(`Payment amount exceeds the remaining balance ($${remainingBalance.toFixed(2)}).`);
       }
 
@@ -380,7 +389,7 @@ export class PatientRepository {
       const payment = await tx.payment.create({
         data: {
           invoiceId,
-          amount: data.amount,
+          amount: paymentAmount,
           method: data.method,
           notes: data.notes,
           paidAt: data.date || new Date(),
@@ -389,12 +398,12 @@ export class PatientRepository {
       });
 
       // 4. Calculate new state
-      const newPaidAmount = currentPaid + Number(data.amount);
+      const newPaidAmount = currentPaid.plus(paymentAmount);
       let newStatus: 'PAID' | 'PARTIAL' | 'PENDING' = 'PENDING';
       
-      if (newPaidAmount >= totalAmount - 0.001) {
+      if (newPaidAmount.greaterThanOrEqualTo(totalAmount)) {
         newStatus = 'PAID';
-      } else if (newPaidAmount > 0) {
+      } else if (newPaidAmount.greaterThan(0)) {
         newStatus = 'PARTIAL';
       }
 

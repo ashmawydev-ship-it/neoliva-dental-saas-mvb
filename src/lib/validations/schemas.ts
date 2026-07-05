@@ -62,7 +62,7 @@ export const PatientSchema = z.object({
 export const AppointmentSchema = z.object({
   patientId: z.string().uuid("Invalid patient ID format"),
   doctorId: z.string().uuid("Invalid doctor ID format"),
-  serviceId: z.string().uuid("Invalid service ID format").optional().nullable().or(z.literal("")),
+  serviceId: z.string().uuid("Invalid service ID format").optional().nullable().or(z.literal("")).transform(v => v === "" ? undefined : v),
   date: z.preprocess((val) => {
     if (!val) return null;
     const d = new Date(val as string);
@@ -77,8 +77,8 @@ export const AppointmentSchema = z.object({
   treatment: z.string().trim().min(1, "Treatment name is required").max(200, "Treatment name must not exceed 200 characters"),
   notes: z.string().trim().optional().nullable().or(z.literal("")),
   color: z.string().trim().optional().nullable().or(z.literal("")),
-  roomId: z.string().uuid("Invalid room ID format").optional().nullable().or(z.literal("")),
-  chairId: z.string().uuid("Invalid chair ID format").optional().nullable().or(z.literal("")),
+  roomId: z.string().uuid("Invalid room ID format").optional().nullable().or(z.literal("")).transform(v => v === "" ? undefined : v),
+  chairId: z.string().uuid("Invalid chair ID format").optional().nullable().or(z.literal("")).transform(v => v === "" ? undefined : v),
 });
 
 /**

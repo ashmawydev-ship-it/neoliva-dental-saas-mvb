@@ -1,3 +1,5 @@
+const DEFAULT_PAGE_SIZE = 50;
+const MAX_PAGE_SIZE = 100;
 import "server-only";
 import { InventoryRepository } from "@/repositories/inventory.repository";
 import { prisma } from "@/lib/prisma";
@@ -81,7 +83,7 @@ export class InventoryService {
         }
       });
 
-      return JSON.parse(JSON.stringify(processedItems));
+      return processedItems;
     } catch (error) {
       console.error("[InventoryService.getItems] Error:", error);
       return [];
@@ -99,7 +101,7 @@ export class InventoryService {
         ...data,
         reason: this.normalizeString(data.reason, "Stock In")
       });
-      return JSON.parse(JSON.stringify(result));
+      return result;
     } catch (error) {
       console.error("[InventoryService.addStock] Error:", error);
       return null;
@@ -140,7 +142,7 @@ export class InventoryService {
           }
       }
 
-      return JSON.parse(JSON.stringify(result));
+      return result;
     } catch (error) {
       console.error("[InventoryService.deductStock] Error:", error);
       throw error; 
@@ -184,7 +186,7 @@ export class InventoryService {
     try {
       this.validateTenant(tenantId);
       const history = await this.inventoryRepository.getStockEntries(tenantId, itemId);
-      return JSON.parse(JSON.stringify(history || []));
+      return history || [];
     } catch (error) {
       console.error("[InventoryService.getItemHistory] Error:", error);
       return [];
@@ -228,8 +230,9 @@ export class InventoryService {
       this.validateTenant(tenantId);
       const usages = await prisma.serviceInventoryUsage.findMany({
         where: { serviceId, tenantId },
-        include: { inventory: true }
-      });
+        include: { inventory: true },
+          take: DEFAULT_PAGE_SIZE
+    });
 
       if (!usages || usages.length === 0) return;
 
@@ -256,7 +259,7 @@ export class InventoryService {
 
   private calculateCurrentStock(entries: any[]): number {
     return (entries || []).reduce((acc, entry) => {
-      const qty = Number(entry.quantity) || 0;
+      const qty = (+(entry.quantity)) || 0;
       if (entry.type === 'IN') return acc + qty;
       if (entry.type === 'OUT') return acc - qty;
       return acc;
@@ -266,7 +269,7 @@ export class InventoryService {
   private serializeItem(item: any) {
     if (!item) return this.getSafeItemFallback();
     try {
-      return JSON.parse(JSON.stringify(item));
+      return item;
     } catch (error) {
       console.error("[InventoryService.serializeItem] Error:", error);
       return this.getSafeItemFallback(item.id);

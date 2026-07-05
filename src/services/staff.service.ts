@@ -39,7 +39,7 @@ export class StaffService {
   private serializeStaff(staff: any) {
     if (!staff) return this.getSafeStaffFallback();
     try {
-      return JSON.parse(JSON.stringify(staff));
+      return staff;
     } catch (error) {
       console.error("[StaffService.serialize] Serialization error:", error);
       return this.getSafeStaffFallback(staff?.id);
@@ -70,7 +70,7 @@ export class StaffService {
         isPending: false,
         title: m.staffProfile?.title || 'Staff Member',
         joinedAt: m.joinedAt,
-        commissionRate: m.staffProfile?.commissionRate ? Number(m.staffProfile.commissionRate) : 0,
+        commissionRate: m.staffProfile?.commissionRate ? (+(m.staffProfile.commissionRate)) : 0,
       }));
 
       const pendingStaff = invitations.map(i => ({

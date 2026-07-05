@@ -1,9 +1,13 @@
 import { prisma } from "@/lib/prisma";
-import type { Prisma } from "@/generated/client";
+import { Prisma } from "@/generated/client";
+import { getPagination } from "@/lib/pagination";
 
 export class TenantRepository {
-  async findMany() {
+  async findMany(params?: { skip?: number; take?: number }) {
+    const { take, skip } = getPagination(params, 100);
     return prisma.tenant.findMany({
+      take,
+      skip,
       include: {
         _count: {
           select: { staff: true }

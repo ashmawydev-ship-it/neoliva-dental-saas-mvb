@@ -89,7 +89,7 @@ export class TreatmentPlanService {
             toothList: ph.toothList?.join(',') || null,
             step: i + 1,
             status: ph.status || 'PLANNED',
-            price: parseFloat(ph.price?.toString().replace(/[^0-9.]/g, "")) || 0,
+            price: ph.price ? new Prisma.Decimal(ph.price.toString().replace(/[^0-9.]/g, "")) : new Prisma.Decimal(0),
             scheduledDate: ph.date && ph.date !== 'TBD' ? new Date(ph.date) : null,
             notes: this.normalizeString(ph.notes)
           }))
@@ -147,7 +147,7 @@ export class TreatmentPlanService {
         toothList: phaseData.toothList?.join(',') || null,
         step: step,
         status: phaseData.status || 'PLANNED',
-        price: parseFloat(phaseData.price?.toString().replace(/[^0-9.]/g, "")) || 0,
+        price: phaseData.price ? new Prisma.Decimal(phaseData.price.toString().replace(/[^0-9.]/g, "")) : new Prisma.Decimal(0),
         scheduledDate: phaseData.date && phaseData.date !== 'TBD' ? new Date(phaseData.date) : null,
         notes: this.normalizeString(phaseData.notes)
       });

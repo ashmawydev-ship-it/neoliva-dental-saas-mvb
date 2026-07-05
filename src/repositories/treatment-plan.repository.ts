@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { TreatmentPlan, TreatmentPlanItem, Prisma } from "@/generated/client";
+import { getPagination } from "@/lib/pagination";
 
 export class TreatmentPlanRepository {
   async findMany(tenantId: string, params?: {
@@ -9,8 +10,12 @@ export class TreatmentPlanRepository {
     take?: number;
     skip?: number;
   }): Promise<any[]> {
+    const { take, skip } = getPagination(params);
+
     return prisma.treatmentPlan.findMany({
       ...params,
+      take,
+      skip,
       where: {
         ...params?.where,
         tenantId,

@@ -1,5 +1,6 @@
 import "server-only";
 import { ServiceRepository } from "@/repositories/service.repository";
+import { Prisma } from "@/generated/client";
 import { ServiceCategory } from "@/generated/client";
 
 export class ServiceService {
@@ -53,8 +54,8 @@ export class ServiceService {
       const result = await this.repository.create(tenantId, {
         name: this.normalizeString(data.name),
         category: data.category,
-        price: Number(data.price) || 0,
-        duration: Number(data.duration) || 30,
+        price: new Prisma.Decimal(data.price || 0),
+        duration: data.duration ? Number(data.duration) : 30,
         description: this.normalizeString(data.description),
         popular: !!data.popular
       });
@@ -77,7 +78,7 @@ export class ServiceService {
       const result = await this.repository.update(tenantId, id, {
         name: data.name ? this.normalizeString(data.name) : undefined,
         category: data.category,
-        price: data.price !== undefined ? Number(data.price) : undefined,
+        price: data.price !== undefined ? new Prisma.Decimal(data.price) : undefined,
         duration: data.duration !== undefined ? Number(data.duration) : undefined,
         description: data.description ? this.normalizeString(data.description) : undefined,
         popular: data.popular !== undefined ? !!data.popular : undefined,
@@ -103,10 +104,9 @@ export class ServiceService {
   private serializeService(s: any) {
     if (!s) return this.getSafeServiceFallback();
     try {
-      return JSON.parse(JSON.stringify({
-        ...s,
-        price: s.price ? Number(s.price) : 0,
-      }));
+      const parsed = JSON.parse(JSON.stringify(s));
+      parsed.price = s.price ? new Prisma.Decimal(s.price) : 0;
+      return parsed;
     } catch (error) {
       console.error("[ServiceService.serialize] Serialization error:", error);
       return this.getSafeServiceFallback(s?.id);

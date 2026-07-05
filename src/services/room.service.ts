@@ -1,3 +1,5 @@
+const DEFAULT_PAGE_SIZE = 50;
+const MAX_PAGE_SIZE = 100;
 import { prisma } from '@/lib/prisma';
 import { logger } from '@/lib/logger';
 import { AuditService } from './audit.service';
@@ -230,7 +232,8 @@ export class RoomService {
         doctor: { select: { id: true, name: true } },
         chair: true,
       },
-      orderBy: { time: 'asc' }
+      orderBy: { time: 'asc' },
+        take: DEFAULT_PAGE_SIZE
     });
   }
 
@@ -385,7 +388,8 @@ export class RoomService {
             }
           }
         }
-      }
+      },
+        take: DEFAULT_PAGE_SIZE
     });
   }
 

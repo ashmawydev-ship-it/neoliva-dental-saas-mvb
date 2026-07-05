@@ -1,3 +1,5 @@
+const DEFAULT_PAGE_SIZE = 50;
+const MAX_PAGE_SIZE = 100;
 import { prisma } from "@/lib/prisma";
 import { startOfDay, endOfDay, subDays, subMonths, startOfMonth, startOfWeek, endOfWeek } from "date-fns";
 
@@ -49,6 +51,7 @@ export class DashboardRepository {
           lte: endOfDay(today),
         },
       },
+        take: DEFAULT_PAGE_SIZE
     });
   }
 
@@ -76,6 +79,7 @@ export class DashboardRepository {
           },
         },
       },
+        take: DEFAULT_PAGE_SIZE
     });
   }
 
@@ -92,6 +96,7 @@ export class DashboardRepository {
         totalAmount: true,
         createdAt: true,
       },
+        take: DEFAULT_PAGE_SIZE
     });
 
     const expenses = await prisma.expense.findMany({
@@ -103,6 +108,7 @@ export class DashboardRepository {
         amount: true,
         date: true,
       },
+        take: DEFAULT_PAGE_SIZE
     });
 
     return { invoices, expenses };
@@ -124,6 +130,7 @@ export class DashboardRepository {
         date: true,
         status: true,
       },
+        take: DEFAULT_PAGE_SIZE
     });
   }
 
@@ -171,6 +178,7 @@ export class DashboardRepository {
           },
         },
       },
+        take: DEFAULT_PAGE_SIZE
     });
   }
 
@@ -188,6 +196,7 @@ export class DashboardRepository {
         status: true,
         createdAt: true,
       },
+        take: DEFAULT_PAGE_SIZE
     });
 
     const expenses = await prisma.expense.findMany({
@@ -201,6 +210,7 @@ export class DashboardRepository {
       select: {
         amount: true,
       },
+        take: DEFAULT_PAGE_SIZE
     });
 
     return { invoices, expenses };
@@ -214,7 +224,10 @@ export class DashboardRepository {
         tenantId,
         createdAt: { gte: sevenDaysAgo },
       },
-      include: { patient: true, doctor: true },
+      include: { 
+        patient: { select: { name: true } }, 
+        doctor: { select: { name: true } } 
+      },
       orderBy: { createdAt: "desc" },
       take: 5,
     });
@@ -225,7 +238,9 @@ export class DashboardRepository {
         status: "PAID",
         updatedAt: { gte: sevenDaysAgo },
       },
-      include: { patient: true },
+      include: { 
+        patient: { select: { name: true } } 
+      },
       orderBy: { updatedAt: "desc" },
       take: 5,
     });
@@ -244,12 +259,13 @@ export class DashboardRepository {
         status: { in: ["WAITING", "IN_PROGRESS", "SCHEDULED"] },
       },
       include: {
-        patient: true,
-        doctor: true,
+        patient: { select: { name: true } },
+        doctor: { select: { name: true } },
       },
       orderBy: {
         date: "asc",
       },
+        take: DEFAULT_PAGE_SIZE
     });
   }
 }

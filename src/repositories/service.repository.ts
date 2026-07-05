@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { Service, Prisma } from "@/generated/client";
+import { getPagination } from "@/lib/pagination";
 
 export class ServiceRepository {
   async findMany(tenantId: string, params?: {
@@ -8,8 +9,12 @@ export class ServiceRepository {
     orderBy?: Prisma.ServiceOrderByWithRelationInput;
     select?: Prisma.ServiceSelect;
   }): Promise<any[]> {
+    const { take, skip } = getPagination(params);
+
     return prisma.service.findMany({
       ...params,
+      take,
+      skip,
       where: {
         tenantId,
         isActive: true,

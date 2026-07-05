@@ -191,15 +191,23 @@ export async function getBillingStats() {
   try {
     return await withPermission('billing', 'read', async (session) => {
       const tenantId = session.tenantId;
-      return await billingService.getBillingStats(tenantId);
+      const stats = await billingService.getBillingStats(tenantId);
+      
+      // Serialize Prisma.Decimal to number at the DTO boundary
+      return {
+        totalRevenue: stats.totalRevenue.toNumber(),
+        pendingAmount: stats.pendingAmount.toNumber(),
+        overdueAmount: stats.overdueAmount.toNumber(),
+        overdueCount: stats.overdueCount
+      };
     });
   } catch (error) {
     console.error("[getBillingStats] Action failed:", error);
         return {
           totalRevenue: 0,
-          totalPaid: 0,
-          totalOutstanding: 0,
-          collectionRate: 0
+          pendingAmount: 0,
+          overdueAmount: 0,
+          overdueCount: 0
         };
   }
 }
