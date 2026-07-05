@@ -71,11 +71,11 @@ export class FinanceRepository {
     const revenueQuery = await prisma.$queryRaw<
       { date: Date; total: number }[]
     >`
-      SELECT DATE("paidAt") as date, SUM(amount) as total
-      FROM "Payment"
-      WHERE "tenantId" = ${tenantId} AND "paidAt" >= ${fromDate}
-      GROUP BY DATE("paidAt")
-      ORDER BY DATE("paidAt") ASC
+      SELECT DATE("paid_at") as date, SUM(amount) as total
+      FROM "payments"
+      WHERE "tenant_id" = ${tenantId}::uuid AND "paid_at" >= ${fromDate}
+      GROUP BY DATE("paid_at")
+      ORDER BY DATE("paid_at") ASC
     `;
 
     // 2. Get daily expenses using raw SQL date_trunc
@@ -83,8 +83,8 @@ export class FinanceRepository {
       { date: Date; total: number }[]
     >`
       SELECT DATE("date") as date, SUM(amount) as total
-      FROM "Expense"
-      WHERE "tenantId" = ${tenantId} AND "date" >= ${fromDate} AND "status" = 'PAID'
+      FROM "expenses"
+      WHERE "tenant_id" = ${tenantId}::uuid AND "date" >= ${fromDate} AND "status" = 'PAID'
       GROUP BY DATE("date")
       ORDER BY DATE("date") ASC
     `;

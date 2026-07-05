@@ -8,6 +8,7 @@ import { ServiceRepository } from "@/repositories/service.repository";
 
 import { NotificationService } from "./notification.service";
 import { RoomService } from "./room.service";
+import { prisma } from "@/lib/prisma";
 
 export class AppointmentService {
   constructor(
@@ -161,6 +162,17 @@ export class AppointmentService {
       this.validateTenant(tenantId);
       const doctors = await this.staffRepository.findStaff(tenantId, 'DOCTOR', { id: true, name: true });
       const servicesRaw = await this.serviceRepository.findMany(tenantId, { select: { id: true, name: true, duration: true, price: true } });
+      const rooms = await prisma.room.findMany({
+        where: { tenantId, isActive: true },
+        select: {
+          id: true,
+          name: true,
+          roomChairs: {
+            where: { isActive: true },
+            select: { id: true, name: true }
+          }
+        }
+      });
 
       const services = (servicesRaw || []).map(s => ({
         ...s,
@@ -169,11 +181,12 @@ export class AppointmentService {
 
       return {
         doctors: doctors || [],
-        services: services || []
+        services: services || [],
+        rooms: rooms || []
       };
     } catch (error) {
       console.error("[AppointmentService] Failed to get form data:", error);
-      return { doctors: [], services: [] };
+      return { doctors: [], services: [], rooms: [] };
     }
   }
 

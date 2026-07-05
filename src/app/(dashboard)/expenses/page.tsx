@@ -8,6 +8,7 @@ import { ExpensesTable } from "@/components/expenses/ExpensesTable";
 import { getExpenses, getExpenseStats } from "@/app/actions/expenses";
 import { ExportExpensesCSV } from "@/components/expenses/ExpenseClientActions";
 import { getTranslations } from "next-intl/server";
+import { NewJournalEntryDialog } from "@/components/finance/NewJournalEntryDialog";
 
 export default async function ExpensesPage() {
   const t = await getTranslations('expenses');
@@ -31,6 +32,7 @@ export default async function ExpensesPage() {
         </div>
         <div className="flex items-center gap-3">
           <ExportExpensesCSV data={expenses} />
+          <NewJournalEntryDialog />
           <NewExpenseDialog />
         </div>
       </div>

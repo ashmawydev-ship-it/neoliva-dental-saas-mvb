@@ -79,6 +79,8 @@ export class AppointmentRepository {
         patient: true,
         doctor: true,
         service: true,
+        room: true,
+        chair: true,
         invoice: {
           select: {
             id: true,

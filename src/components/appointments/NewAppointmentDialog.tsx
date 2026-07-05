@@ -11,7 +11,9 @@ import {
   ClipboardList,
   Palette,
   Search,
-  Loader2
+  Loader2,
+  DoorOpen,
+  Armchair
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -45,9 +47,10 @@ type AppointmentFormValues = z.infer<typeof AppointmentSchema>;
 interface NewAppointmentDialogProps {
   doctors: any[];
   services: any[];
+  rooms?: any[];
 }
 
-export function NewAppointmentDialog({ doctors, services }: NewAppointmentDialogProps) {
+export function NewAppointmentDialog({ doctors, services, rooms = [] }: NewAppointmentDialogProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const t = useTranslations("appointments");
@@ -82,6 +85,11 @@ export function NewAppointmentDialog({ doctors, services }: NewAppointmentDialog
   const watchedServiceId = watch("serviceId");
   const watchedDate = watch("date");
   const watchedTime = watch("time");
+  const watchedRoomId = watch("roomId");
+  const watchedChairId = watch("chairId");
+
+  const selectedRoomData = rooms.find(r => r.id === watchedRoomId);
+  const availableChairs = selectedRoomData?.roomChairs || [];
 
   // Client-side Async Search State
   const [patientQuery, setPatientQuery] = useState("");
@@ -303,6 +311,45 @@ export function NewAppointmentDialog({ doctors, services }: NewAppointmentDialog
                   </SelectContent>
                 </Select>
                 {errors.serviceId && <p className="text-xs text-red-500 mt-0.5 font-medium">{errors.serviceId.message}</p>}
+              </div>
+
+              {/* Room Selection */}
+              <div className="space-y-2">
+                <Label className="text-xs md:text-sm font-bold text-gray-700 uppercase tracking-wider flex items-center gap-2 dark:text-slate-300">
+                  <DoorOpen className="w-4 h-4 text-blue-500" /> Room
+                </Label>
+                <Select value={watchedRoomId} onValueChange={(val) => {
+                  setValue("roomId", val ?? undefined, { shouldValidate: true });
+                  setValue("chairId", undefined, { shouldValidate: true });
+                }}>
+                  <SelectTrigger className="h-10 md:h-12 border-gray-200 focus:ring-blue-500/20 rounded-xl md:rounded-2xl bg-gray-50/50 dark:bg-slate-800 dark:border-slate-700 dark:text-white">
+                    <SelectValue placeholder="Select Room" />
+                  </SelectTrigger>
+                  <SelectContent className="rounded-xl md:rounded-2xl border-gray-100 shadow-xl p-1 bg-white dark:bg-slate-800 dark:border-slate-700 dark:text-white">
+                    {rooms.map(r => (
+                      <SelectItem key={r.id} value={r.id} className="rounded-lg md:rounded-xl my-0.5">{r.name}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {errors.roomId && <p className="text-xs text-red-500 mt-0.5 font-medium">{errors.roomId.message}</p>}
+              </div>
+
+              {/* Chair Selection */}
+              <div className="space-y-2">
+                <Label className="text-xs md:text-sm font-bold text-gray-700 uppercase tracking-wider flex items-center gap-2 dark:text-slate-300">
+                  <Armchair className="w-4 h-4 text-blue-500" /> Chair
+                </Label>
+                <Select disabled={!watchedRoomId || availableChairs.length === 0} value={watchedChairId} onValueChange={(val) => setValue("chairId", val ?? undefined, { shouldValidate: true })}>
+                  <SelectTrigger className="h-10 md:h-12 border-gray-200 focus:ring-blue-500/20 rounded-xl md:rounded-2xl bg-gray-50/50 dark:bg-slate-800 dark:border-slate-700 dark:text-white disabled:opacity-50">
+                    <SelectValue placeholder="Select Chair" />
+                  </SelectTrigger>
+                  <SelectContent className="rounded-xl md:rounded-2xl border-gray-100 shadow-xl p-1 bg-white dark:bg-slate-800 dark:border-slate-700 dark:text-white">
+                    {availableChairs.map((c: any) => (
+                      <SelectItem key={c.id} value={c.id} className="rounded-lg md:rounded-xl my-0.5">{c.name}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {errors.chairId && <p className="text-xs text-red-500 mt-0.5 font-medium">{errors.chairId.message}</p>}
               </div>
 
               {/* Treatment Name */}

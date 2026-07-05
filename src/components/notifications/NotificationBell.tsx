@@ -97,6 +97,19 @@ export function NotificationBell({ userId, tenantId }: NotificationBellProps) {
     };
   }, [userId, fetchInitialData]);
 
+  // Handle Alt+T keyboard shortcut to toggle notifications
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.altKey && e.key.toLowerCase() === 't') {
+        e.preventDefault();
+        setIsOpen((prev) => !prev);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
   const handleMarkAllRead = async () => {
     const res = await markAllAsRead();
     if (res.success) {
@@ -114,6 +127,8 @@ export function NotificationBell({ userId, tenantId }: NotificationBellProps) {
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
       <DropdownMenuTrigger asChild>
         <Button 
+          id="notifications-trigger"
+          aria-label="Notifications"
           variant="ghost" 
           size="icon" 
           className="relative hover:bg-slate-100 rounded-full w-10 h-10 transition-all active:scale-95"

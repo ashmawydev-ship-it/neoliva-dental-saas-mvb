@@ -19,6 +19,7 @@ import { generateInvoiceFromAppointment } from "@/app/actions/billing";
 import { updateAppointmentStatus } from "@/app/actions/appointments";
 import { toast } from "sonner";
 import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { format, startOfMonth, endOfMonth, startOfWeek, endOfWeek, eachDayOfInterval, isSameMonth, isSameDay, addMonths, subMonths } from "date-fns";
 
 const statusConfig: Record<string, { icon: any; className: string }> = {
@@ -35,8 +36,9 @@ export function AppointmentsView({ initialAppointments }: { initialAppointments:
   const [filterStatus, setFilterStatus] = useState("All");
   const [view, setView] = useState<"list" | "calendar">("list");
   const [editingApt, setEditingApt] = useState<any>(null);
-  const [generatingInvoiceApt, setGeneratingInvoiceApt] = useState<any>(null);
+  const [generatingInvoiceApt, setGeneratingInvoiceApt] = useState<any | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
+  const router = useRouter();
   const [isUpdating, setIsUpdating] = useState<string | null>(null);
 
   useEffect(() => {
@@ -158,6 +160,9 @@ export function AppointmentsView({ initialAppointments }: { initialAppointments:
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end" className="w-40 rounded-xl shadow-lg border-gray-100 border p-1">
+                          <DropdownMenuItem onClick={() => router.push(`/appointments/${apt.id}`)} className="text-sm rounded-lg font-medium text-blue-700 focus:bg-blue-50 focus:text-blue-800 cursor-pointer">
+                            View Details
+                          </DropdownMenuItem>
                           <DropdownMenuItem onClick={() => setEditingApt(apt)} className="text-sm rounded-lg font-medium text-gray-700 focus:bg-blue-50 focus:text-blue-700 cursor-pointer">
                             Edit Status
                           </DropdownMenuItem>
