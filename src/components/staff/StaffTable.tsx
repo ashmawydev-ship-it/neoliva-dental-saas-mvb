@@ -124,7 +124,11 @@ export function StaffTable({ initialStaff }: { initialStaff: any[] }) {
                           variant="ghost" 
                           size="icon" 
                           className="h-8 w-8 text-muted-foreground hover:text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-500/10 rounded-lg transition-all active:scale-90"
-                          onClick={() => setCommissionMember(member)}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            setCommissionMember(member);
+                          }}
                           title="Commission Rate"
                         >
                           <Percent className="w-4 h-4" />
@@ -134,7 +138,11 @@ export function StaffTable({ initialStaff }: { initialStaff: any[] }) {
                         variant="ghost" 
                         size="icon" 
                         className="h-8 w-8 text-muted-foreground hover:text-blue-600 hover:bg-muted rounded-lg transition-all active:scale-90"
-                        onClick={() => setEditingMember(member)}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          setEditingMember(member);
+                        }}
                       >
                         <UserPen className="w-4 h-4" />
                       </Button>

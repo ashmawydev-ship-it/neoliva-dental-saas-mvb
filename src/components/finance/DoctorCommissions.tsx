@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import React, { useState, useEffect, useTransition } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -233,12 +233,12 @@ function CommissionDetails({ doctorId }: { doctorId: string }) {
   const [details, setDetails] = useState<DoctorFullSummary | null>(null);
   const [loading, setLoading] = useState(true);
 
-  useState(() => {
+  useEffect(() => {
     getDoctorCommissionSummaryAction(doctorId).then((data) => {
       setDetails(data as DoctorFullSummary);
       setLoading(false);
     });
-  });
+  }, [doctorId]);
 
   if (loading) {
     return (
@@ -385,9 +385,8 @@ export function DoctorsCommissionTable({ doctors }: { doctors: DoctorSummary[] }
             </TableHeader>
             <TableBody>
               {doctors.map((doc) => (
-                <>
+                <React.Fragment key={doc.doctorId}>
                   <TableRow
-                    key={doc.doctorId}
                     className="border-slate-100 dark:border-slate-800/50 hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition-colors"
                   >
                     <TableCell>
@@ -473,7 +472,7 @@ export function DoctorsCommissionTable({ doctors }: { doctors: DoctorSummary[] }
                       </TableCell>
                     </TableRow>
                   )}
-                </>
+                </React.Fragment>
               ))}
             </TableBody>
           </Table>

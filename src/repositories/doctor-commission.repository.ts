@@ -130,12 +130,16 @@ export class DoctorCommissionRepository {
       _sum: { commissionAmount: true },
     });
 
-    const doctorIds = Array.from(new Set(rawGroupings.map(g => g.doctorId)));
-
+    // Find ALL doctors who have a commission rate set, regardless of whether they have commissions yet.
+    // This fixes the issue where doctors with 0 earned commissions were hidden.
     const doctors = await prisma.staff.findMany({
-      where: { id: { in: doctorIds }, tenantId },
+      where: { 
+        tenantId, 
+        role: "DOCTOR",
+        commissionRate: { gt: 0 }
+      },
       select: { id: true, name: true, commissionRate: true },
-        take: DEFAULT_PAGE_SIZE
+      take: DEFAULT_PAGE_SIZE
     });
 
     return doctors.map((doc) => {

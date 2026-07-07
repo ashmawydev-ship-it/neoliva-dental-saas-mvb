@@ -27,8 +27,6 @@ export function NewStaffDialog() {
 
   const [formData, setFormData] = useState({
     name: "",
-    role: "",
-    title: "",
     email: "",
     phone: "",
     invite: true
@@ -43,24 +41,25 @@ export function NewStaffDialog() {
     setLoading(true);
     
     try {
-      await createStaff(formData);
+      const result = await createStaff(formData);
+      if (!result.success) {
+        throw new Error(result.error || "Failed to create staff member");
+      }
       toast.success("Staff invitation sent successfully");
       setOpen(false);
       
       // Reset form
       setFormData({
         name: "",
-        role: "",
-        title: "",
         email: "",
         phone: "",
         invite: true
       });
       
       router.refresh();
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
-      toast.error("Failed to create staff member");
+      toast.error(error.message || "Failed to create staff member");
     } finally {
       setLoading(false);
     }
@@ -104,47 +103,6 @@ export function NewStaffDialog() {
               />
             </div>
 
-            {/* Role & Title */}
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label className="text-sm font-semibold text-gray-700 dark:text-gray-300">{t('form.role')}</Label>
-                <div className="relative">
-                  <Shield className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 z-10 pointer-events-none" />
-                  <Select 
-                    required 
-                    value={formData.role} 
-                    onValueChange={(val) => handleChange('role', val)}
-                    disabled={loading}
-                  >
-                    <SelectTrigger className="pl-10 bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-700 focus:ring-blue-500 rounded-xl shadow-sm h-11 w-full">
-                      <SelectValue placeholder={t('form.selectRole')} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="admin">{t.has('roles.admin') ? t('roles.admin') : 'Admin'}</SelectItem>
-                      <SelectItem value="doctor">{t.has('roles.doctor') ? t('roles.doctor') : 'Doctor'}</SelectItem>
-                      <SelectItem value="assistant">{t.has('roles.assistant') ? t('roles.assistant') : 'Assistant'}</SelectItem>
-                      <SelectItem value="receptionist">{t.has('roles.receptionist') ? t('roles.receptionist') : 'Receptionist'}</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="title" className="text-sm font-semibold text-gray-700 dark:text-gray-300">Job Title</Label>
-                <div className="relative">
-                  <Briefcase className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 z-10 pointer-events-none" />
-                  <Input 
-                    id="title"
-                    value={formData.title}
-                    onChange={(e) => handleChange('title', e.target.value)}
-                    placeholder="e.g. Lead Dentist" 
-                    className="pl-10 bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-700 focus-visible:ring-blue-500 rounded-xl shadow-sm h-11" 
-                    required
-                    disabled={loading}
-                  />
-                </div>
-              </div>
-            </div>
 
             {/* Contact Info */}
             <div className="grid grid-cols-2 gap-4">

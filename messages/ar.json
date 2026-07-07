@@ -878,7 +878,9 @@
       "dob": "تاريخ الميلاد",
       "address": "العنوان"
     },
-    "allergies": { "title": "الحساسية والتنبيهات" },
+    "allergies": {
+      "title": "الحساسية والتنبيهات"
+    },
     "quickStats": {
       "title": "إحصائيات سريعة",
       "totalVisits": "إجمالي الزيارات",
@@ -1022,8 +1024,16 @@
       "bloodType": "فصيلة الدم",
       "smokingStatus": "حالة التدخين",
       "alcoholUse": "استخدام الكحول",
-      "smoking": { "Never": "لا يدخن", "Former": "سابقاً", "Current": "حالياً" },
-      "alcohol": { "None": "لا يتناول", "Social": "اجتماعي", "Regular": "منتظم" }
+      "smoking": {
+        "Never": "لا يدخن",
+        "Former": "سابقاً",
+        "Current": "حالياً"
+      },
+      "alcohol": {
+        "None": "لا يتناول",
+        "Social": "اجتماعي",
+        "Regular": "منتظم"
+      }
     },
     "notes": {
       "placeholder": "أضف أي ملاحظات طبية إضافية...",
@@ -1199,6 +1209,14 @@
       "Dental Fluorosis": "التفلور السني",
       "Oral Cancer": "سرطان الفم",
       "Burning Mouth Syndrome": "متلازمة حرقة الفم"
+    },
+    "toasts": {
+      "noteSaved": "تم حفظ الملاحظة بنجاح",
+      "statusSaved": "تم تحديث الحالة بنجاح"
+    },
+    "errors": {
+      "noteSaveFailed": "فشل في حفظ الملاحظة",
+      "statusSaveFailed": "فشل في تحديث الحالة"
     }
   },
   "toothChart": {

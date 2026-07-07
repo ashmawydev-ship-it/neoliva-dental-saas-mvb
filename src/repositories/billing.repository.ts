@@ -130,7 +130,7 @@ export class BillingRepository {
   /**
    * Creates an invoice with items atomically
    */
-  async create(tenantId: string, data: Omit<Prisma.InvoiceUncheckedCreateInput, 'tenantId' | 'totalAmount'> & { totalAmount?: any }, tx?: Prisma.TransactionClient) {
+  async create(tenantId: string, data: Omit<Prisma.InvoiceUncheckedCreateInput, 'tenantId' | 'totalAmount'> & { totalAmount?: any, doctorId?: string }, tx?: Prisma.TransactionClient) {
     // Calculate total amount if items are provided in the create-input style
     let totalAmount = new Prisma.Decimal(0);
     if (data.items && typeof data.items === 'object' && 'create' in data.items) {
@@ -149,7 +149,8 @@ export class BillingRepository {
       data: {
         ...data,
         totalAmount: data.totalAmount ? new Prisma.Decimal(data.totalAmount) : totalAmount,
-        tenantId
+        tenantId,
+        doctorId: data.doctorId || null
       },
       select: {
         id: true,

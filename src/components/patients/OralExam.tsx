@@ -19,6 +19,7 @@ import {
   deleteVisitRecord
 } from "@/app/actions/patients";
 import { useTranslations } from "next-intl";
+import { toast } from "sonner";
 
 // ============ TYPES ============
 type TissueStatus = "healthy" | "needs attention" | "pathological";
@@ -96,9 +97,6 @@ export function OralExam({ patient, onRefresh }: { patient: any; onRefresh?: () 
 
   // ============ SYNC STATE WITH PROPS ============
   useEffect(() => {
-    // If we are currently in a transition, skip this effect to avoid flickering
-    // and overwriting local optimistic updates.
-    if (isPending) return;
     if (!patient) return;
 
     // Soft Tissue findings
@@ -152,7 +150,7 @@ export function OralExam({ patient, onRefresh }: { patient: any; onRefresh?: () 
     })));
 
     setOtherNotes(patient.notes || "");
-  }, [patient, isPending]);
+  }, [patient]);
 
 
   // ============ HANDLERS ============
@@ -163,9 +161,11 @@ export function OralExam({ patient, onRefresh }: { patient: any; onRefresh?: () 
     startTransition(async () => {
       try {
         await updateOralTissue(patient.id, tissue.name, status, tissue.notes || "");
+        toast.success(t('toasts.statusSaved', { defaultValue: 'Status updated successfully' }));
         onRefresh?.();
       } catch (error) {
         console.error("Failed to update tissue status:", error);
+        toast.error(t('errors.statusSaveFailed', { defaultValue: 'Failed to update status' }));
       }
     });
   };
@@ -195,9 +195,11 @@ export function OralExam({ patient, onRefresh }: { patient: any; onRefresh?: () 
     startTransition(async () => {
       try {
         await updateOralTissue(patient.id, tissue.name, tissue.status, notes);
+        toast.success(t('toasts.noteSaved', { defaultValue: 'Note saved successfully' }));
         onRefresh?.();
       } catch (error) {
         console.error("Failed to update tissue notes:", error);
+        toast.error(t('errors.noteSaveFailed', { defaultValue: 'Failed to save note' }));
       }
     });
   };

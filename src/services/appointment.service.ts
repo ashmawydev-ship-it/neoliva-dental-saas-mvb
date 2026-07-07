@@ -286,6 +286,40 @@ export class AppointmentService {
   }
 
   /**
+   * Assign a room and chair to an appointment
+   */
+  async assignRoom(tenantId: string, id: string, roomId: string, chairId?: string) {
+    try {
+      this.validateTenant(tenantId);
+      
+      const apt = await this.appointmentRepository.findUnique(tenantId, id);
+      if (!apt) throw new Error("Appointment not found");
+
+      // Validate overlap
+      await RoomService.validateRoomBooking(tenantId, {
+        roomId,
+        chairId,
+        doctorId: apt.doctorId,
+        date: apt.date,
+        time: apt.time,
+        duration: apt.service?.duration || 30,
+        excludeAppointmentId: id
+      });
+
+      // Update
+      const updated = await this.appointmentRepository.update(tenantId, id, {
+        roomId,
+        chairId: chairId || null
+      });
+
+      return this.serializeAppointment(updated);
+    } catch (error) {
+      console.error(`[AppointmentService] Failed to assign room for appointment ${id}:`, error);
+      throw error;
+    }
+  }
+
+  /**
    * Update appointment status and handle automatic triggers
    */
   async updateStatus(tenantId: string, id: string, status: AppointmentStatus) {

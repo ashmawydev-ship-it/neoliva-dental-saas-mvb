@@ -11,6 +11,7 @@ export interface CampaignFilters {
   maxAge?: number;
   gender?: string;
   hasBalance?: boolean;
+  upcomingAppointmentsDays?: number;
 }
 
 export class SmsCampaignService {
@@ -28,6 +29,7 @@ export class SmsCampaignService {
     const whereClause: any = {
       tenantId,
       phone: { not: null }, // Must have a phone number
+      AND: []
     };
 
     // Age filter
@@ -56,21 +58,21 @@ export class SmsCampaignService {
       whereClause.invoices = {
         some: {
           status: { not: 'PAID' }
-          // Actually, we could check if totalAmount - paidAmount > 0,
-          // but relying on status being not 'PAID' is simpler and aligns with the system's InvoiceStatus.
         }
       };
     }
 
     // Procedure type filter
     if (filters.procedures && filters.procedures.length > 0) {
-      whereClause.appointments = {
-        some: {
-          service: {
-            name: { in: filters.procedures }
+      whereClause.AND.push({
+        appointments: {
+          some: {
+            service: {
+              name: { in: filters.procedures }
+            }
           }
         }
-      };
+      });
     }
 
     // Last visit > N months ago
@@ -78,18 +80,36 @@ export class SmsCampaignService {
       const cutoffDate = new Date();
       cutoffDate.setMonth(cutoffDate.getMonth() - filters.lastVisitMonths);
       
-      // Patient MUST have at least one appointment, and all of them must be BEFORE cutoffDate
-      // Or simply: last appointment was before cutoffDate.
-      // We can use: no appointments AFTER cutoffDate, but MUST have some appointments.
-      if (!whereClause.appointments) {
-         whereClause.appointments = {};
-      }
-      whereClause.appointments.none = {
-        date: { gte: cutoffDate }
-      };
-      whereClause.appointments.some = {
-        date: { lt: cutoffDate }
-      };
+      whereClause.AND.push({
+        appointments: {
+          none: {
+            date: { gte: cutoffDate }
+          },
+          some: {
+            date: { lt: cutoffDate }
+          }
+        }
+      });
+    }
+
+    // Upcoming appointments within N days
+    if (filters.upcomingAppointmentsDays) {
+      const now = new Date();
+      const futureDate = new Date();
+      futureDate.setDate(now.getDate() + filters.upcomingAppointmentsDays);
+      
+      whereClause.AND.push({
+        appointments: {
+          some: {
+            date: { gte: now, lte: futureDate },
+            status: 'SCHEDULED'
+          }
+        }
+      });
+    }
+
+    if (whereClause.AND.length === 0) {
+      delete whereClause.AND;
     }
 
     return whereClause;

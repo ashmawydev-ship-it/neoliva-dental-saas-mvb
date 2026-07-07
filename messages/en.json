@@ -799,7 +799,9 @@
       "dob": "Date of Birth",
       "address": "Address"
     },
-    "allergies": { "title": "Allergies & Alerts" },
+    "allergies": {
+      "title": "Allergies & Alerts"
+    },
     "quickStats": {
       "title": "Quick Stats",
       "totalVisits": "Total Visits",
@@ -943,8 +945,16 @@
       "bloodType": "Blood Type",
       "smokingStatus": "Smoking Status",
       "alcoholUse": "Alcohol Use",
-      "smoking": { "Never": "Never", "Former": "Former", "Current": "Current" },
-      "alcohol": { "None": "None", "Social": "Social", "Regular": "Regular" }
+      "smoking": {
+        "Never": "Never",
+        "Former": "Former",
+        "Current": "Current"
+      },
+      "alcohol": {
+        "None": "None",
+        "Social": "Social",
+        "Regular": "Regular"
+      }
     },
     "notes": {
       "placeholder": "Add any additional medical notes, observations, or important details...",
@@ -1109,6 +1119,14 @@
       "Dental Fluorosis": "Dental Fluorosis",
       "Oral Cancer": "Oral Cancer",
       "Burning Mouth Syndrome": "Burning Mouth Syndrome"
+    },
+    "toasts": {
+      "noteSaved": "Note saved successfully",
+      "statusSaved": "Status updated successfully"
+    },
+    "errors": {
+      "noteSaveFailed": "Failed to save note",
+      "statusSaveFailed": "Failed to update status"
     }
   },
   "toothChart": {

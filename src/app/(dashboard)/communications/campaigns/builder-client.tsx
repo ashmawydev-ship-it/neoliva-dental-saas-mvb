@@ -14,6 +14,7 @@ import { CampaignFilters } from '@/services/smsCampaignService';
 import { Loader2, Users, Send } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
+import { getTemplates } from '@/app/actions/smsTemplates';
 
 export function CampaignBuilder() {
   const router = useRouter();
@@ -28,6 +29,31 @@ export function CampaignBuilder() {
   const [audienceCount, setAudienceCount] = useState<number | null>(null);
   const [isLoadingAudience, setIsLoadingAudience] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const [templates, setTemplates] = useState<any[]>([]);
+  const [selectedTemplateId, setSelectedTemplateId] = useState<string>('');
+
+  useEffect(() => {
+    async function loadTemplates() {
+      const res = await getTemplates();
+      if (res.success && res.templates) {
+        setTemplates(res.templates);
+      }
+    }
+    loadTemplates();
+  }, []);
+
+  const handleTemplateSelect = (templateId: string | null) => {
+    if (!templateId || templateId === 'none') {
+      setSelectedTemplateId('');
+      return;
+    }
+    setSelectedTemplateId(templateId);
+    const template = templates.find(t => t.id === templateId);
+    if (template) {
+      setMessage(template.message);
+    }
+  };
 
   // Debounced Audience calculation
   useEffect(() => {
@@ -149,6 +175,22 @@ export function CampaignBuilder() {
               />
             </div>
 
+            <div className="space-y-2">
+              <Label>Upcoming Appointments</Label>
+              <Select onValueChange={(val: any) => handleFilterChange('upcomingAppointmentsDays', !val || val === 'ANY' ? undefined : parseInt(val))}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Any Time" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="ANY">Any Time</SelectItem>
+                  <SelectItem value="1">Next 24 Hours</SelectItem>
+                  <SelectItem value="3">Next 3 Days</SelectItem>
+                  <SelectItem value="7">Next 7 Days</SelectItem>
+                  <SelectItem value="14">Next 14 Days</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
             <div className="flex items-center space-x-2 pt-2">
               <Switch 
                 id="has-balance" 
@@ -185,6 +227,21 @@ export function CampaignBuilder() {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
               />
+            </div>
+
+            <div className="space-y-2">
+              <Label>Load from Template</Label>
+              <Select value={selectedTemplateId} onValueChange={handleTemplateSelect}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select a template..." />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">None (Start from scratch)</SelectItem>
+                  {templates.map(t => (
+                    <SelectItem key={t.id} value={t.id}>{t.name}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
             <div className="space-y-2">

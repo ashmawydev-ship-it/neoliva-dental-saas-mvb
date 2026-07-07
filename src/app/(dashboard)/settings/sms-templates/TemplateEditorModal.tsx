@@ -145,7 +145,7 @@ export function TemplateEditorModal({
             <div className="flex justify-between items-center gap-4">
               <div className="space-y-2 flex-1">
                 <Label>{t('smsTemplates.templateName')}</Label>
-                <Input {...register('name')} placeholder={t('smsTemplates.templateNamePlaceholder') || 'e.g., Appointment Confirmation'} />
+                <Input {...register('name')} placeholder={t('smsTemplates.templateNamePlaceholder') || 'e.g., Appointment Confirmation'} data-testid="template-name-input" />
                 {errors.name && <p className="text-xs text-destructive">{errors.name.message}</p>}
               </div>
               <div className="space-y-2 flex flex-col items-center pt-6">
@@ -155,7 +155,7 @@ export function TemplateEditorModal({
                     name="isActive"
                     control={control}
                     render={({ field }) => (
-                      <Switch checked={field.value} onCheckedChange={field.onChange} />
+                      <Switch checked={field.value} onCheckedChange={field.onChange} data-testid="template-active-switch" />
                     )}
                   />
                   <span className="text-sm">{t('smsTemplates.active')}</span>
@@ -175,6 +175,7 @@ export function TemplateEditorModal({
                 {...register('message')} 
                 className="h-32" 
                 placeholder="Hi {{patient_name}}, your appointment at {{clinic_name}} is on {{appointment_date}} at {{appointment_time}}."
+                data-testid="template-message-input"
               />
               {errors.message && <p className="text-xs text-destructive">{errors.message.message}</p>}
               

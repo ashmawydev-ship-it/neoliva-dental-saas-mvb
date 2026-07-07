@@ -126,7 +126,9 @@ export function NewLabOrderDialog({ patients }: NewLabOrderDialogProps) {
                 onValueChange={(val) => setFormData({ ...formData, patientId: val ?? "" })}
               >
                 <SelectTrigger className="h-12 border-gray-200 dark:border-slate-700 focus:ring-purple-500/20 rounded-2xl bg-gray-50/50 dark:bg-slate-800/50 dark:text-white">
-                  <SelectValue placeholder={t('form.selectPatientPlaceholder')} />
+                  <SelectValue placeholder={t('form.selectPatientPlaceholder')}>
+                    {formData.patientId ? patients.find(p => p.id === formData.patientId)?.name : null}
+                  </SelectValue>
                 </SelectTrigger>
                 <SelectContent className="rounded-2xl border-gray-100 dark:border-slate-700 shadow-2xl p-1 bg-white dark:bg-slate-900">
                   {patients.map(p => (

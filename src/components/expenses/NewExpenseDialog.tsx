@@ -24,6 +24,7 @@ export function NewExpenseDialog({ customTrigger }: { customTrigger?: React.Reac
   const t = useTranslations('expenses');
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
   const router = useRouter();
 
   const [formData, setFormData] = useState({
@@ -42,6 +43,21 @@ export function NewExpenseDialog({ customTrigger }: { customTrigger?: React.Reac
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Custom Validation
+    const newErrors: Record<string, string> = {};
+    if (!formData.title.trim()) newErrors.title = t('form.titleRequired', { defaultValue: 'Expense title is required' });
+    if (!formData.amount) newErrors.amount = t('form.amountRequired', { defaultValue: 'Amount is required' });
+    if (!formData.date) newErrors.date = t('form.dateRequired', { defaultValue: 'Date is required' });
+    if (!formData.category) newErrors.category = t('form.categoryRequired', { defaultValue: 'Category is required' });
+    if (!formData.status) newErrors.status = t('form.statusRequired', { defaultValue: 'Status is required' });
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
+    setErrors({});
     setLoading(true);
     
     try {
@@ -51,6 +67,7 @@ export function NewExpenseDialog({ customTrigger }: { customTrigger?: React.Reac
       });
       toast.success(t('toast.successCreate'));
       setOpen(false);
+      setErrors({});
       
       // Reset form
       setFormData({
@@ -93,6 +110,7 @@ export function NewExpenseDialog({ customTrigger }: { customTrigger?: React.Reac
         </DialogHeader>
 
         <form 
+          noValidate
           onSubmit={handleSubmit} 
           className="flex-1 flex flex-col overflow-hidden max-h-[80vh]"
         >
@@ -106,10 +124,10 @@ export function NewExpenseDialog({ customTrigger }: { customTrigger?: React.Reac
                 value={formData.title}
                 onChange={(e) => handleChange('title', e.target.value)}
                 placeholder={t('form.titlePlaceholder')} 
-                className="bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-700 focus-visible:ring-red-500 rounded-xl shadow-sm h-11 dark:text-white" 
-                required
+                className={`bg-white dark:bg-slate-800 focus-visible:ring-red-500 rounded-xl shadow-sm h-11 dark:text-white ${errors.title ? 'border-red-500' : 'border-gray-200 dark:border-slate-700'}`} 
                 disabled={loading}
               />
+              {errors.title && <span className="text-red-500 text-xs font-medium">{errors.title}</span>}
             </div>
 
             {/* Description */}
@@ -139,11 +157,11 @@ export function NewExpenseDialog({ customTrigger }: { customTrigger?: React.Reac
                     placeholder="0.00" 
                     min="0"
                     step="0.01"
-                    className="pl-10 bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-700 focus-visible:ring-red-500 rounded-xl shadow-sm h-11 dark:text-white" 
-                    required
+                    className={`pl-10 bg-white dark:bg-slate-800 focus-visible:ring-red-500 rounded-xl shadow-sm h-11 dark:text-white ${errors.amount ? 'border-red-500' : 'border-gray-200 dark:border-slate-700'}`} 
                     disabled={loading}
                   />
                 </div>
+                {errors.amount && <span className="text-red-500 text-xs font-medium">{errors.amount}</span>}
               </div>
               
               <div className="space-y-2">
@@ -155,11 +173,11 @@ export function NewExpenseDialog({ customTrigger }: { customTrigger?: React.Reac
                     type="date"
                     value={formData.date}
                     onChange={(e) => handleChange('date', e.target.value)}
-                    className="pl-10 bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-700 focus-visible:ring-red-500 rounded-xl shadow-sm h-11 dark:text-white" 
-                    required
+                    className={`pl-10 bg-white dark:bg-slate-800 focus-visible:ring-red-500 rounded-xl shadow-sm h-11 dark:text-white ${errors.date ? 'border-red-500' : 'border-gray-200 dark:border-slate-700'}`} 
                     disabled={loading}
                   />
                 </div>
+                {errors.date && <span className="text-red-500 text-xs font-medium">{errors.date}</span>}
               </div>
             </div>
 
@@ -170,12 +188,11 @@ export function NewExpenseDialog({ customTrigger }: { customTrigger?: React.Reac
                 <div className="relative">
                   <Tag className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 dark:text-gray-500 z-10 pointer-events-none" />
                   <Select 
-                    required
                     value={formData.category}
                     onValueChange={(val) => handleChange('category', val)}
                     disabled={loading}
                   >
-                    <SelectTrigger className="pl-10 bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-700 focus:ring-red-500 rounded-xl shadow-sm h-11 w-full dark:text-white">
+                    <SelectTrigger className={`pl-10 bg-white dark:bg-slate-800 focus:ring-red-500 rounded-xl shadow-sm h-11 w-full dark:text-white ${errors.category ? 'border-red-500' : 'border-gray-200 dark:border-slate-700'}`}>
                       <SelectValue placeholder={t('form.selectPlaceholder')} />
                     </SelectTrigger>
                     <SelectContent className="dark:bg-slate-900 dark:border-slate-800">
@@ -188,6 +205,7 @@ export function NewExpenseDialog({ customTrigger }: { customTrigger?: React.Reac
                     </SelectContent>
                   </Select>
                 </div>
+                {errors.category && <span className="text-red-500 text-xs font-medium">{errors.category}</span>}
               </div>
               
               <div className="space-y-2">
@@ -195,12 +213,11 @@ export function NewExpenseDialog({ customTrigger }: { customTrigger?: React.Reac
                 <div className="relative">
                   <CreditCard className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 dark:text-gray-500 z-10 pointer-events-none" />
                   <Select 
-                    required
                     value={formData.status}
                     onValueChange={(val) => handleChange('status', val)}
                     disabled={loading}
                   >
-                    <SelectTrigger className="pl-10 bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-700 focus:ring-red-500 rounded-xl shadow-sm h-11 w-full dark:text-white">
+                    <SelectTrigger className={`pl-10 bg-white dark:bg-slate-800 focus:ring-red-500 rounded-xl shadow-sm h-11 w-full dark:text-white ${errors.status ? 'border-red-500' : 'border-gray-200 dark:border-slate-700'}`}>
                       <SelectValue placeholder={t('form.selectPlaceholder')} />
                     </SelectTrigger>
                     <SelectContent className="dark:bg-slate-900 dark:border-slate-800">
@@ -209,6 +226,7 @@ export function NewExpenseDialog({ customTrigger }: { customTrigger?: React.Reac
                     </SelectContent>
                   </Select>
                 </div>
+                {errors.status && <span className="text-red-500 text-xs font-medium">{errors.status}</span>}
               </div>
             </div>
 

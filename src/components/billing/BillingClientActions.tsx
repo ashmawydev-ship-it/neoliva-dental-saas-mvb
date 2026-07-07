@@ -120,7 +120,7 @@ Paid Amount: $${invoice.paidAmount}
             size="icon" 
             className="h-7 w-7 text-gray-500 hover:text-emerald-600 rounded-lg hover:bg-emerald-50"
             title="Record Payment"
-            data-testid={`record-payment-${invoice.displayId}`}
+            data-testid="record-payment-trigger"
           >
             <CreditCard className="h-3.5 w-3.5" />
           </Button>

@@ -137,7 +137,7 @@ export class StaffService {
       };
       
       if (formattedUpdates.role) {
-        // Ensure role matches StaffRole enum if needed, but repository handles Prisma.StaffUpdateInput
+        formattedUpdates.role = formattedUpdates.role.toUpperCase();
       }
       
       const result = await this.repository.updateByMembershipId(tenantId, membershipId, {
@@ -148,7 +148,7 @@ export class StaffService {
       return this.serializeStaff(result);
     } catch (error) {
       console.error("[StaffService.updateStaffMember] Error:", error);
-      return this.getSafeStaffFallback(membershipId);
+      throw error;
     }
   }
 

@@ -203,7 +203,10 @@ export function PrescriptionList({
         patientId={patientId} 
         open={isFormOpen} 
         onOpenChange={setIsFormOpen}
-        onSuccess={() => {
+        onSuccess={(newPrescription) => {
+          if (newPrescription) {
+            setPrescriptions([newPrescription, ...prescriptions])
+          }
           if (onRefresh) {
             onRefresh()
           } else {

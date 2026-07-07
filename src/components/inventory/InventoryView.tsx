@@ -151,14 +151,14 @@ export default function InventoryView({ initialItems, lowStockCount }: Inventory
             </thead>
             <tbody className="divide-y divide-gray-50">
               {filteredItems.map((item) => (
-                <tr key={item.id} className="hover:bg-gray-50/50 transition-colors">
+                <tr key={item.id} className="hover:bg-gray-50/50 transition-colors" data-testid={`inventory-row-${item.name.replace(/\s+/g, '-').toLowerCase()}`}>
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
                       <div className={`p-2 rounded-lg ${item.status === 'Low' ? 'bg-red-50' : 'bg-blue-50'}`}>
                         <Package className={`w-4 h-4 ${item.status === 'Low' ? 'text-red-600' : 'text-blue-600'}`} />
                       </div>
                       <div>
-                        <p className="font-semibold text-gray-900">{item.name}</p>
+                        <p className="font-semibold text-gray-900" data-testid="inventory-name">{item.name}</p>
                         <p className="text-xs text-gray-500">{item.location || 'Main Storage'}</p>
                       </div>
                     </div>
@@ -170,7 +170,7 @@ export default function InventoryView({ initialItems, lowStockCount }: Inventory
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-4">
-                      <span className="text-sm font-bold text-gray-900">{item.quantity} {item.unit}</span>
+                      <span className="text-sm font-bold text-gray-900" data-testid="inventory-quantity">{item.quantity} {item.unit}</span>
                       <div className="flex gap-1">
                         <button 
                           onClick={() => handleAdjustStock(item.id, -1)}
@@ -191,6 +191,7 @@ export default function InventoryView({ initialItems, lowStockCount }: Inventory
                   </td>
                   <td className="px-6 py-4">
                     <Badge 
+                      data-testid="inventory-status"
                       className={`
                         ${item.status === 'Low' 
                           ? 'bg-red-100 text-red-700 hover:bg-red-200' 

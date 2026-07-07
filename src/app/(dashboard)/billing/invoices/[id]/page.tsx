@@ -7,6 +7,7 @@ import Link from "next/link";
 import { getInvoice } from "@/app/actions/billing";
 import { notFound } from "next/navigation";
 import { PrintButton } from "./PrintButton";
+import { RecordPaymentButton } from "./RecordPaymentButton";
 
 export default async function InvoiceDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = await params;
@@ -44,6 +45,7 @@ export default async function InvoiceDetailPage({ params }: { params: Promise<{ 
             <p className="text-sm text-gray-500 dark:text-gray-400">Issued: {new Date(invoice.createdAt).toLocaleDateString()}</p>
           </div>
           <div className="flex gap-2">
+            <RecordPaymentButton invoice={JSON.parse(JSON.stringify(invoice))} patientId={invoice.patientId} />
             <PrintButton />
           </div>
         </div>

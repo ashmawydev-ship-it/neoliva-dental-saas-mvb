@@ -114,6 +114,7 @@ export class BillingService {
       return await this.createInvoice(tenantId, {
         patientId: apt.patientId,
         appointmentId: apt.id,
+        doctorId: apt.doctorId,
         items
       });
     } catch (error) {
@@ -259,6 +260,7 @@ export class BillingService {
     patientId: string;
     appointmentId?: string;
     planId?: string;
+    doctorId?: string;
     dueDate?: Date;
     items: {
       description: string;
@@ -284,6 +286,7 @@ export class BillingService {
           patientId: data.patientId,
           appointmentId: data.appointmentId,
           planId: data.planId,
+          doctorId: data.doctorId,
           displayId,
           dueDate: data.dueDate,
           totalAmount,
@@ -353,7 +356,7 @@ export class BillingService {
         }, tx);
 
         return paymentResult;
-      });
+      }, { maxWait: 10000, timeout: 25000 });
 
       // Calculate doctor commission (fire-and-forget, should not block payment)
       if (this.doctorCommissionService) {

@@ -14,15 +14,17 @@ import { resolveTenantContextOrRedirect } from "@/lib/auth/resolve-tenant-contex
 
 export const dynamic = 'force-dynamic';
 
-export default async function AppointmentDetailPage({ params }: { params: { id: string } }) {
+export default async function AppointmentDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const t = await getTranslations('appointments');
   const { tenantId } = await resolveTenantContextOrRedirect();
+  const resolvedParams = await params;
+  const id = resolvedParams?.id;
 
   if (!tenantId) {
     return notFound();
   }
 
-  const appointment = await appointmentService.getAppointmentDetails(tenantId, params.id);
+  const appointment = await appointmentService.getAppointmentDetails(tenantId, id);
 
   if (!appointment || appointment.id === "unknown") {
     return notFound();
@@ -167,6 +169,62 @@ export default async function AppointmentDetailPage({ params }: { params: { id: 
                       {appointment.chair ? ` - ${appointment.chair.name}` : ""}
                     </p>
                   </div>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Status Timeline */}
+          <Card className="border-0 shadow-sm overflow-hidden sticky top-6">
+            <CardHeader className="bg-slate-50/50 dark:bg-slate-800/50 border-b border-gray-100 dark:border-slate-700">
+              <CardTitle className="text-lg flex items-center gap-2">
+                <Activity className="h-5 w-5 text-indigo-500" />
+                Status Timeline
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-6">
+              {(appointment.status === "CANCELLED" || appointment.status === "NO_SHOW") ? (
+                <div className="flex flex-col items-center justify-center py-6 text-center">
+                  <div className="w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center mb-3">
+                    <span className="text-red-600 dark:text-red-400 font-bold text-xl">!</span>
+                  </div>
+                  <h3 className="text-lg font-bold text-red-600 dark:text-red-400">
+                    {appointment.status === "NO_SHOW" ? "No Show" : "Cancelled"}
+                  </h3>
+                  <p className="text-sm text-muted-foreground mt-1">This appointment did not proceed.</p>
+                </div>
+              ) : (
+                <div className="space-y-6 relative before:absolute before:inset-0 before:ml-[11px] before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-border before:to-transparent">
+                  {[
+                    { id: "SCHEDULED", label: "Scheduled" },
+                    { id: "ARRIVED", label: "Arrived" },
+                    { id: "IN_PROGRESS", label: "In Progress" },
+                    { id: "COMPLETED", label: "Completed" }
+                  ].map((status, index) => {
+                    const statusOrder = ["SCHEDULED", "ARRIVED", "IN_PROGRESS", "COMPLETED"];
+                    const currentStatusIndex = statusOrder.indexOf(appointment.status);
+                    const isCompleted = currentStatusIndex >= index;
+                    const isCurrent = currentStatusIndex === index;
+                    
+                    return (
+                      <div key={status.id} className="relative flex items-center group">
+                        <div className={`flex items-center justify-center w-6 h-6 rounded-full border-2 bg-card z-10 shrink-0 
+                          ${isCompleted ? 'border-primary bg-primary' : 'border-border text-muted-foreground'}`}
+                        >
+                          {isCompleted && <div className="w-2 h-2 rounded-full bg-white" />}
+                        </div>
+                        
+                        <div className={`ml-4 w-full p-4 rounded-xl border ${
+                          isCurrent ? 'bg-primary/5 border-primary/20 shadow-sm' : 'bg-card border-border/50 shadow-none opacity-60'
+                        }`}>
+                          <h4 className={`text-sm font-bold ${isCurrent ? 'text-primary' : 'text-foreground'}`}>{status.label}</h4>
+                          {isCurrent && (
+                            <p className="text-xs text-muted-foreground mt-0.5">Currently in this stage</p>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               )}
             </CardContent>

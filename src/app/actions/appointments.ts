@@ -27,7 +27,18 @@ export async function getAppointmentsData() {
   }
 }
 
-
+export async function getAppointment(id: string) {
+  try {
+    return await withPermission('appointments', 'read', async (session) => {
+      const tenantId = session.tenantId;
+      await requireRecordAccess('appointment', id);
+      return await appointmentService.getAppointmentDetails(tenantId, id);
+    });
+  } catch (error) {
+    console.error('Error fetching appointment details:', error);
+    return null;
+  }
+}
 
 export async function getAppointmentFormData() {
   try {
@@ -88,6 +99,30 @@ export const updateAppointmentStatus = wrapAction(
             entityType: 'APPOINTMENT',
             entityId: id,
             metadata: { status }
+          });
+      
+          revalidatePath('/appointments');
+          revalidatePath('/dashboard');
+          return updated;
+    });
+  },
+  { module: 'appointments', entityType: 'APPOINTMENT' }
+);
+
+export const assignRoomToAppointment = wrapAction(
+  'APPOINTMENT_ASSIGN_ROOM',
+  async (id: string, roomId: string, chairId?: string) => {
+    return withPermission('appointments', 'update', async (session) => {
+      const tenantId = session.tenantId;
+      await requireRecordAccess('appointment', id);
+          const updated = await appointmentService.assignRoom(tenantId, id, roomId, chairId);
+          
+          await EventService.trackEvent({
+            tenantId,
+            eventType: 'APPOINTMENT_ROOM_ASSIGNED' as any,
+            entityType: 'APPOINTMENT',
+            entityId: id,
+            metadata: { roomId, chairId }
           });
       
           revalidatePath('/appointments');

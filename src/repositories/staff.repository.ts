@@ -94,12 +94,21 @@ export class StaffRepository {
    * Update staff profile using membership ID.
    */
   async updateByMembershipId(tenantId: string, membershipId: string, data: Prisma.StaffUpdateInput): Promise<Staff> {
-    return prisma.staff.update({
-      where: {
-        membershipId,
-        tenantId,
-      },
-      data,
+    return prisma.$transaction(async (tx) => {
+      if (data.role) {
+        await tx.tenantMembership.update({
+          where: { id: membershipId, tenantId },
+          data: { role: data.role as any }
+        });
+      }
+
+      return tx.staff.update({
+        where: {
+          membershipId,
+          tenantId,
+        },
+        data,
+      });
     });
   }
 

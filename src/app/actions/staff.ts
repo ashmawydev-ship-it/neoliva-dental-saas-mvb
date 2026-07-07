@@ -79,7 +79,7 @@ export async function getStaff() {
 
 export const createStaff = wrapAction(
   'STAFF_CREATE',
-  async (formData: { name: string; role: string; title: string; email: string; phone: string; invite: boolean }) => {
+  async (formData: { name: string; email: string; phone: string; invite: boolean }) => {
     console.log('[STAFF_ACTION] createStaff called with:', formData);
     return withPermission('staff', 'create', async (session) => {
       const tenantId = session.tenantId!;
@@ -87,9 +87,7 @@ export const createStaff = wrapAction(
           console.log('[STAFF_ACTION] About to call createStaffInvitation');
           const result = await createStaffInvitation({
             email: formData.email,
-            fullName: formData.name,
-            role: formData.role as any,
-            jobTitle: formData.title
+            fullName: formData.name
           }, tenantId);
           console.log('[STAFF_ACTION] createStaffInvitation result:', result);
       

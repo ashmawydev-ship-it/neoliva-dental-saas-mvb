@@ -10,13 +10,13 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import {
   Search, CalendarDays, Clock, 
   CheckCircle2, XCircle, AlertCircle, MoreHorizontal, LayoutList, Calendar as CalendarIcon,
-  Receipt, DollarSign
+  Receipt, DollarSign, MapPin
 } from "lucide-react";
 import { 
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator 
 } from "@/components/ui/dropdown-menu";
 import { generateInvoiceFromAppointment } from "@/app/actions/billing";
-import { updateAppointmentStatus } from "@/app/actions/appointments";
+import { updateAppointmentStatus, assignRoomToAppointment } from "@/app/actions/appointments";
 import { toast } from "sonner";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
@@ -30,12 +30,15 @@ const statusConfig: Record<string, { icon: any; className: string }> = {
   WAITING: { icon: Clock, className: "bg-amber-50 text-amber-700 border-amber-100 dark:bg-amber-900/30 dark:text-amber-400 dark:border-amber-800" },
 };
 
-export function AppointmentsView({ initialAppointments }: { initialAppointments: any[] }) {
+export function AppointmentsView({ initialAppointments, rooms = [] }: { initialAppointments: any[], rooms?: any[] }) {
   const [appointmentsList, setAppointmentsList] = useState<any[]>(initialAppointments);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState("All");
   const [view, setView] = useState<"list" | "calendar">("list");
   const [editingApt, setEditingApt] = useState<any>(null);
+  const [assigningRoomApt, setAssigningRoomApt] = useState<any | null>(null);
+  const [selectedRoomId, setSelectedRoomId] = useState<string>("");
+  const [selectedChairId, setSelectedChairId] = useState<string>("");
   const [generatingInvoiceApt, setGeneratingInvoiceApt] = useState<any | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const router = useRouter();
@@ -57,6 +60,24 @@ export function AppointmentsView({ initialAppointments }: { initialAppointments:
       }
     } catch (error) {
       toast.error("An error occurred");
+    } finally {
+      setIsUpdating(null);
+    }
+  };
+
+  const handleAssignRoom = async () => {
+    if (!assigningRoomApt || !selectedRoomId) return;
+    setIsUpdating(assigningRoomApt.id);
+    try {
+      const res = await assignRoomToAppointment(assigningRoomApt.id, selectedRoomId, selectedChairId || undefined);
+      if (res) {
+        toast.success(`Room assigned successfully`);
+        setAssigningRoomApt(null);
+        setSelectedRoomId("");
+        setSelectedChairId("");
+      }
+    } catch (error: any) {
+      toast.error(error.message || "Failed to assign room");
     } finally {
       setIsUpdating(null);
     }
@@ -165,6 +186,19 @@ export function AppointmentsView({ initialAppointments }: { initialAppointments:
                           </DropdownMenuItem>
                           <DropdownMenuItem onClick={() => setEditingApt(apt)} className="text-sm rounded-lg font-medium text-gray-700 focus:bg-blue-50 focus:text-blue-700 cursor-pointer">
                             Edit Status
+                          </DropdownMenuItem>
+                          
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem 
+                            onClick={() => {
+                              setAssigningRoomApt(apt);
+                              setSelectedRoomId(apt.roomId || "");
+                              setSelectedChairId(apt.chairId || "");
+                            }} 
+                            className="text-sm rounded-lg font-semibold text-purple-600 focus:bg-purple-50 focus:text-purple-700 cursor-pointer"
+                          >
+                            <MapPin className="w-4 h-4 mr-2" />
+                            Assign Room
                           </DropdownMenuItem>
                           
                           {!apt.hasInvoice && apt.status === "COMPLETED" && (
@@ -321,6 +355,103 @@ export function AppointmentsView({ initialAppointments }: { initialAppointments:
               {isGenerating ? "Generating..." : "Confirm & Generate"}
             </Button>
           </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Assign Room Dialog */}
+      <Dialog 
+        open={!!assigningRoomApt} 
+        onOpenChange={(open) => {
+          if (!open) {
+            setAssigningRoomApt(null);
+            setSelectedRoomId("");
+            setSelectedChairId("");
+          }
+        }}
+      >
+        <DialogContent className="sm:max-w-md p-0 overflow-hidden bg-white border-0 shadow-2xl rounded-2xl dark:bg-slate-900">
+          <DialogHeader className="px-6 py-4 border-b border-gray-100 bg-gray-50 flex flex-row items-center justify-between m-0 dark:bg-slate-800 dark:border-slate-700">
+            <DialogTitle className="text-lg font-bold text-gray-800 dark:text-white flex items-center gap-2">
+              <MapPin className="w-5 h-5 text-purple-600" />
+              Assign Room & Chair
+            </DialogTitle>
+          </DialogHeader>
+
+          <div className="p-6 space-y-6">
+            <div className="p-4 bg-purple-50/50 border border-purple-100 rounded-xl flex items-center gap-4 dark:bg-purple-900/20 dark:border-purple-800">
+              <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-white font-bold bg-gradient-to-br ${assigningRoomApt?.color || 'from-gray-400 to-gray-500'} shadow-md`}>
+                {assigningRoomApt?.avatar}
+              </div>
+              <div>
+                <h3 className="font-bold text-gray-900 dark:text-white">{assigningRoomApt?.patient}</h3>
+                <p className="text-xs font-semibold text-gray-500 tracking-wider uppercase mt-1 dark:text-slate-400">{assigningRoomApt?.treatment}</p>
+                <p className="text-xs text-gray-500 mt-1 dark:text-slate-400">
+                  {assigningRoomApt?.date && format(new Date(assigningRoomApt.date), "MMM d, yyyy")} • {assigningRoomApt?.time} ({assigningRoomApt?.duration || 30} min)
+                </p>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <div className="space-y-1.5">
+                <label className="text-sm font-bold text-gray-700 dark:text-slate-300">Select Room</label>
+                <select
+                  className="w-full h-11 px-3 border border-gray-200 rounded-xl bg-white focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition-all dark:bg-slate-900 dark:border-slate-800 dark:text-white outline-none"
+                  value={selectedRoomId}
+                  onChange={(e) => {
+                    setSelectedRoomId(e.target.value);
+                    setSelectedChairId(""); // Reset chair when room changes
+                  }}
+                  disabled={isUpdating === assigningRoomApt?.id}
+                >
+                  <option value="">-- Choose a Room --</option>
+                  {rooms.map((room) => (
+                    <option key={room.id} value={room.id}>
+                      {room.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {selectedRoomId && (
+                <div className="space-y-1.5 animate-in slide-in-from-top-2 opacity-100 duration-300">
+                  <label className="text-sm font-bold text-gray-700 dark:text-slate-300">Select Chair</label>
+                  <select
+                    className="w-full h-11 px-3 border border-gray-200 rounded-xl bg-white focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition-all dark:bg-slate-900 dark:border-slate-800 dark:text-white outline-none"
+                    value={selectedChairId}
+                    onChange={(e) => setSelectedChairId(e.target.value)}
+                    disabled={isUpdating === assigningRoomApt?.id}
+                  >
+                    <option value="">-- Any Chair / No Specific Chair --</option>
+                    {rooms
+                      .find((r) => r.id === selectedRoomId)
+                      ?.roomChairs?.map((chair: any) => (
+                        <option key={chair.id} value={chair.id}>
+                          {chair.name}
+                        </option>
+                      ))}
+                  </select>
+                </div>
+              )}
+            </div>
+            
+            <DialogFooter className="mt-4 pt-4 border-t border-gray-100 dark:border-slate-800">
+              <Button
+                variant="outline"
+                className="w-full sm:w-auto h-11 rounded-xl font-bold dark:bg-slate-800 dark:text-white dark:hover:bg-slate-700 dark:border-slate-700"
+                onClick={() => setAssigningRoomApt(null)}
+                disabled={!!isUpdating}
+              >
+                Cancel
+              </Button>
+              <Button
+                className="w-full sm:w-auto h-11 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bold shadow-md shadow-purple-500/20"
+                onClick={handleAssignRoom}
+                disabled={!selectedRoomId || isUpdating === assigningRoomApt?.id}
+              >
+                {isUpdating === assigningRoomApt?.id ? "Saving..." : "Save Assignment"}
+              </Button>
+            </DialogFooter>
+          </div>
         </DialogContent>
       </Dialog>
     </div>

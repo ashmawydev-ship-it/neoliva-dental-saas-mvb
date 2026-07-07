@@ -297,7 +297,9 @@ export function NewAppointmentDialog({ doctors, services, rooms = [] }: NewAppoi
                 </Label>
                 <Select value={watchedDoctorId || ""} onValueChange={(val) => setValue("doctorId", val ?? "", { shouldValidate: true })}>
                   <SelectTrigger className="h-10 md:h-12 border-gray-200 focus:ring-blue-500/20 rounded-xl md:rounded-2xl bg-gray-50/50 dark:bg-slate-800 dark:border-slate-700 dark:text-white">
-                    <SelectValue placeholder={t('form.selectDoctor')} />
+                    <SelectValue placeholder={t('form.selectDoctor')}>
+                      {doctors.find(d => d.id === watchedDoctorId) ? `Dr. ${doctors.find(d => d.id === watchedDoctorId)?.name}` : t('form.selectDoctor')}
+                    </SelectValue>
                   </SelectTrigger>
                   <SelectContent className="rounded-xl md:rounded-2xl border-gray-100 shadow-xl p-1 bg-white dark:bg-slate-800 dark:border-slate-700 dark:text-white">
                     {doctors.map(d => (
@@ -315,7 +317,9 @@ export function NewAppointmentDialog({ doctors, services, rooms = [] }: NewAppoi
                 </Label>
                 <Select value={watchedServiceId || ""} onValueChange={(val) => handleServiceChange(val ?? "")}>
                   <SelectTrigger className="h-10 md:h-12 border-gray-200 focus:ring-blue-500/20 rounded-xl md:rounded-2xl bg-gray-50/50 dark:bg-slate-800 dark:border-slate-700 dark:text-white">
-                    <SelectValue placeholder={t('form.selectService')} />
+                    <SelectValue placeholder={t('form.selectService')}>
+                      {services.find(s => s.id === watchedServiceId)?.name || t('form.selectService')}
+                    </SelectValue>
                   </SelectTrigger>
                   <SelectContent className="rounded-xl md:rounded-2xl border-gray-100 shadow-xl p-1 bg-white dark:bg-slate-800 dark:border-slate-700 dark:text-white">
                     {services.map(s => (
@@ -336,7 +340,9 @@ export function NewAppointmentDialog({ doctors, services, rooms = [] }: NewAppoi
                   setValue("chairId", undefined, { shouldValidate: true });
                 }}>
                   <SelectTrigger className="h-10 md:h-12 border-gray-200 focus:ring-blue-500/20 rounded-xl md:rounded-2xl bg-gray-50/50 dark:bg-slate-800 dark:border-slate-700 dark:text-white">
-                    <SelectValue placeholder="Select Room" />
+                    <SelectValue placeholder="Select Room">
+                      {rooms.find(r => r.id === watchedRoomId)?.name || "Select Room"}
+                    </SelectValue>
                   </SelectTrigger>
                   <SelectContent className="rounded-xl md:rounded-2xl border-gray-100 shadow-xl p-1 bg-white dark:bg-slate-800 dark:border-slate-700 dark:text-white">
                     {rooms.map(r => (

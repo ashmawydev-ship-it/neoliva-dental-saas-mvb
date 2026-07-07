@@ -23,7 +23,10 @@ async function AppointmentFormWrapper() {
 }
 
 async function AppointmentsDataWrapper({ t }: { t: any }) {
-  const data = await getAppointmentsData();
+  const [data, formData] = await Promise.all([
+    getAppointmentsData(),
+    getAppointmentFormData()
+  ]);
   const { list, stats: statsData } = data;
 
   const stats = [
@@ -50,7 +53,7 @@ async function AppointmentsDataWrapper({ t }: { t: any }) {
           </Card>
         ))}
       </div>
-      <AppointmentsView initialAppointments={list} />
+      <AppointmentsView initialAppointments={list} rooms={formData.rooms} />
     </>
   );
 }

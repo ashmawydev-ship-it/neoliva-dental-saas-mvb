@@ -193,8 +193,10 @@ export function TreatmentPlans({
     return s + (isNaN(n) ? 0 : n);
   }, 0);
 
-  const addInlinePhase = () => {
-    if (!inlinePhase.name.trim()) return;
+  const addInlinePhase = (e?: React.MouseEvent) => {
+    e?.preventDefault();
+    e?.stopPropagation();
+    if (!inlinePhase.name?.trim()) return;
     setNewPlanPhases(prev => [...prev, { ...inlinePhase }]);
     setInlinePhase({ name: "", date: "", price: 0, notes: "", serviceId: undefined, doctorId: undefined, toothList: [] });
   };
@@ -718,9 +720,10 @@ export function TreatmentPlans({
                     className="h-9"
                   />
                   <Button
+                    type="button"
                     size="sm"
-                    onClick={addInlinePhase}
-                    disabled={!inlinePhase.name.trim()}
+                    onClick={(e) => addInlinePhase(e)}
+                    disabled={!inlinePhase.name?.trim()}
                     className="h-9 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-semibold"
                   >
                     <Plus className="w-3.5 h-3.5 mr-1" /> {t('dialog.add')}

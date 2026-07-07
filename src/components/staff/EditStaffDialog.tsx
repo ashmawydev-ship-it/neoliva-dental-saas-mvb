@@ -52,13 +52,16 @@ export function EditStaffDialog({ member, open, onOpenChange }: EditStaffDialogP
     setLoading(true);
     
     try {
-      await updateStaff(member.id, formData);
+      const result = await updateStaff(member.id, formData);
+      if (!result.success) {
+        throw new Error(result.error || "Failed to update staff member");
+      }
       toast.success("Staff member updated successfully");
       onOpenChange(false);
       router.refresh();
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
-      toast.error("Failed to update staff member");
+      toast.error(error.message || "Failed to update staff member");
     } finally {
       setLoading(false);
     }
@@ -69,13 +72,16 @@ export function EditStaffDialog({ member, open, onOpenChange }: EditStaffDialogP
     
     setDeleting(true);
     try {
-      await deleteStaff(member.id);
+      const result = await deleteStaff(member.id);
+      if (!result.success) {
+        throw new Error(result.error || "Failed to delete staff member");
+      }
       toast.success("Staff member deleted successfully");
       onOpenChange(false);
       router.refresh();
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
-      toast.error("Failed to delete staff member");
+      toast.error(error.message || "Failed to delete staff member");
     } finally {
       setDeleting(false);
     }

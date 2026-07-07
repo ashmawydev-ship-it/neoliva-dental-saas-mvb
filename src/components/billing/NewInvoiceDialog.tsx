@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
+import { useRouter } from "next/navigation";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -22,6 +23,7 @@ type InvoiceFormValues = z.infer<typeof InvoiceFormSchema>;
 export function NewInvoiceDialog({ customTrigger }: { customTrigger?: React.ReactNode }) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
   const t = useTranslations("billing");
   const tCommon = useTranslations("common");
   const [patients, setPatients] = useState<any[]>([]);
@@ -114,6 +116,7 @@ export function NewInvoiceDialog({ customTrigger }: { customTrigger?: React.Reac
         toast.success("Invoice created successfully");
         setOpen(false);
         reset();
+        router.refresh();
       } else {
         toast.error(result.error || "Failed to create invoice");
       }
@@ -158,7 +161,9 @@ export function NewInvoiceDialog({ customTrigger }: { customTrigger?: React.Reac
               </Label>
               <Select value={watchedPatientId} onValueChange={(val) => setValue("patientId", val ?? "", { shouldValidate: true })}>
                 <SelectTrigger id="patient" className="h-11 bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-700 focus:ring-blue-500 rounded-xl shadow-sm text-gray-900 dark:text-white">
-                  <SelectValue placeholder={fetchingData ? "..." : t('form.patient')} />
+                  <SelectValue placeholder={fetchingData ? "..." : t('form.patient')}>
+                    {watchedPatientId ? patients.find(p => p.id === watchedPatientId)?.name : null}
+                  </SelectValue>
                 </SelectTrigger>
                 <SelectContent className="rounded-xl border-gray-100 dark:border-slate-800 shadow-xl bg-white dark:bg-slate-800">
                   {patients.map((patient) => (
@@ -183,7 +188,9 @@ export function NewInvoiceDialog({ customTrigger }: { customTrigger?: React.Reac
               </Label>
               <Select value={watchedServiceId || undefined} onValueChange={(val) => handleServiceChange(val)}>
                 <SelectTrigger id="service" className="h-11 bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-700 focus:ring-blue-500 rounded-xl shadow-sm text-gray-900 dark:text-white">
-                  <SelectValue placeholder={fetchingData ? "..." : t('form.services')} />
+                  <SelectValue placeholder={fetchingData ? "..." : t('form.services')}>
+                    {watchedServiceId ? services.find(s => s.id === watchedServiceId)?.name : null}
+                  </SelectValue>
                 </SelectTrigger>
                 <SelectContent className="rounded-xl border-gray-100 dark:border-slate-800 shadow-xl bg-white dark:bg-slate-800">
                   {services.map((service) => (

@@ -11,6 +11,7 @@ import Link from "next/link";
 import { getInvoices, getBillingStats } from "@/app/actions/billing";
 import { NewInvoiceDialog } from "@/components/billing/NewInvoiceDialog";
 import { ExportCSVButton, InvoiceRowActions } from "@/components/billing/BillingClientActions";
+import { ClickableTableRow } from "@/components/billing/ClickableTableRow";
 import { getTranslations } from "next-intl/server";
 import { cookies } from "next/headers";
 import { formatDate } from "@/lib/format";
@@ -105,7 +106,11 @@ export default async function BillingPage() {
             </TableHeader>
             <TableBody>
               {transactions.map((tx) => (
-                <TableRow key={tx.id} className="table-row-hover group border-border">
+                <ClickableTableRow 
+                  key={tx.id} 
+                  href={`/billing/invoices/${tx.id}`}
+                  className="table-row-hover group border-border"
+                >
                   <TableCell className="text-sm font-medium text-muted-foreground">
                     {tx.displayId}
                   </TableCell>
@@ -140,7 +145,7 @@ export default async function BillingPage() {
                   <TableCell>
                     <InvoiceRowActions invoice={tx} />
                   </TableCell>
-                </TableRow>
+                </ClickableTableRow>
               ))}
               {transactions.length === 0 && (
                 <TableRow>

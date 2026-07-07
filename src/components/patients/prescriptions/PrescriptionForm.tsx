@@ -27,7 +27,7 @@ export function PrescriptionForm({
   patientId: string
   open: boolean
   onOpenChange: (open: boolean) => void
-  onSuccess?: () => void
+  onSuccess?: (newPrescription?: any) => void
 }) {
   const t = useTranslations('prescriptions')
   const [loading, setLoading] = useState(false)
@@ -70,7 +70,7 @@ export function PrescriptionForm({
         onOpenChange(false)
         setItems([{ medicationName: '', dosage: '', frequency: '', duration: '' }])
         setNotes('')
-        onSuccess?.()
+        onSuccess?.(res.data)
       } else {
         toast.error(res.error)
       }
@@ -121,6 +121,7 @@ export function PrescriptionForm({
                       <span className="text-[10px] font-bold text-gray-400 uppercase">{t('form.medication')}</span>
                     </div>
                     <Input
+                      name="medication"
                       placeholder={t('form.phMedication')}
                       value={item.medicationName}
                       onChange={(e) => updateItem(index, 'medicationName', e.target.value)}
@@ -133,6 +134,7 @@ export function PrescriptionForm({
                       <span className="text-[10px] font-bold text-gray-400 uppercase">{t('form.dosage')}</span>
                     </div>
                     <Input
+                      name="dosage"
                       placeholder={t('form.phDosage')}
                       value={item.dosage}
                       onChange={(e) => updateItem(index, 'dosage', e.target.value)}
@@ -145,6 +147,7 @@ export function PrescriptionForm({
                       <span className="text-[10px] font-bold text-gray-400 uppercase">{t('form.frequency')}</span>
                     </div>
                     <Input
+                      name="frequency"
                       placeholder={t('form.phFrequency')}
                       value={item.frequency}
                       onChange={(e) => updateItem(index, 'frequency', e.target.value)}
@@ -157,6 +160,7 @@ export function PrescriptionForm({
                       <span className="text-[10px] font-bold text-gray-400 uppercase">{t('form.duration')}</span>
                     </div>
                     <Input
+                      name="duration"
                       placeholder={t('form.phDuration')}
                       value={item.duration}
                       onChange={(e) => updateItem(index, 'duration', e.target.value)}
