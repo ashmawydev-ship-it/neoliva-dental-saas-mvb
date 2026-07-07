@@ -1,1 +1,0 @@
-{"nodes": [{"id": "temp_periodontogram", "label": "Periodontogram Component", "file_type": "code", "source_file": "temp_periodontogram.txt"}], "edges": [{"source": "temp_periodontogram", "target": "src_actions_patients", "relation": "calls", "confidence": "EXTRACTED", "confidence_score": 1.0, "source_file": "temp_periodontogram.txt"}], "hyperedges": []}

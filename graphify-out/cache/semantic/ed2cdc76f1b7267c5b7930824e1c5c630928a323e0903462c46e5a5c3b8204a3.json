@@ -1,1 +1,0 @@
-{"nodes": [{"id": "ui_migration_guide", "label": "UI Migration Guide", "file_type": "document", "source_file": "UI_MIGRATION.md"}], "edges": [{"source": "ui_migration_guide", "target": "readme", "relation": "conceptually_related_to", "confidence": "INFERRED", "confidence_score": 0.7, "source_file": "UI_MIGRATION.md"}], "hyperedges": []}
