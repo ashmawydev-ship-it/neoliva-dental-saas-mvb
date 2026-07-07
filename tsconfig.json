@@ -31,6 +31,6 @@
     ".next/dev/types/**/*.ts",
     "**/*.mts"
   ],
-  "exclude": ["node_modules", "scripts", "scratch", "src/scratch", "temp_prisma.ts", "check_columns.ts"]
+  "exclude": ["node_modules", "_cleanup_archive", "scripts", "scratch", "src/scratch", "temp_prisma.ts", "check_columns.ts"]
 }
 
