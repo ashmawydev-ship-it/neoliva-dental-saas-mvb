@@ -75,7 +75,21 @@ export async function getTreatmentPlans(patientId: string) {
               cost: totalCost,
               created: plan.createdAt ? new Date(plan.createdAt).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }) : '—',
               notes: plan.notes || '',
-              invoices: plan.invoices || [],
+              invoices: (plan.invoices || []).map((inv: any) => ({
+                ...inv,
+                totalAmount: parseDecimalToNumber(inv.totalAmount),
+                paidAmount: parseDecimalToNumber(inv.paidAmount),
+                items: (inv.items || []).map((item: any) => ({
+                  ...item,
+                  price: parseDecimalToNumber(item.price),
+                  discount: parseDecimalToNumber(item.discount),
+                  total: parseDecimalToNumber(item.total),
+                })),
+                payments: (inv.payments || []).map((p: any) => ({
+                  ...p,
+                  amount: parseDecimalToNumber(p.amount),
+                }))
+              })),
               phases
             }
           });

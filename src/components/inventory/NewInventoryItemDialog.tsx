@@ -81,6 +81,7 @@ export function NewInventoryItemDialog() {
               <Input 
                 id="name"
                 name="name"
+                data-testid="item-name-input"
                 placeholder="e.g. Lidocaine 2%" 
                 className="bg-white border-gray-200 focus-visible:ring-blue-500 rounded-xl shadow-sm h-11" 
                 required
@@ -94,7 +95,7 @@ export function NewInventoryItemDialog() {
                 <div className="relative">
                   <Layers className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 z-10 pointer-events-none" />
                   <Select name="category" required>
-                    <SelectTrigger className="pl-10 bg-white border-gray-200 focus:ring-blue-500 rounded-xl shadow-sm h-11 w-full">
+                    <SelectTrigger data-testid="item-category-select" className="pl-10 bg-white border-gray-200 focus:ring-blue-500 rounded-xl shadow-sm h-11 w-full">
                       <SelectValue placeholder="Select" />
                     </SelectTrigger>
                     <SelectContent>
@@ -113,7 +114,7 @@ export function NewInventoryItemDialog() {
                 <div className="relative">
                   <Scale className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 z-10 pointer-events-none" />
                   <Select name="unit" required>
-                    <SelectTrigger className="pl-10 bg-white border-gray-200 focus:ring-blue-500 rounded-xl shadow-sm h-11 w-full">
+                    <SelectTrigger data-testid="item-unit-select" className="pl-10 bg-white border-gray-200 focus:ring-blue-500 rounded-xl shadow-sm h-11 w-full">
                       <SelectValue placeholder="Select" />
                     </SelectTrigger>
                     <SelectContent>
@@ -138,6 +139,7 @@ export function NewInventoryItemDialog() {
                   <Input 
                     id="quantity"
                     name="quantity"
+                    data-testid="item-quantity-input"
                     type="number"
                     placeholder="0" 
                     min="0"
@@ -154,6 +156,7 @@ export function NewInventoryItemDialog() {
                   <Input 
                     id="minLevel"
                     name="minLevel"
+                    data-testid="item-minlevel-input"
                     type="number"
                     placeholder="0" 
                     min="0"
@@ -180,6 +183,7 @@ export function NewInventoryItemDialog() {
             <Button 
               type="submit" 
               disabled={loading}
+              data-testid="submit-item-button"
               className="px-8 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-md shadow-blue-500/25 h-11 font-semibold"
             >
               {loading ? (

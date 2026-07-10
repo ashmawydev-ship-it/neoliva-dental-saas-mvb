@@ -126,24 +126,30 @@ export function InventoryClient({ initialItems, initialStats }: InventoryClientP
     if (!stockModal.item) return;
 
     setLoading(true);
-    let res;
-    if (stockModal.type === 'IN') {
-      res = await addStockAction({ itemId: stockModal.item.id, quantity, reason });
-    } else {
-      res = await deductStockAction({ itemId: stockModal.item.id, quantity, reason });
-    }
+    try {
+      let res;
+      if (stockModal.type === 'IN') {
+        res = await addStockAction({ itemId: stockModal.item.id, quantity, reason });
+      } else {
+        res = await deductStockAction({ itemId: stockModal.item.id, quantity, reason });
+      }
 
-    if (res.success) {
-      const message = stockModal.type === 'IN'
-        ? t('toast.stockAdded', { quantity, unit: stockModal.item.unit, name: stockModal.item.name })
-        : t('toast.stockDeducted', { quantity, unit: stockModal.item.unit, name: stockModal.item.name });
-      toast.success(message);
-      setStockModal({ open: false, item: null, type: null });
-      fetchInventory();
-    } else {
-      toast.error(res.error || t('toast.error'));
+      if (res?.success) {
+        const message = stockModal.type === 'IN'
+          ? t('toast.stockAdded', { quantity, unit: stockModal.item.unit, name: stockModal.item.name })
+          : t('toast.stockDeducted', { quantity, unit: stockModal.item.unit, name: stockModal.item.name });
+        toast.success(message);
+        setStockModal({ open: false, item: null, type: null });
+        fetchInventory();
+      } else {
+        toast.error(res?.error || t('toast.error'));
+      }
+    } catch (error: any) {
+      console.error(error);
+      toast.error(error.message || t('toast.error'));
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const handleAddItem = async (formData: FormData) => {
@@ -529,7 +535,7 @@ export function InventoryClient({ initialItems, initialStats }: InventoryClientP
           <form action={handleStockAction} className="space-y-4 pt-2">
             <div className="space-y-2">
               <label className="text-sm font-semibold">{t('form.quantity')} ({stockModal.item?.unit})</label>
-              <Input name="quantity" type="number" min="1" required className="h-11" />
+              <Input name="quantity" type="number" min="1" required className="h-11" data-testid="quantity-input" />
             </div>
             <div className="space-y-2">
               <label className="text-sm font-semibold">{t('form.reason')}</label>
@@ -538,6 +544,7 @@ export function InventoryClient({ initialItems, initialStats }: InventoryClientP
                 placeholder={stockModal.type === 'IN' ? t('form.reasonPlaceholderIn') : t('form.reasonPlaceholderOut')} 
                 required 
                 className="h-11" 
+                data-testid="reason-input"
               />
             </div>
             {stockModal.type === 'OUT' && (
@@ -547,10 +554,11 @@ export function InventoryClient({ initialItems, initialStats }: InventoryClientP
               </p>
             )}
             <DialogFooter className="pt-2">
-              <Button type="button" variant="outline" onClick={() => setStockModal({ ...stockModal, open: false })}>{t('form.cancel')}</Button>
+              <Button type="button" variant="outline" data-testid="cancel-stock-button" onClick={() => setStockModal({ ...stockModal, open: false })}>{t('form.cancel')}</Button>
               <Button 
                 type="submit" 
                 disabled={loading}
+                data-testid="submit-stock-button"
                 className={stockModal.type === 'IN' ? "bg-emerald-600 hover:bg-emerald-700" : "bg-rose-600 hover:bg-rose-700"}
               >
                 {loading ? t('form.processing') : stockModal.type === 'IN' ? t('actions.addStock') : t('actions.deductStock')}

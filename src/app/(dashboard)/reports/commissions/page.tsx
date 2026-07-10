@@ -6,10 +6,41 @@ import {
   DoctorsCommissionTable,
 } from "@/components/finance/DoctorCommissions";
 import { Banknote } from "lucide-react";
+import { Suspense } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
 
-export default async function CommissionsPage() {
+function CommissionsSkeleton() {
+  return (
+    <div className="space-y-6">
+      <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+        {[1, 2, 3, 4].map((i) => (
+          <Skeleton key={i} className="h-[120px] rounded-xl dark:bg-slate-800" />
+        ))}
+      </div>
+      <div>
+        <Skeleton className="h-6 w-48 mb-3 dark:bg-slate-800" />
+        <Skeleton className="h-[300px] rounded-xl dark:bg-slate-800" />
+      </div>
+    </div>
+  );
+}
+
+async function CommissionsData() {
   const doctors = await getAllDoctorsCommissionAction();
+  return (
+    <>
+      <CommissionKPIs doctors={doctors} />
+      <div>
+        <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-3">
+          Commission Overview
+        </h2>
+        <DoctorsCommissionTable doctors={doctors} />
+      </div>
+    </>
+  );
+}
 
+export default function CommissionsPage() {
   return (
     <div className="space-y-6 pb-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
       {/* Page Header */}
@@ -25,16 +56,9 @@ export default async function CommissionsPage() {
         </p>
       </div>
 
-      {/* KPI Cards */}
-      <CommissionKPIs doctors={doctors} />
-
-      {/* Doctors Commission Table */}
-      <div>
-        <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-3">
-          Commission Overview
-        </h2>
-        <DoctorsCommissionTable doctors={doctors} />
-      </div>
+      <Suspense fallback={<CommissionsSkeleton />}>
+        <CommissionsData />
+      </Suspense>
     </div>
   );
 }

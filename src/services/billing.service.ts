@@ -32,6 +32,17 @@ export class BillingService {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private getSafeInvoiceFallback(id?: string, settings?: any) {
+    const fallbackSettings = settings ? {
+      ...settings,
+      taxRate: settings.taxRate ? (+(settings.taxRate)) : 0
+    } : {
+      currency: "USD",
+      taxRate: 0,
+      clinicName: "Neoliva Dental",
+      address: "123 Clinic Street, Cairo, Egypt",
+      email: "contact@neoliva.com"
+    };
+
     const fallback = {
       id: id || "unknown",
       displayId: "INV-0000",
@@ -43,13 +54,7 @@ export class BillingService {
       dueDate: new Date(),
       items: [],
       payments: [],
-      settings: settings || {
-        currency: "USD",
-        taxRate: 0,
-        clinicName: "Neoliva Dental",
-        address: "123 Clinic Street, Cairo, Egypt",
-        email: "contact@neoliva.com"
-      }
+      settings: fallbackSettings
     };
     return fallback;
   }
@@ -114,7 +119,7 @@ export class BillingService {
       return await this.createInvoice(tenantId, {
         patientId: apt.patientId,
         appointmentId: apt.id,
-        doctorId: apt.doctorId,
+        doctorId: apt.doctorId || undefined,
         items
       });
     } catch (error) {
@@ -219,18 +224,23 @@ export class BillingService {
     try {
       this.validateTenant(tenantId);
       const stats = await this.billingRepository.getFinancialStats(tenantId);
-      return stats || { 
-        totalRevenue: new Prisma.Decimal(0), 
-        pendingAmount: new Prisma.Decimal(0), 
-        overdueAmount: new Prisma.Decimal(0), 
+      return stats ? {
+        ...stats,
+        totalRevenue: stats.totalRevenue ? (+(stats.totalRevenue)) : 0,
+        pendingAmount: stats.pendingAmount ? (+(stats.pendingAmount)) : 0,
+        overdueAmount: stats.overdueAmount ? (+(stats.overdueAmount)) : 0
+      } : { 
+        totalRevenue: 0, 
+        pendingAmount: 0, 
+        overdueAmount: 0, 
         overdueCount: 0 
       };
     } catch (error) {
       console.error("[BillingService.getStats] Error:", error);
       return { 
-        totalRevenue: new Prisma.Decimal(0), 
-        pendingAmount: new Prisma.Decimal(0), 
-        overdueAmount: new Prisma.Decimal(0), 
+        totalRevenue: 0, 
+        pendingAmount: 0, 
+        overdueAmount: 0, 
         overdueCount: 0 
       };
     }
@@ -317,6 +327,9 @@ export class BillingService {
         }, tx);
 
         return { result: createResult, serialized: ser };
+      }, {
+        maxWait: 10000,
+        timeout: 30000
       });
 
       // Trigger Notification
@@ -355,15 +368,13 @@ export class BillingService {
           invoiceId: invoiceId,
         }, tx);
 
+        // Calculate doctor commission - MUST succeed inside transaction!
+        if (this.doctorCommissionService) {
+          await this.doctorCommissionService.calculateOnPayment(tenantId, invoiceId, data.amount, tx);
+        }
+
         return paymentResult;
       }, { maxWait: 10000, timeout: 25000 });
-
-      // Calculate doctor commission (fire-and-forget, should not block payment)
-      if (this.doctorCommissionService) {
-        await this.doctorCommissionService
-          .calculateOnPayment(tenantId, invoiceId, data.amount)
-          .catch((err) => console.error("[BillingService] Commission calculation failed:", err));
-      }
 
       return result;
     } catch (error) {
@@ -398,6 +409,9 @@ export class BillingService {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         items: (inv.items || []).map((item: any) => ({
           ...item,
+          unitPrice: item.unitPrice ? (+(item.unitPrice)) : undefined,
+          discount: item.discount ? (+(item.discount)) : undefined,
+          total: item.total ? (+(item.total)) : undefined,
           price: (+(item.unitPrice || item.price || 0))
         })),
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -405,7 +419,10 @@ export class BillingService {
           ...p,
           amount: (+(p.amount || 0))
         })),
-        settings
+        settings: settings ? {
+          ...settings,
+          taxRate: settings.taxRate ? (+(settings.taxRate)) : 0
+        } : null
       };
 
       return result;

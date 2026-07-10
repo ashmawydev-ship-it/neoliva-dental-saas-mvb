@@ -20,7 +20,7 @@ import { z } from "zod";
 
 type InvoiceFormValues = z.infer<typeof InvoiceFormSchema>;
 
-export function NewInvoiceDialog({ customTrigger }: { customTrigger?: React.ReactNode }) {
+export function NewInvoiceDialog({ customTrigger, doctors = [] }: { customTrigger?: React.ReactNode, doctors?: any[] }) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
@@ -29,6 +29,8 @@ export function NewInvoiceDialog({ customTrigger }: { customTrigger?: React.Reac
   const [patients, setPatients] = useState<any[]>([]);
   const [services, setServices] = useState<any[]>([]);
   const [fetchingData, setFetchingData] = useState(false);
+  
+  console.log("Available Doctors:", doctors);
 
   const {
     register,
@@ -41,6 +43,7 @@ export function NewInvoiceDialog({ customTrigger }: { customTrigger?: React.Reac
     resolver: zodResolver(InvoiceFormSchema) as any,
     defaultValues: {
       patientId: "",
+      doctorId: "",
       serviceId: "",
       amount: 0,
       dueDate: "",
@@ -49,6 +52,7 @@ export function NewInvoiceDialog({ customTrigger }: { customTrigger?: React.Reac
   });
 
   const watchedPatientId = watch("patientId");
+  const watchedDoctorId = watch("doctorId");
   const watchedServiceId = watch("serviceId");
   const watchedAmount = watch("amount");
   const watchedDueDate = watch("dueDate");
@@ -74,7 +78,7 @@ export function NewInvoiceDialog({ customTrigger }: { customTrigger?: React.Reac
       setServices(servicesData || []);
     } catch (error) {
       console.error("[NewInvoiceDialog] Error fetching data:", error);
-      toast.error("Failed to load patients and services");
+      toast.error("Failed to load data");
     } finally {
       setFetchingData(false);
     }
@@ -103,6 +107,7 @@ export function NewInvoiceDialog({ customTrigger }: { customTrigger?: React.Reac
     try {
       const result = await createInvoice({
         patientId: data.patientId,
+        doctorId: data.doctorId || undefined,
         dueDate: data.dueDate ? new Date(data.dueDate) : undefined,
         items: [{
           description: data.treatment || "Dental Service",
@@ -159,7 +164,7 @@ export function NewInvoiceDialog({ customTrigger }: { customTrigger?: React.Reac
               <Label htmlFor="patient" className="text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2">
                 <User className="w-4 h-4 text-gray-400" /> {t('form.patient')} <span className="text-red-500">*</span>
               </Label>
-              <Select value={watchedPatientId} onValueChange={(val) => setValue("patientId", val ?? "", { shouldValidate: true })}>
+              <Select value={watchedPatientId || null} onValueChange={(val) => setValue("patientId", val ?? "", { shouldValidate: true })}>
                 <SelectTrigger id="patient" className="h-11 bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-700 focus:ring-blue-500 rounded-xl shadow-sm text-gray-900 dark:text-white">
                   <SelectValue placeholder={fetchingData ? "..." : t('form.patient')}>
                     {watchedPatientId ? patients.find(p => p.id === watchedPatientId)?.name : null}
@@ -181,12 +186,34 @@ export function NewInvoiceDialog({ customTrigger }: { customTrigger?: React.Reac
               {errors.patientId && <p className="text-xs text-red-500 mt-0.5 font-medium">{errors.patientId.message}</p>}
             </div>
 
+            {/* Doctor Selection */}
+            <div className="space-y-2">
+              <Label htmlFor="doctor" className="text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2">
+                <User className="w-4 h-4 text-gray-400" /> Doctor (Optional)
+              </Label>
+              <Select value={watchedDoctorId || null} onValueChange={(val) => setValue("doctorId", val === "none" ? "" : val, { shouldValidate: true })}>
+                <SelectTrigger id="doctor" className="h-11 bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-700 focus:ring-blue-500 rounded-xl shadow-sm text-gray-900 dark:text-white">
+                  <SelectValue placeholder={fetchingData ? "..." : "Select Doctor"}>
+                    {watchedDoctorId ? doctors.find(d => d.id === watchedDoctorId)?.name : null}
+                  </SelectValue>
+                </SelectTrigger>
+                <SelectContent className="rounded-xl border-gray-100 dark:border-slate-800 shadow-xl bg-white dark:bg-slate-800">
+                  <SelectItem value="none" className="text-gray-500 italic">No specific doctor</SelectItem>
+                  {doctors.map((doc) => (
+                    <SelectItem key={doc.id} value={doc.id} className="rounded-lg">
+                      {doc.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
             {/* Service Selection (Optional shortcut) */}
             <div className="space-y-2">
               <Label htmlFor="service" className="text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2">
                 <ActivityIcon className="w-4 h-4 text-gray-400" /> {t('form.services')}
               </Label>
-              <Select value={watchedServiceId || undefined} onValueChange={(val) => handleServiceChange(val)}>
+              <Select value={watchedServiceId || null} onValueChange={(val) => handleServiceChange(val)}>
                 <SelectTrigger id="service" className="h-11 bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-700 focus:ring-blue-500 rounded-xl shadow-sm text-gray-900 dark:text-white">
                   <SelectValue placeholder={fetchingData ? "..." : t('form.services')}>
                     {watchedServiceId ? services.find(s => s.id === watchedServiceId)?.name : null}

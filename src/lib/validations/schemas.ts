@@ -94,6 +94,7 @@ export const InvoiceItemSchema = z.object({
 
 export const InvoiceSchema = z.object({
   patientId: z.string().uuid("Invalid patient ID format"),
+  doctorId: z.string().uuid("Invalid doctor ID format").optional().nullable().or(z.literal("")),
   appointmentId: z.string().uuid("Invalid appointment ID format").optional().nullable().or(z.literal("")),
   dueDate: z.preprocess((val) => {
     if (!val) return null;
@@ -116,6 +117,7 @@ export const PaymentSchema = z.object({
 
 export const InvoiceFormSchema = z.object({
   patientId: z.string().uuid("Please select a patient"),
+  doctorId: z.string().uuid("Invalid doctor ID format").optional().nullable().or(z.literal("")),
   serviceId: z.string().uuid("Invalid service ID format").optional().nullable().or(z.literal("")),
   amount: z.preprocess((val) => {
     if (val === "" || val === null || val === undefined) return 0;

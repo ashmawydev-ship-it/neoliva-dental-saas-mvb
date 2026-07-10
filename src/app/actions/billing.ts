@@ -58,6 +58,7 @@ export const createInvoice = wrapAction(
   async (data: { 
     patientId: string;
     appointmentId?: string;
+    doctorId?: string;
     dueDate?: Date;
     items: {
       description: string;
@@ -134,8 +135,12 @@ export const recordPayment = wrapAction(
           revalidatePath(`/patients/${invoice.patientId}`);
           revalidatePath(`/billing`);
           revalidatePath(`/billing/invoices`);
+          revalidatePath(`/reports/commissions`);
       
-          return result;
+          return {
+            ...result,
+            amount: result.amount ? Number(result.amount.toString()) : 0
+          };
     });
   },
   { module: 'billing', entityType: 'PAYMENT' }
@@ -193,13 +198,8 @@ export async function getBillingStats() {
       const tenantId = session.tenantId;
       const stats = await billingService.getBillingStats(tenantId);
       
-      // Serialize Prisma.Decimal to number at the DTO boundary
-      return {
-        totalRevenue: stats.totalRevenue.toNumber(),
-        pendingAmount: stats.pendingAmount.toNumber(),
-        overdueAmount: stats.overdueAmount.toNumber(),
-        overdueCount: stats.overdueCount
-      };
+      // Return stats directly as they are already serialized
+      return stats;
     });
   } catch (error) {
     console.error("[getBillingStats] Action failed:", error);

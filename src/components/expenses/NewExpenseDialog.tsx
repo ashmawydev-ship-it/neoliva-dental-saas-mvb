@@ -61,10 +61,16 @@ export function NewExpenseDialog({ customTrigger }: { customTrigger?: React.Reac
     setLoading(true);
     
     try {
-      await createExpense({
+      const result = await createExpense({
         ...formData,
         amount: parseFloat(formData.amount)
       });
+      
+      if (!result?.success) {
+        toast.error(result?.error || t('toast.errorCreate'));
+        return;
+      }
+      
       toast.success(t('toast.successCreate'));
       setOpen(false);
       setErrors({});

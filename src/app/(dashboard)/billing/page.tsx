@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { getInvoices, getBillingStats } from "@/app/actions/billing";
+import { getStaff } from "@/app/actions/staff";
 import { NewInvoiceDialog } from "@/components/billing/NewInvoiceDialog";
 import { ExportCSVButton, InvoiceRowActions } from "@/components/billing/BillingClientActions";
 import { ClickableTableRow } from "@/components/billing/ClickableTableRow";
@@ -17,10 +18,15 @@ import { cookies } from "next/headers";
 import { formatDate } from "@/lib/format";
 
 export default async function BillingPage() {
-  const [transactions, stats] = await Promise.all([
+  const [transactions, stats, staffData] = await Promise.all([
     getInvoices(),
-    getBillingStats()
+    getBillingStats(),
+    getStaff()
   ]);
+
+  const doctors = (staffData || [])
+    .filter((s: any) => s.role?.toUpperCase() === 'DOCTOR' && s.staffId)
+    .map((s: any) => ({ ...s, id: s.staffId }));
 
   const t = await getTranslations('billing');
   const cookieStore = await cookies();
@@ -39,7 +45,7 @@ export default async function BillingPage() {
               <Receipt className="mr-2 h-4 w-4" /> {t('viewInvoices')}
             </Button>
           </Link>
-          <NewInvoiceDialog />
+          <NewInvoiceDialog doctors={doctors} />
         </div>
       </div>
 

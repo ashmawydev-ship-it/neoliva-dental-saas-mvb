@@ -37,78 +37,86 @@ export class DoctorCommissionService {
   async calculateOnPayment(
     tenantId: string,
     invoiceId: string,
-    paidAmount: number | Prisma.Decimal
+    paidAmount: number | Prisma.Decimal,
+    txClient: Prisma.TransactionClient = prisma
   ) {
-    try {
-      const amount = (+(paidAmount));
-      if (!amount || amount <= 0) return;
+    const amount = (+(paidAmount));
+    if (!amount || amount <= 0) return;
 
-      // 1. Get invoice to find doctorId
-      const invoice = await prisma.invoice.findFirst({
-        where: { id: invoiceId, tenantId },
-        select: { id: true, doctorId: true, totalAmount: true, displayId: true },
-      });
+    // 1. Get invoice to find doctorId
+    const invoice = await txClient.invoice.findFirst({
+      where: { id: invoiceId, tenantId },
+      select: { id: true, doctorId: true, totalAmount: true, displayId: true },
+    });
 
-      if (!invoice?.doctorId) return; // No doctor assigned → skip
-
-      // 2. Get doctor's commission rate
-      const doctor = await prisma.staff.findFirst({
-        where: { id: invoice.doctorId, tenantId },
-        select: { id: true, name: true, commissionRate: true },
-      });
-
-      if (!doctor) return;
-
-      const rate = (+(doctor.commissionRate || 0));
-      if (rate <= 0) return; // No commission rate → skip
-
-      // 3. Calculate
-      const commissionAmount = (amount * rate) / 100;
-      if (commissionAmount <= 0) return;
-
-      // 4. Create journal entry + commission record in a transaction
-      await prisma.$transaction(async (tx) => {
-        // 4a. Journal Entry: DR Expense, CR Liability
-        const journalEntry = await this.treasuryService.createJournalEntry(
-          tenantId,
-          {
-            reference: invoice.id,
-            description: `عمولة د.${doctor.name} على فاتورة ${invoice.displayId || invoice.id} — ${commissionAmount.toFixed(2)}`,
-            lines: [
-              {
-                accountName: COMMISSION_ACCOUNTS.EXPENSE,
-                debit: commissionAmount,
-                credit: 0,
-              },
-              {
-                accountName: COMMISSION_ACCOUNTS.LIABILITY,
-                debit: 0,
-                credit: commissionAmount,
-              },
-            ],
-          },
-          tx
-        );
-
-        // 4b. Create commission record
-        await this.commissionRepository.create(
-          {
-            tenantId,
-            doctorId: doctor.id,
-            invoiceId: invoice.id,
-            invoiceAmount: amount,
-            commissionRate: rate,
-            commissionAmount,
-            journalEntryId: journalEntry.id,
-            status: "pending",
-          },
-          tx
-        );
-      });
-    } catch (error) {
-      // Commission calculation should not break the payment flow
-      console.error("[DoctorCommissionService] calculateOnPayment failed:", error);
+    if (!invoice?.doctorId) {
+      console.warn(`[DoctorCommissionService] Invoice ${invoiceId} has no doctorId. Bypassing commission calculation.`);
+      return; 
     }
+
+    // 2. Get doctor's commission rate
+    const doctor = await txClient.staff.findFirst({
+      where: { id: invoice.doctorId, tenantId },
+      select: { id: true, name: true, commissionRate: true },
+    });
+
+    if (!doctor) return;
+
+    const rate = (+(doctor.commissionRate || 0));
+    if (rate <= 0) return; // No commission rate → skip
+
+    // 3. Calculate
+    const commissionAmount = (amount * rate) / 100;
+    if (commissionAmount <= 0) return;
+
+    // 4. Create journal entry + commission record
+    // 4a. Journal Entry: DR Expense, CR Liability
+    const journalEntry = await this.treasuryService.createJournalEntry(
+      tenantId,
+      {
+        reference: invoice.id,
+        description: `عمولة د.${doctor.name} على فاتورة ${invoice.displayId || invoice.id} — ${commissionAmount.toFixed(2)}`,
+        lines: [
+          {
+            accountName: COMMISSION_ACCOUNTS.EXPENSE,
+            debit: commissionAmount,
+            credit: 0,
+          },
+          {
+            accountName: COMMISSION_ACCOUNTS.LIABILITY,
+            debit: 0,
+            credit: commissionAmount,
+          },
+        ],
+      },
+      txClient
+    );
+
+    // 4b. Create commission record
+    console.log("[DoctorCommissionService] Preparing to insert DB record:", {
+        tenantId,
+        doctorId: doctor.id,
+        invoiceId: invoice.id,
+        invoiceAmount: amount,
+        commissionRate: rate,
+        commissionAmount,
+        journalEntryId: journalEntry.id,
+        status: "pending",
+    });
+
+    await this.commissionRepository.create(
+      {
+        tenantId,
+        doctorId: doctor.id,
+        invoiceId: invoice.id,
+        invoiceAmount: amount,
+        commissionRate: rate,
+        commissionAmount,
+        journalEntryId: journalEntry.id,
+        status: "pending",
+      },
+      txClient
+    );
   }
 
   /**
